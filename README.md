@@ -2,7 +2,7 @@
 
 ## 🎮 Descripción del Proyecto
 
-AncletoCoffeeWorld es un juego incremental de navegador inspirado en "Candy Box 2", enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
+AncletoCoffeeWorld es un juego incremental de navegador enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
 
 El juego se ejecuta directamente en el navegador, sin instalación, con progreso automático y sistema de guardado robusto.
 
@@ -156,7 +156,7 @@ Este proyecto es de código abierto y está disponible bajo la licencia MIT. Ver
 ## 👨‍💼 Créditos
 
 **Creado por**: El universo de Ancleto  
-**Inspirado en**: Candy Box 2 y la cultura cafetera  
+**Inspirado en**: Cultura cafetera y juegos incrementales clásicos  
 **Desarrollado con**: Mucho café y amor por los juegos incrementales  
 
 ---

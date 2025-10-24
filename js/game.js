@@ -48,7 +48,7 @@ let dungeons = {
             ['#','M','P','.','#'],
             ['#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Café Amargo', health: 50, reward: 10 } },
+        monsters: { M: { name: 'Café Amargo', health: 150, reward: 30 } },
         exit: { x: 4, y: 2 }
     },
     bodegaSecreta: {
@@ -62,7 +62,7 @@ let dungeons = {
             ['#','.','.','.','.','#'],
             ['#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Grano Maldito', health: 100, reward: 50 } },
+        monsters: { M: { name: 'Grano Maldito', health: 300, reward: 100 } },
         exit: { x: 5, y: 3 }
     }
 };
@@ -321,8 +321,16 @@ function handleBuyCommand(target) {
 }
 
 function handleFightCommand() {
-    fightBoss();
-    consoleLog('Atacando al boss...');
+    // Primero verificar si hay monstruo en dungeon
+    if (inDungeon && currentDungeon && currentDungeon.currentMonster) {
+        fightDungeonMonster();
+        consoleLog('Atacando al monstruo de la mazmorra...');
+    } else if (currentBoss) {
+        fightBoss();
+        consoleLog('Atacando al boss...');
+    } else {
+        consoleLog('No hay enemigos para luchar. Explora dungeons o espera un boss.');
+    }
 }
 
 function handleListCommand(target) {
@@ -448,7 +456,21 @@ function handleLoadCSVCommand() {
 }
 
 function handleHelpCommand() {
-    consoleLog('Comandos: buy [upgrade], fight, donate, mail, work, dungeons, list [upgrades/achievements], boss, save, load, status, explore [mazmorra], go [direccion], exit, savecsv, loadcsv, fixnan, help');
+    consoleLog('=== COMANDOS BÁSICOS ===');
+    consoleLog('buy [upgrade] - Comprar mejora');
+    consoleLog('fight - Luchar (boss o monstruo de dungeon)');
+    consoleLog('status - Ver estadísticas');
+    consoleLog('save/load - Guardar/cargar juego');
+    consoleLog('');
+    consoleLog('=== DUNGEONS ===');
+    consoleLog('dungeons - Listar mazmorras disponibles');
+    consoleLog('explore [cafeteria oscura/bodega secreta] - Entrar a mazmorra');
+    consoleLog('go [north/south/east/west] - Moverse en mazmorra');
+    consoleLog('exit - Salir de mazmorra actual');
+    consoleLog('');
+    consoleLog('=== OTROS ===');
+    consoleLog('donate, mail, work, list [upgrades/achievements], boss');
+    consoleLog('savecsv, loadcsv, fixnan - Utilidades');
 }
 
 // Comandos de cheat
@@ -734,6 +756,14 @@ function displayMap() {
         }
         mapStr += '\n';
     }
+    
+    // Mostrar información del monstruo si hay uno activo
+    if (currentDungeon.currentMonster) {
+        const monster = currentDungeon.currentMonster;
+        mapStr += `\n⚔️ En combate: ${monster.name} (${monster.health}/${monster.maxHealth} HP)`;
+        mapStr += `\nUsa 'fight' para atacar`;
+    }
+    
     consoleLog(mapStr);
 }
 
@@ -751,6 +781,9 @@ function enterDungeon(name) {
 
 function exitDungeon() {
     inDungeon = false;
+    if (currentDungeon) {
+        currentDungeon.currentMonster = null; // Limpiar monstruo actual
+    }
     currentDungeon = null;
     consoleLog('Saliendo de la mazmorra.');
 }
@@ -774,18 +807,19 @@ function movePlayer(dx, dy) {
     playerPos.x = newX;
     playerPos.y = newY;
     if (tile === 'M') {
-        // Luchar automáticamente
+        // Luchar tácticamente - no automático
         const monster = currentDungeon.monsters[tile];
-        consoleLog(`¡Encuentras a ${monster.name}! Luchando...`);
-        // Simular combate automático basado en fuerza
-        const damage = coffeeStrength + charisma;
-        if (damage >= monster.health) {
-            coffee += monster.reward;
-            consoleLog(`¡Derrotaste a ${monster.name}! Ganaste ${monster.reward} café.`);
-            currentDungeon.map[newY][newX] = '.'; // Remover monstruo
-        } else {
-            consoleLog(`¡${monster.name} te derrotó! Perdiste ${Math.floor(monster.reward / 2)} café.`);
-            coffee = Math.max(0, coffee - Math.floor(monster.reward / 2));
+        consoleLog(`¡Encuentras a ${monster.name}! (Vida: ${monster.health})`);
+        consoleLog(`Usa el comando 'fight' para atacar en la consola.`);
+        
+        // Crear objeto temporal de monstruo actual para el combate
+        if (!currentDungeon.currentMonster) {
+            currentDungeon.currentMonster = { 
+                ...monster, 
+                x: newX, 
+                y: newY,
+                maxHealth: monster.health 
+            };
         }
     } else if (newX === currentDungeon.exit.x && newY === currentDungeon.exit.y) {
         consoleLog('¡Encontraste la salida!');
@@ -793,6 +827,43 @@ function movePlayer(dx, dy) {
         return;
     }
     displayMap();
+}
+
+// Luchar contra monstruo en dungeon
+function fightDungeonMonster() {
+    if (!inDungeon || !currentDungeon || !currentDungeon.currentMonster) {
+        consoleLog('No hay monstruo para luchar en la mazmorra.');
+        return;
+    }
+    
+    // Cooldown de 1 segundo para dungeons (más rápido que bosses)
+    if (Date.now() - lastFightTime < 1000) {
+        const remaining = Math.ceil((1000 - (Date.now() - lastFightTime)) / 1000);
+        consoleLog(`Espera ${remaining} segundo antes de atacar de nuevo.`);
+        return;
+    }
+    
+    const monster = currentDungeon.currentMonster;
+    const damage = Math.max(1, Math.floor((charisma + coffeeStrength) * 0.3)); // Menos daño que bosses
+    monster.health -= damage;
+    lastFightTime = Date.now();
+    
+    consoleLog(`¡Atacas a ${monster.name}! Daño: ${damage}. Vida restante: ${Math.max(0, monster.health)}/${monster.maxHealth}`);
+    
+    if (monster.health <= 0) {
+        coffee += monster.reward;
+        totalCoffee += monster.reward;
+        consoleLog(`🏆 ¡Derrotaste a ${monster.name}! Ganaste ${monster.reward} café.`);
+        
+        // Remover monstruo del mapa
+        currentDungeon.map[monster.y][monster.x] = '.';
+        currentDungeon.currentMonster = null;
+        
+        // Actualizar display y guardar
+        updateDisplay();
+        saveGame();
+        displayMap();
+    }
 }
 
 // Producción automática
