@@ -23,9 +23,12 @@ let consoleVisible = false;
 let currentBoss = null;
 let defeatedBosses = [];
 let bosses = [
-    { name: "Minion de Lucía", health: 200, maxHealth: 200, reward: 50, spawnAt: 1000, dungeon: "cafeteriaOscura" },
-    { name: "Niebla Azul", health: 800, maxHealth: 800, reward: 300, spawnAt: 5000, dungeon: "bodegaSecreta" },
-    { name: "Lucía", health: 2000, maxHealth: 2000, reward: 1500, spawnAt: 50000, dungeon: "oficinaCentral" }
+    { name: "Empleado Rebelde", health: 150, maxHealth: 150, reward: 30, spawnAt: 300, dungeon: "salaReuniones" },
+    { name: "Crisis Ortográfica", health: 250, maxHealth: 250, reward: 75, spawnAt: 1000, dungeon: "cafeteriaOscura" },
+    { name: "Minion de Lucía", health: 400, maxHealth: 400, reward: 150, spawnAt: 5000, dungeon: "casaDamian" },
+    { name: "Sonrisa Inquebrantable", health: 800, maxHealth: 800, reward: 400, spawnAt: 20000, dungeon: "bodegaSecreta" },
+    { name: "Niebla Azul", health: 1200, maxHealth: 1200, reward: 800, spawnAt: 40000, dungeon: "posadaPerros" },
+    { name: "Lucía Final", health: 3000, maxHealth: 3000, reward: 2000, spawnAt: 70000, dungeon: "oficinaCentral" }
 ];
 
 // Variables de cooldown
@@ -33,7 +36,7 @@ let lastMailTime = 0;
 let lastWorkTime = 0;
 let lastFightTime = 0;
 
-// Sistema de diálogos progresivos basado en la historia de mails
+// Sistema de diálogos progresivos basado en la historia completa de mails
 let currentDialogueIndex = 0;
 let dialogues = [
     {
@@ -44,74 +47,284 @@ let dialogues = [
         narrator: "Ancleto"
     },
     {
+        threshold: 50,
+        act: "Acto 1: Primeras Reflexiones",
+        title: "La Cultura del Café",
+        message: "En esta empresa, el café no es solo una infusión. Es un ritual, es el momento en que las ideas se cruzan y los proyectos se gestan.",
+        narrator: "Ancleto"
+    },
+    {
         threshold: 100,
-        act: "Acto 1: Primeros Logros",
+        act: "Acto 1: Solicitud Inicial",
         title: "Solicitud de Colaboración Financiera",
         message: "Estimado equipo, necesitamos invertir en cafeteras nuevas. Como el mejor CEO del mundo, sé exactamente cómo invertir cada peso para el bien común.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 200,
+        act: "Acto 1: Seguimiento",
+        title: "Recordatorio de Donaciones",
+        message: "He notado que algunos aún no han concretado su donación. Tu participación es fundamental para que todos disfrutemos de un espacio más ameno.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 300,
+        act: "Acto 1: Primera Resistencia",
+        title: "Respuesta Desafiante",
+        message: "Damián respondió 'yo hago lo que quiero'. Una actitud preocupante que requiere reflexión y, posiblemente, más café.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 400,
+        act: "Acto 1: Problemas Ortográficos",
+        title: "Guerra al Diccionario",
+        message: "Su nueva respuesta fue 'yo havlo como quiero'. Ahora declara la guerra tanto a la colaboración como a la gramática básica.",
         narrator: "Ancleto"
     },
     {
         threshold: 500,
         act: "Acto 1: Lista de la Vergüenza",
         title: "Llamado a la Responsabilidad",
-        message: "He notado que algunos no han contribuido. La Lista de la Vergüenza será visible junto a las cafeteras. No como castigo, sino como recordatorio.",
+        message: "He decidido crear la Lista de la Vergüenza. No como castigo, sino como recordatorio de que en esta empresa todos remamos juntos.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 750,
+        act: "Acto 1: Viajes Globales - Introducción",
+        title: "Cruzada Global por la Excelencia",
+        message: "He recorrido el mundo en busca de la cafetera perfecta. En Estambul negocié con comerciantes, en Kioto probé sifones alquímicos.",
         narrator: "Ancleto"
     },
     {
         threshold: 1000,
-        act: "Acto 2: La Crisis de Arganaraz",
-        title: "Renuncia Dramática Recibida",
-        message: "Damián envió una renuncia pidiendo cobrar. Como el mejor CEO del mundo, lo convenceré con un simple 'tómate un café'.",
+        act: "Acto 2: Crisis de Arganaraz",
+        title: "Renuncia Operística",
+        message: "Recibí una renuncia de Arganaraz: quiere desvincularse pero seguir cobrando. Una ópera barroca de emociones y propuestas laborales kafkianas.",
         narrator: "Ancleto"
     },
     {
-        threshold: 2000,
-        act: "Acto 2: Respuesta de Arganaraz",
-        title: "La Rebeldía del Empleado",
-        message: "Damián respondió 'yo hago lo que quiero' y 'yo havlo como quiero'. Su ortografía y actitud requieren intervención inmediata.",
+        threshold: 1200,
+        act: "Acto 2: Consejo Cafetero",
+        title: "Tómate un Café y Respirá",
+        message: "Le sugerí a Arganaraz: 'Tómate un café, preparalo bien, sentate tranquilo y respirá.' Porque las decisiones importantes no se toman en ayunas.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 1500,
+        act: "Acto 2: Reflexión de Arganaraz",
+        title: "Delirio Administrativo Reconocido",
+        message: "Arganaraz respondió: 'Tiene más de ópera barroca que de carta formal. Me dejé llevar por el drama y una pizca de delirio administrativo.'",
+        narrator: "Arganaraz"
+    },
+    {
+        threshold: 1800,
+        act: "Acto 2: Reconciliación",
+        title: "Café Colombiano de Altura",
+        message: "Mañana a las 10h espero a Arganaraz con café colombiano de altura y churros de Buenos Aires. El café es diálogo, el café une culturas.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 2200,
+        act: "Acto 2: Matías el Héroe",
+        title: "El 200% de Generosidad",
+        message: "¡Matías aportó el 200% del monto requerido! Su gesto de entrega y compromiso merece reconocimiento: es nuestro nuevo CEO honorario.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 2500,
+        act: "Acto 2: CEO Supremo",
+        title: "Ascenso de Matías",
+        message: "Matías ostenta ahora el título de CEO Supremo del Café y la Cultura Corporativa, con prioridad en la primera taza y veto sobre café instantáneo.",
         narrator: "Ancleto"
     },
     {
         threshold: 3000,
-        act: "Acto 2: Ascenso de Matías",
-        title: "Un Héroe Emerge",
-        message: "Matías aportó el 200% del monto requerido. Como nuevo CEO honorario, merece nuestro respeto y una taza preferencial.",
+        act: "Acto 2: Charla TED - Inicio",
+        title: "Historia del Café como Civilización",
+        message: "Preparé una charla TED: 'Más que cafeína: el café como motor de civilización'. Todo comenzó con Kaldi y sus cabras eufóricas en Etiopía.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 3500,
+        act: "Acto 2: Charla TED - Sufíes",
+        title: "Rituales Sufíes del Siglo XV",
+        message: "En Yemen, los sufíes usaban café para vigilia. Su proceso: tostado lento en cobre, molienda manual, infusión con reposo. El café como activo social.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 4000,
+        act: "Acto 2: Charla TED - Constantinopla",
+        title: "Escuelas de Sabios",
+        message: "Siglo XVI: nacen las cafeterías en Constantinopla. Eran centros de debate y poesía, llamadas 'Kıraat Khane' o casas de lectura.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 4500,
+        act: "Acto 2: Equipo Salesforce",
+        title: "Integración Uruguaya",
+        message: "Ofrecí a Damián un equipo uruguayo de Salesforce: arquitectos, consultores y desarrolladores. Su huso horario encaja perfecto con nuestra franja.",
         narrator: "Ancleto"
     },
     {
         threshold: 5000,
-        act: "Acto 3: La Cruzada contra Lucía",
-        title: "La Amenaza se Revela",
-        message: "Lucía ha aparecido. Su sonrisa inquebrantable infiltra hogares y cafeteras. Debemos prepararnos para la resistencia.",
+        act: "Acto 3: Resistencia de Arganaraz",
+        title: "Orden Tácita de Alejamiento",
+        message: "Arganaraz rechazó Salesforce: 'Hay una orden tácita de alejamiento profesional. Me mudé a Posadas con 19 perros guardianes.'",
+        narrator: "Arganaraz"
+    },
+    {
+        threshold: 5500,
+        act: "Acto 3: Lucía se Revela",
+        title: "La Infiltración Silenciosa",
+        message: "Debo confesar algo terrible: Lucía lleva un año hospedándose en casa de Damián, usando su wifi y dejando su libreta en el escritorio.",
         narrator: "Ancleto"
     },
     {
+        threshold: 6000,
+        act: "Acto 3: Amenaza Sistémica",
+        title: "Sonrisa Inquebrantable",
+        message: "Lucía no solo vive en casa de Damián: su sonrisa inquebrantable y cafetera portátil se han instalado en hogares de todos los empleados.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 7000,
+        act: "Acto 3: Miedo de Ancleto",
+        title: "También Estoy Asustado",
+        message: "Debo confesarte algo: también estoy asustado. Lucía posa con su sonrisa indestructible como el Rostro de Espresso Supremo.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 8000,
+        act: "Acto 3: Llamado a la Resistencia",
+        title: "Pedido de Auxilio Cafetero",
+        message: "Apelando a tu generosidad: prepárate un espresso triple, necesitamos fuerza. Tu experiencia con perros guardianes es nuestra esperanza.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 9000,
+        act: "Acto 3: Respuesta de Arganaraz",
+        title: "Lealtad en el Universo Cafetero",
+        message: "Arganaraz respondió: 'No voy a soltarte la mano. Si algo nos queda es la lealtad entre quienes distinguimos un ristretto de una sonrisa falsa.'",
+        narrator: "Arganaraz"
+    },
+    {
         threshold: 10000,
-        act: "Acto 3: Escalada del Conflicto",
-        title: "Lucía se Fortalece",
-        message: "Lucía lleva un año hospedándose en casa de Damián. Su presencia es inminente e inevitable. Los 19 perros guardianes no bastarán.",
+        act: "Acto 4: Amenaza Sistémica",
+        title: "Resistencia con Blend Propio",
+        message: "'Estamos ante una amenaza sistémica. Vamos a resistir con blend propio, temple y convicción de que ningún aroma puede doblegar nuestra voluntad.'",
+        narrator: "Arganaraz"
+    },
+    {
+        threshold: 12000,
+        act: "Acto 4: Damián Generoso",
+        title: "El 900% de Aportes",
+        message: "Buenos días Damián: tu generosísima transferencia del 900% llegó con retraso por coordinación bancaria. Lamento el inconveniente.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 15000,
+        act: "Acto 4: Vicepresidente Junior",
+        title: "Ascenso de Damián",
+        message: "Para reconocer tu aporte extraordinario: serás Vicepresidente Junior de Cultura Cafetera. Validarás el primer espresso y supervisarás la Lista de Vergüenza.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 18000,
+        act: "Acto 4: Ancleto 100% Real",
+        title: "Aclaración de Identidad",
+        message: "Soy 100% real, no fake. Mi nombre es Ancleto con 'n', legalmente distinto de cualquier Anacleto. Consultá el Boletín Oficial si tenés dudas.",
         narrator: "Ancleto"
     },
     {
         threshold: 20000,
-        act: "Acto 4: La Resistencia se Organiza",
-        title: "Unión en la Adversidad",
-        message: "Damián finalmente comprende la amenaza: 'No voy a soltarte la mano. Vamos a resistir con blend propio y temple.'",
-        narrator: "Arganaraz"
+        act: "Acto 4: Sacrificio Personal",
+        title: "La Pérdida de Todo",
+        message: "Lucía hizo desaparecer a mi esposa, mis hijos... incluso mi hámster con ojitos de espuma. Cada aroma me habla de lo que perdí.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 25000,
+        act: "Acto 4: Últimas Palabras",
+        title: "Cuídate, No Te Queda Mucho",
+        message: "Te lo digo con el corazón en la mano: cuídate. Tu orden de alejamiento no bastará. Ella avanza sin prisa con esa sonrisa inquebrantable.",
+        narrator: "Ancleto"
     },
     {
         threshold: 30000,
-        act: "Acto 4: El Sacrificio de Ancleto",
-        title: "Últimas Palabras",
-        message: "Lucía hizo desaparecer a mi esposa, mis hijos... incluso mi hámster. No te queda mucho antes de que te alcance su sombra.",
+        act: "Acto 5: Desaparición",
+        title: "Respuesta Automática",
+        message: "Ancleto no está disponible. Se encuentra en misión crítica: contener la infiltración de Lucía y coordinar la resistencia cafeteril.",
+        narrator: "Sistema"
+    },
+    {
+        threshold: 35000,
+        act: "Acto 5: En Hiding",
+        title: "Mensaje desde las Sombras",
+        message: "Me escondo en la bodega, aferrado a mi taza rota. Pero sepan que Ancleto está vivo, y mientras el café fluya, yo regresaré.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 40000,
+        act: "Acto 5: Promesa de Venganza",
+        title: "Volveré con Ristretto Doble",
+        message: "Volveré para vengar cada grano robado y honrar la memoria de mi hámster. Escucharán el tamper contra el portafiltro y mi voz reclamando justicia.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 45000,
+        act: "Acto 5: Preparativos Finales",
+        title: "Fondos para la Victoria",
+        message: "Con el 900% de Damián, reforzamos defensas: tamper de acero, café colombiano y 19 perros entrenados como Guardia del Blend.",
         narrator: "Ancleto"
     },
     {
         threshold: 50000,
-        act: "Acto 5: Legado y Resistencia",
-        title: "El Legado Continúa",
-        message: "Ancleto no está disponible. Se encuentra en misión anti-Lucía, luchando por recuperar nuestras tazas y proteger a su familia perdida.",
-        narrator: "Sistema"
+        act: "Acto 6: Victoria Final",
+        title: "Lucía Ha Sido Neutralizada",
+        message: "¡Misión cumplida! La amenaza de Lucía ha quedado hecha añicos. Su red de sonrisas y cafeteras secuestradas ha sido destruida. ¡Gracias Damián!",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 55000,
+        act: "Acto 6: Liberación",
+        title: "Defensas Baristas Exitosas",
+        message: "Con tamper de acero, vigilancia perruna y espresso bajo control paramilitar, el último bastión de Lucía cayó esta madrugada.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 60000,
+        act: "Acto 6: Reconocimiento",
+        title: "Damián, Héroe Cafeteril",
+        message: "Damián, tu 900% no solo fue generoso: fue la chispa de nuestra victoria. Espero disfrutes cada sorbo de tu privilegio como VP Junior.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 70000,
+        act: "Acto 6: Restauración",
+        title: "Renacimiento de la Cultura",
+        message: "Los Viernes de Cupping renacieron, las máquinas ronronean y el tamper golpea en señal de que la cultura del café está más viva que nunca.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 80000,
+        act: "Acto 6: Estado Actual",
+        title: "Dónde Están Ahora",
+        message: "Recuperé mi despacho y dicto masterclasses de latte art. Matías escribe 'Crónicas del Doble Espresso'. El hámster patrulla la Moka Express.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 90000,
+        act: "Acto 6: Epílogo Abierto",
+        title: "Niebla Azul Misteriosa",
+        message: "En la última molienda, alguien divisó una ligera niebla azul sobre la pila de posos. ¿Será sugestión o quedan rastros de Lucía?",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 100000,
+        act: "Acto 6: Final Abierto",
+        title: "El Café es un Viaje Sin Fin",
+        message: "El café es un viaje sin fin. Y cuando menos lo esperemos, tal vez aquella niebla azul nos susurre que la verdadera aventura apenas comienza...",
+        narrator: "Ancleto"
     }
 ];
 
@@ -120,11 +333,26 @@ let inDungeon = false;
 let currentDungeon = null;
 let playerPos = { x: 0, y: 0 };
 let dungeons = {
+    salaReuniones: {
+        unlocked: false,
+        unlockAt: 300,
+        bossName: "Empleado Rebelde",
+        story: "La sala donde Damián respondió 'yo hago lo que quiero', desafiando la cultura cafeteril...",
+        map: [
+            ['#','#','#','#','#'],
+            ['#','.','B','.','#'],
+            ['#','M','P','E','#'],
+            ['#','#','#','#','#']
+        ],
+        monsters: { M: { name: 'Actitud Tóxica', health: 100, reward: 20 } },
+        boss: { x: 2, y: 1 },
+        exit: { x: 3, y: 2 }
+    },
     cafeteriaOscura: {
         unlocked: false,
         unlockAt: 1000,
-        bossName: "Minion de Lucía",
-        story: "La oscura cafetería donde Lucía envió a su minion para sabotear las reuniones matutinas...",
+        bossName: "Crisis Ortográfica",
+        story: "Donde las palabras se escriben mal y la gramática muere. Aquí habita el espíritu de 'yo havlo como quiero'...",
         map: [
             ['#','#','#','#','#','#'],
             ['#','.','M','.','B','#'],
@@ -132,15 +360,15 @@ let dungeons = {
             ['#','M','P','.','E','#'],
             ['#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Café Amargo', health: 150, reward: 30 } },
+        monsters: { M: { name: 'Error Tipográfico', health: 150, reward: 30 } },
         boss: { x: 4, y: 1 },
         exit: { x: 4, y: 3 }
     },
-    bodegaSecreta: {
+    casaDamian: {
         unlocked: false,
         unlockAt: 5000,
-        bossName: "Niebla Azul",
-        story: "En las profundidades de la bodega, una extraña niebla azul custodia los granos más preciados...",
+        bossName: "Minion de Lucía",
+        story: "La casa de Damián en Posadas, custodiada por 19 perros guardianes. Aquí Lucía estableció su primera base...",
         map: [
             ['#','#','#','#','#','#','#'],
             ['#','.','M','.','M','.','#'],
@@ -149,15 +377,32 @@ let dungeons = {
             ['#','.','.','.','.','E','#'],
             ['#','#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Grano Maldito', health: 300, reward: 100 } },
+        monsters: { M: { name: 'Perro Hipnotizado', health: 200, reward: 50 } },
         boss: { x: 5, y: 2 },
         exit: { x: 5, y: 4 }
     },
-    oficinaCentral: {
+    bodegaSecreta: {
         unlocked: false,
-        unlockAt: 50000,
-        bossName: "Lucía",
-        story: "La oficina central, último bastión de resistencia. Aquí Lucía ha establecido su cuartel general...",
+        unlockAt: 20000,
+        bossName: "Sonrisa Inquebrantable",
+        story: "En las profundidades donde Ancleto se escondió, la sonrisa de Lucía persiste entre las sombras...",
+        map: [
+            ['#','#','#','#','#','#','#'],
+            ['#','.','M','.','M','.','#'],
+            ['#','.','.','.','.','B','#'],
+            ['#','M','P','.','M','.','#'],
+            ['#','.','.','.','.','E','#'],
+            ['#','#','#','#','#','#','#']
+        ],
+        monsters: { M: { name: 'Recuerdo Doloroso', health: 300, reward: 100 } },
+        boss: { x: 5, y: 2 },
+        exit: { x: 5, y: 4 }
+    },
+    posadaPerros: {
+        unlocked: false,
+        unlockAt: 40000,
+        bossName: "Niebla Azul",
+        story: "Las afueras de Posadas donde la misteriosa niebla azul se alza sobre los posos de café...",
         map: [
             ['#','#','#','#','#','#','#','#'],
             ['#','.','M','.','.','M','.','#'],
@@ -167,9 +412,28 @@ let dungeons = {
             ['#','M','.','P','.','M','E','#'],
             ['#','#','#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Empleado Hipnotizado', health: 400, reward: 150 } },
+        monsters: { M: { name: 'Niebla Tóxica', health: 400, reward: 150 } },
         boss: { x: 4, y: 4 },
         exit: { x: 6, y: 5 }
+    },
+    oficinaCentral: {
+        unlocked: false,
+        unlockAt: 70000,
+        bossName: "Lucía Final",
+        story: "La oficina central, último bastión donde Lucía hace su resistencia final antes de ser neutralizada...",
+        map: [
+            ['#','#','#','#','#','#','#','#','#'],
+            ['#','.','M','.','.','M','.','M','#'],
+            ['#','.','.','.','.','.','.','.','.','#'],
+            ['#','M','.','.','.','.','.','.','.','#'],
+            ['#','.','.','.','.','B','.','.','.','#'],
+            ['#','M','.','.','.','.','.','.','.','#'],
+            ['#','.','.','.','P','.','M','E','#'],
+            ['#','#','#','#','#','#','#','#','#']
+        ],
+        monsters: { M: { name: 'Sonrisa Hipnótica', health: 500, reward: 200 } },
+        boss: { x: 5, y: 4 },
+        exit: { x: 7, y: 6 }
     }
 };
 
@@ -821,20 +1085,35 @@ function updateDisplay() {
     }
 
     // Desbloquear mazmorras según café total
+    if (!dungeons.salaReuniones.unlocked && totalCoffee >= dungeons.salaReuniones.unlockAt) {
+        dungeons.salaReuniones.unlocked = true;
+        consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Sala de Reuniones!');
+        showNarrative('La sala donde todo comenzó... donde Damián declaró su rebeldía contra la cultura cafetera.');
+    }
     if (!dungeons.cafeteriaOscura.unlocked && totalCoffee >= dungeons.cafeteriaOscura.unlockAt) {
         dungeons.cafeteriaOscura.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Cafetería Oscura!');
-        showNarrative('Una misteriosa cafetería ha aparecido. Los rumores hablan de un minion de Lucía...');
+        showNarrative('Donde las palabras se escriben mal y la gramática muere. "Yo havlo como quiero" resuena aquí...');
+    }
+    if (!dungeons.casaDamian.unlocked && totalCoffee >= dungeons.casaDamian.unlockAt) {
+        dungeons.casaDamian.unlocked = true;
+        consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Casa de Damián!');
+        showNarrative('La casa en Posadas, custodiada por 19 perros. Aquí Lucía estableció su primera base...');
     }
     if (!dungeons.bodegaSecreta.unlocked && totalCoffee >= dungeons.bodegaSecreta.unlockAt) {
         dungeons.bodegaSecreta.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Bodega Secreta!');
-        showNarrative('Las profundidades de la bodega se han abierto. Una niebla azul custodia secretos...');
+        showNarrative('Donde Ancleto se escondió. Su sonrisa inquebrantable persiste entre las sombras...');
+    }
+    if (!dungeons.posadaPerros.unlocked && totalCoffee >= dungeons.posadaPerros.unlockAt) {
+        dungeons.posadaPerros.unlocked = true;
+        consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Posada de los Perros!');
+        showNarrative('Las afueras de Posadas donde la misteriosa niebla azul se alza sobre los posos...');
     }
     if (!dungeons.oficinaCentral.unlocked && totalCoffee >= dungeons.oficinaCentral.unlockAt) {
         dungeons.oficinaCentral.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Oficina Central!');
-        showNarrative('La oficina central se ha transformado. Lucía ha establecido su cuartel general...');
+        showNarrative('El último bastión donde Lucía hace su resistencia final antes de ser neutralizada...');
     }
     
     // Actualizar botón de mail

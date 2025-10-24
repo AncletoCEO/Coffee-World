@@ -58,7 +58,7 @@ Liderazgo, resolución de problemas, importancia del café en la oficina. Humor 
 Confía en mí: esta historia basada en mis aventuras hará el juego inolvidable.
 
 
-Lo siguiente es la historia completa de mails del mundo ancleto cafetero
+# Lo siguiente es la historia completa de mails del mundo ancleto cafetero
 
 soy ancleto y quiero pedir dinero a uno de mis empleados para poder invertir en cafeteras nuevas para la oficina. Aclarar constantemente que soy ancleto y que confien en mi por ser el mejor ceo del mundo. hacer el mensaje lo mas extenso posible
 
