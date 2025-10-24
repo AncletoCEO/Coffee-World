@@ -966,12 +966,16 @@ function updateStory() {
         }
     }
     
-    // Actualizar elementos del DOM si existen
+    // Actualizar elementos del DOM de la sección Historia
     if (currentActDisplay) {
         currentActDisplay.textContent = currentDialogue.act;
     }
     if (actDescriptionDisplay) {
-        actDescriptionDisplay.textContent = currentDialogue.title;
+        // Mostrar el diálogo completo en la sección de historia
+        actDescriptionDisplay.innerHTML = `
+            <h4>${currentDialogue.title}</h4>
+            <p><strong>${currentDialogue.narrator}:</strong> ${currentDialogue.message}</p>
+        `;
     }
     
     // Mostrar nuevo diálogo si hemos progresado
@@ -979,9 +983,6 @@ function updateStory() {
         currentDialogueIndex = newDialogueIndex;
         showNewDialogue(currentDialogue);
     }
-    
-    // Mostrar narrativa basada en el diálogo actual
-    showNarrative(`${currentDialogue.narrator}: ${currentDialogue.message.substring(0, 100)}...`);
     
     // Mostrar progreso hacia el siguiente diálogo
     const nextDialogue = dialogues.find(d => d.threshold > totalCoffee);
@@ -1012,19 +1013,16 @@ function updateStory() {
 function showNewDialogue(dialogue) {
     consoleLog('');
     consoleLog('═══════════════════════════════════════');
-    consoleLog(`📧 NUEVO MENSAJE: ${dialogue.title}`);
-    consoleLog(`👤 De: ${dialogue.narrator}`);
+    consoleLog(`📧 NUEVA HISTORIA DESBLOQUEADA!`);
+    consoleLog(`📖 ${dialogue.title}`);
+    consoleLog(`👤 ${dialogue.narrator}`);
     consoleLog('═══════════════════════════════════════');
-    consoleLog('');
-    
-    // Dividir el mensaje en líneas para mejor legibilidad
-    const lines = dialogue.message.match(/.{1,60}(\s|$)/g) || [dialogue.message];
-    lines.forEach(line => {
-        consoleLog(`   ${line.trim()}`);
-    });
-    
-    consoleLog('');
+    consoleLog('   ¡Revisa la sección HISTORIA para leer');
+    consoleLog('   el mensaje completo!');
     consoleLog('═══════════════════════════════════════');
+    
+    // Notificación en narrativa también
+    showNarrative(`📧 Nueva historia: "${dialogue.title}" de ${dialogue.narrator}. ¡Revisa la sección Historia!`);
     
     // Sonido especial para nuevos diálogos
     playEventSound();

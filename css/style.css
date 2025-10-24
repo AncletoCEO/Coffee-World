@@ -143,6 +143,31 @@ main {
     grid-row: 1;
 }
 
+#actDescription {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    line-height: 1.6;
+}
+
+#actDescription h4 {
+    color: #00ffff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px #00ffff;
+    border-bottom: 1px solid #00ffff;
+    padding-bottom: 5px;
+}
+
+#actDescription p {
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+#actDescription strong {
+    color: #ffff00;
+    text-shadow: 0 0 3px #ffff00;
+}
+
 #combat {
     grid-column: 1;
     grid-row: 2;
