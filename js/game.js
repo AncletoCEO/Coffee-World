@@ -23,15 +23,97 @@ let consoleVisible = false;
 let currentBoss = null;
 let defeatedBosses = [];
 let bosses = [
-    { name: "Minion de Lucía", health: 200, maxHealth: 200, reward: 50, spawnAt: 1000 },
-    { name: "Niebla Azul", health: 800, maxHealth: 800, reward: 300, spawnAt: 5000 },
-    { name: "Lucía", health: 2000, maxHealth: 2000, reward: 1500, spawnAt: 50000 }
+    { name: "Minion de Lucía", health: 200, maxHealth: 200, reward: 50, spawnAt: 1000, dungeon: "cafeteriaOscura" },
+    { name: "Niebla Azul", health: 800, maxHealth: 800, reward: 300, spawnAt: 5000, dungeon: "bodegaSecreta" },
+    { name: "Lucía", health: 2000, maxHealth: 2000, reward: 1500, spawnAt: 50000, dungeon: "oficinaCentral" }
 ];
 
 // Variables de cooldown
 let lastMailTime = 0;
 let lastWorkTime = 0;
 let lastFightTime = 0;
+
+// Sistema de diálogos progresivos basado en la historia de mails
+let currentDialogueIndex = 0;
+let dialogues = [
+    {
+        threshold: 0,
+        act: "Acto 1: Fundación de la Cultura Cafetera",
+        title: "El Inicio del Imperio Cafetero",
+        message: "Soy Ancleto, el mejor CEO del mundo. Confía en mí: el café no es solo un break, sino un ritual diario. Comencemos recolectando granos automáticamente.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 100,
+        act: "Acto 1: Primeros Logros",
+        title: "Solicitud de Colaboración Financiera",
+        message: "Estimado equipo, necesitamos invertir en cafeteras nuevas. Como el mejor CEO del mundo, sé exactamente cómo invertir cada peso para el bien común.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 500,
+        act: "Acto 1: Lista de la Vergüenza",
+        title: "Llamado a la Responsabilidad",
+        message: "He notado que algunos no han contribuido. La Lista de la Vergüenza será visible junto a las cafeteras. No como castigo, sino como recordatorio.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 1000,
+        act: "Acto 2: La Crisis de Arganaraz",
+        title: "Renuncia Dramática Recibida",
+        message: "Damián envió una renuncia pidiendo cobrar. Como el mejor CEO del mundo, lo convenceré con un simple 'tómate un café'.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 2000,
+        act: "Acto 2: Respuesta de Arganaraz",
+        title: "La Rebeldía del Empleado",
+        message: "Damián respondió 'yo hago lo que quiero' y 'yo havlo como quiero'. Su ortografía y actitud requieren intervención inmediata.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 3000,
+        act: "Acto 2: Ascenso de Matías",
+        title: "Un Héroe Emerge",
+        message: "Matías aportó el 200% del monto requerido. Como nuevo CEO honorario, merece nuestro respeto y una taza preferencial.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 5000,
+        act: "Acto 3: La Cruzada contra Lucía",
+        title: "La Amenaza se Revela",
+        message: "Lucía ha aparecido. Su sonrisa inquebrantable infiltra hogares y cafeteras. Debemos prepararnos para la resistencia.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 10000,
+        act: "Acto 3: Escalada del Conflicto",
+        title: "Lucía se Fortalece",
+        message: "Lucía lleva un año hospedándose en casa de Damián. Su presencia es inminente e inevitable. Los 19 perros guardianes no bastarán.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 20000,
+        act: "Acto 4: La Resistencia se Organiza",
+        title: "Unión en la Adversidad",
+        message: "Damián finalmente comprende la amenaza: 'No voy a soltarte la mano. Vamos a resistir con blend propio y temple.'",
+        narrator: "Arganaraz"
+    },
+    {
+        threshold: 30000,
+        act: "Acto 4: El Sacrificio de Ancleto",
+        title: "Últimas Palabras",
+        message: "Lucía hizo desaparecer a mi esposa, mis hijos... incluso mi hámster. No te queda mucho antes de que te alcance su sombra.",
+        narrator: "Ancleto"
+    },
+    {
+        threshold: 50000,
+        act: "Acto 5: Legado y Resistencia",
+        title: "El Legado Continúa",
+        message: "Ancleto no está disponible. Se encuentra en misión anti-Lucía, luchando por recuperar nuestras tazas y proteger a su familia perdida.",
+        narrator: "Sistema"
+    }
+];
 
 // Variables de exploración
 let inDungeon = false;
@@ -41,29 +123,53 @@ let dungeons = {
     cafeteriaOscura: {
         unlocked: false,
         unlockAt: 1000,
+        bossName: "Minion de Lucía",
+        story: "La oscura cafetería donde Lucía envió a su minion para sabotear las reuniones matutinas...",
         map: [
-            ['#','#','#','#','#'],
-            ['#','.','M','.','#'],
-            ['#','.','.','.','#'],
-            ['#','M','P','.','#'],
-            ['#','#','#','#','#']
+            ['#','#','#','#','#','#'],
+            ['#','.','M','.','B','#'],
+            ['#','.','.','.','#','#'],
+            ['#','M','P','.','E','#'],
+            ['#','#','#','#','#','#']
         ],
         monsters: { M: { name: 'Café Amargo', health: 150, reward: 30 } },
-        exit: { x: 4, y: 2 }
+        boss: { x: 4, y: 1 },
+        exit: { x: 4, y: 3 }
     },
     bodegaSecreta: {
         unlocked: false,
-        unlockAt: 10000,
+        unlockAt: 5000,
+        bossName: "Niebla Azul",
+        story: "En las profundidades de la bodega, una extraña niebla azul custodia los granos más preciados...",
         map: [
-            ['#','#','#','#','#','#'],
-            ['#','.','M','.','M','#'],
-            ['#','.','.','.','.','#'],
-            ['#','M','P','.','M','#'],
-            ['#','.','.','.','.','#'],
-            ['#','#','#','#','#','#']
+            ['#','#','#','#','#','#','#'],
+            ['#','.','M','.','M','.','#'],
+            ['#','.','.','.','.','B','#'],
+            ['#','M','P','.','M','.','#'],
+            ['#','.','.','.','.','E','#'],
+            ['#','#','#','#','#','#','#']
         ],
         monsters: { M: { name: 'Grano Maldito', health: 300, reward: 100 } },
-        exit: { x: 5, y: 3 }
+        boss: { x: 5, y: 2 },
+        exit: { x: 5, y: 4 }
+    },
+    oficinaCentral: {
+        unlocked: false,
+        unlockAt: 50000,
+        bossName: "Lucía",
+        story: "La oficina central, último bastión de resistencia. Aquí Lucía ha establecido su cuartel general...",
+        map: [
+            ['#','#','#','#','#','#','#','#'],
+            ['#','.','M','.','.','M','.','#'],
+            ['#','.','.','.','.','.','.','#'],
+            ['#','M','.','.','.','.','.','#'],
+            ['#','.','.','.','B','.','.','#'],
+            ['#','M','.','P','.','M','E','#'],
+            ['#','#','#','#','#','#','#','#']
+        ],
+        monsters: { M: { name: 'Empleado Hipnotizado', health: 400, reward: 150 } },
+        boss: { x: 4, y: 4 },
+        exit: { x: 6, y: 5 }
     }
 };
 
@@ -132,6 +238,7 @@ function loadGame() {
             lastMailTime = parseInt(data.lastMailTime) || 0;
             lastWorkTime = parseInt(data.lastWorkTime) || 0;
             lastFightTime = parseInt(data.lastFightTime) || 0;
+            currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -166,6 +273,7 @@ function resetGameData() {
         lastMailTime = 0;
         lastWorkTime = 0;
         lastFightTime = 0;
+        currentDialogueIndex = 0;
         
         // Resetear upgrades
         for (const key in upgrades) {
@@ -202,7 +310,8 @@ function saveGame() {
         dungeons,
         lastMailTime,
         lastWorkTime,
-        lastFightTime
+        lastFightTime,
+        currentDialogueIndex
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -222,7 +331,8 @@ function saveToCSV() {
         dungeons: JSON.stringify(dungeons),
         lastMailTime,
         lastWorkTime,
-        lastFightTime
+        lastFightTime,
+        currentDialogueIndex
     };
     const csvContent = 'data:text/csv;charset=utf-8,' + 
         Object.keys(data).join(',') + '\n' + 
@@ -262,6 +372,7 @@ function loadFromCSV(event) {
         lastMailTime = parseInt(data.lastMailTime) || 0;
         lastWorkTime = parseInt(data.lastWorkTime) || 0;
         lastFightTime = parseInt(data.lastFightTime) || 0;
+        currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
         
         updateDisplay();
         updateAchievements();
@@ -462,11 +573,13 @@ function handleHelpCommand() {
     consoleLog('status - Ver estadísticas');
     consoleLog('save/load - Guardar/cargar juego');
     consoleLog('');
-    consoleLog('=== DUNGEONS ===');
+    consoleLog('=== DUNGEONS Y BOSSES ===');
     consoleLog('dungeons - Listar mazmorras disponibles');
-    consoleLog('explore [cafeteria oscura/bodega secreta] - Entrar a mazmorra');
+    consoleLog('explore [cafeteria oscura/bodega secreta/oficina central] - Entrar a mazmorra');
     consoleLog('go [north/south/east/west] - Moverse en mazmorra');
     consoleLog('exit - Salir de mazmorra actual');
+    consoleLog('📍 En dungeons: @ = Tú, M = Monstruo, B = Boss, E = Salida');
+    consoleLog('⚔️ Los bosses aparecen en dungeons específicas, no en el mundo');
     consoleLog('');
     consoleLog('=== OTROS ===');
     consoleLog('donate, mail, work, list [upgrades/achievements], boss');
@@ -575,84 +688,44 @@ function handleCommand(command) {
 }
 
 // Actualizar historia
+// Actualizar historia con diálogos progresivos
 function updateStory() {
-    const storyActs = [
-        {
-            threshold: 0,
-            act: "Acto 1: Fundación de la Cultura Cafetera",
-            desc: "Como Ancleto, decides que el café no es solo un break, sino un ritual diario. Comienzas recolectando café básico automáticamente.",
-            narrative: "🌱 Inicio humilde: cada grano cuenta en tu imperio cafetero."
-        },
-        {
-            threshold: 100,
-            act: "Acto 2: La Crisis de Arganaraz",
-            desc: "Damian Arganaraz envía renuncia dramática pidiendo cobrar. Lo convences con 'tómate un café'.",
-            narrative: "☕ Crisis resuelta: el poder del café une al equipo."
-        },
-        {
-            threshold: 1000,
-            act: "Acto 3: La Cruzada contra Lucía",
-            desc: "Lucía secuestra familia y hámster. Damian aporta 900% para financiar defensa.",
-            narrative: "⚔️ Guerra declarada: tu carisma cafetero será tu arma."
-        },
-        {
-            threshold: 5000,
-            act: "Acto 4: Ascenso y Reconocimientos",
-            desc: "Matías se convierte en CEO honorario. Damian VP Junior. El imperio crece.",
-            narrative: "👑 Expansión exitosa: liderazgo y café van de la mano."
-        },
-        {
-            threshold: 20000,
-            act: "Acto 5: Viajes Globales",
-            desc: "Viajes a Estambul, Kioto, Milán para analizar cafeteras. Conocimiento global.",
-            narrative: "🌍 Sabiduría mundial: cada cultura aporta su secreto cafetero."
-        },
-        {
-            threshold: 50000,
-            act: "Acto 6: Revolución Tecnológica",
-            desc: "Implementas sistemas SQL y automatización. La tecnología potencia tu imperio.",
-            narrative: "💻 Era digital: café y código trabajando juntos."
-        },
-        {
-            threshold: 100000,
-            act: "Acto 7: Resolución Técnica y Legado",
-            desc: "Error Divide by Zero en compensatorios resuelto. Damian comprende la perfección técnica.",
-            narrative: "🏆 Maestría absoluta: tu legado cafetero será eterno."
-        }
-    ];
+    // Encontrar el diálogo actual basado en el progreso
+    let currentDialogue = dialogues[0];
+    let newDialogueIndex = 0;
     
-    // Encontrar el acto actual
-    let currentStoryAct = storyActs[0];
-    for (let i = storyActs.length - 1; i >= 0; i--) {
-        if (totalCoffee >= storyActs[i].threshold) {
-            currentStoryAct = storyActs[i];
+    for (let i = dialogues.length - 1; i >= 0; i--) {
+        if (totalCoffee >= dialogues[i].threshold) {
+            currentDialogue = dialogues[i];
+            newDialogueIndex = i;
             break;
         }
     }
     
     // Actualizar elementos del DOM si existen
     if (currentActDisplay) {
-        currentActDisplay.textContent = currentStoryAct.act;
+        currentActDisplay.textContent = currentDialogue.act;
     }
     if (actDescriptionDisplay) {
-        actDescriptionDisplay.textContent = currentStoryAct.desc;
+        actDescriptionDisplay.textContent = currentDialogue.title;
     }
     
-    // Mostrar narrativa especial en logros importantes
-    const nextAct = storyActs.find(act => act.threshold > totalCoffee);
-    if (nextAct) {
-        const progress = Math.floor((totalCoffee / nextAct.threshold) * 100);
-        if (progress >= 90 && !achievements.includes(`Próximo: ${nextAct.act}`)) {
-            showNarrative(`🎯 ${progress}% completado hacia: ${nextAct.act}`);
+    // Mostrar nuevo diálogo si hemos progresado
+    if (newDialogueIndex > currentDialogueIndex) {
+        currentDialogueIndex = newDialogueIndex;
+        showNewDialogue(currentDialogue);
+    }
+    
+    // Mostrar narrativa basada en el diálogo actual
+    showNarrative(`${currentDialogue.narrator}: ${currentDialogue.message.substring(0, 100)}...`);
+    
+    // Mostrar progreso hacia el siguiente diálogo
+    const nextDialogue = dialogues.find(d => d.threshold > totalCoffee);
+    if (nextDialogue) {
+        const progress = Math.floor((totalCoffee / nextDialogue.threshold) * 100);
+        if (progress >= 90) {
+            consoleLog(`🎯 ${progress}% completado hacia: ${nextDialogue.act}`);
         }
-    }
-    
-    // Mostrar narrativa del acto actual si es nuevo
-    const lastAct = localStorage.getItem('lastStoryAct');
-    if (lastAct !== currentStoryAct.act) {
-        showNarrative(currentStoryAct.narrative);
-        localStorage.setItem('lastStoryAct', currentStoryAct.act);
-        consoleLog(`📖 ${currentStoryAct.act}: ${currentStoryAct.desc}`);
     }
 
     // Mostrar créditos al final
@@ -669,6 +742,28 @@ function updateStory() {
             creditsSection.style.display = 'none';
         }
     }
+}
+
+// Mostrar nuevo diálogo cuando se alcanza un hito
+function showNewDialogue(dialogue) {
+    consoleLog('');
+    consoleLog('═══════════════════════════════════════');
+    consoleLog(`📧 NUEVO MENSAJE: ${dialogue.title}`);
+    consoleLog(`👤 De: ${dialogue.narrator}`);
+    consoleLog('═══════════════════════════════════════');
+    consoleLog('');
+    
+    // Dividir el mensaje en líneas para mejor legibilidad
+    const lines = dialogue.message.match(/.{1,60}(\s|$)/g) || [dialogue.message];
+    lines.forEach(line => {
+        consoleLog(`   ${line.trim()}`);
+    });
+    
+    consoleLog('');
+    consoleLog('═══════════════════════════════════════');
+    
+    // Sonido especial para nuevos diálogos
+    playEventSound();
 }
 
 // Mostrar mensaje narrativo
@@ -725,14 +820,21 @@ function updateDisplay() {
         button.disabled = coffee < cost;
     }
 
-    // Desbloquear mazmorras
-    if (!dungeons.cafeteriaOscura.unlocked && defeatedBosses.includes('Minion de Lucía')) {
+    // Desbloquear mazmorras según café total
+    if (!dungeons.cafeteriaOscura.unlocked && totalCoffee >= dungeons.cafeteriaOscura.unlockAt) {
         dungeons.cafeteriaOscura.unlocked = true;
-        consoleLog('¡Nueva mazmorra desbloqueada: cafeteria oscura!');
+        consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Cafetería Oscura!');
+        showNarrative('Una misteriosa cafetería ha aparecido. Los rumores hablan de un minion de Lucía...');
     }
-    if (!dungeons.bodegaSecreta.unlocked && defeatedBosses.includes('Niebla Azul')) {
+    if (!dungeons.bodegaSecreta.unlocked && totalCoffee >= dungeons.bodegaSecreta.unlockAt) {
         dungeons.bodegaSecreta.unlocked = true;
-        consoleLog('¡Nueva mazmorra desbloqueada: bodega secreta!');
+        consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Bodega Secreta!');
+        showNarrative('Las profundidades de la bodega se han abierto. Una niebla azul custodia secretos...');
+    }
+    if (!dungeons.oficinaCentral.unlocked && totalCoffee >= dungeons.oficinaCentral.unlockAt) {
+        dungeons.oficinaCentral.unlocked = true;
+        consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Oficina Central!');
+        showNarrative('La oficina central se ha transformado. Lucía ha establecido su cuartel general...');
     }
     
     // Actualizar botón de mail
@@ -757,11 +859,24 @@ function displayMap() {
         mapStr += '\n';
     }
     
+    mapStr += '\nLeyenda: @ = Tú, M = Monstruo, B = Boss, E = Salida, # = Pared\n';
+    
     // Mostrar información del monstruo si hay uno activo
     if (currentDungeon.currentMonster) {
         const monster = currentDungeon.currentMonster;
         mapStr += `\n⚔️ En combate: ${monster.name} (${monster.health}/${monster.maxHealth} HP)`;
         mapStr += `\nUsa 'fight' para atacar`;
+    }
+    
+    // Mostrar información del boss si hay uno activo
+    if (currentBoss) {
+        mapStr += `\n👑 Boss activo: ${currentBoss.name} (${currentBoss.health}/${currentBoss.maxHealth} HP)`;
+        mapStr += `\nUsa 'fight' para atacar al boss`;
+    }
+    
+    // Mostrar historia de la dungeon
+    if (currentDungeon.story) {
+        mapStr += `\n📖 ${currentDungeon.story}`;
     }
     
     consoleLog(mapStr);
@@ -821,6 +936,22 @@ function movePlayer(dx, dy) {
                 maxHealth: monster.health 
             };
         }
+    } else if (tile === 'B') {
+        // Encontrar boss de la dungeon
+        const bossName = currentDungeon.bossName;
+        const boss = bosses.find(b => b.name === bossName);
+        
+        if (boss && !defeatedBosses.includes(boss.name)) {
+            consoleLog(`¡Encuentras a ${bossName}! El jefe final de esta mazmorra.`);
+            consoleLog(`Vida: ${boss.health}/${boss.maxHealth}`);
+            consoleLog(`Usa 'fight' para enfrentar al boss.`);
+            
+            // Activar boss como enemigo actual
+            currentBoss = { ...boss };
+            updateBossDisplay();
+        } else if (defeatedBosses.includes(bossName)) {
+            consoleLog(`El lugar donde derrotaste a ${bossName}. Solo quedan recuerdos de café amargo.`);
+        }
     } else if (newX === currentDungeon.exit.x && newY === currentDungeon.exit.y) {
         consoleLog('¡Encontraste la salida!');
         exitDungeon();
@@ -873,8 +1004,7 @@ function produceCoffee() {
     
     coffee += cps;
     totalCoffee += cps;
-    spawnBoss();
-    // Los bosses ya no pelean automáticamente - el jugador debe usar el botón
+    // Los bosses ya no spawean automáticamente - están en dungeons específicas
     updateDisplay();
     checkAchievements();
     updateStory(); // Asegurar que la historia se actualice
@@ -1059,19 +1189,7 @@ function updateBossDisplay() {
     }
 }
 
-// Spawnear boss si no hay uno y se cumple condición
-function spawnBoss() {
-    if (!currentBoss) {
-        for (let boss of bosses) {
-            if (totalCoffee >= boss.spawnAt && !defeatedBosses.includes(boss.name)) {
-                currentBoss = { ...boss };
-                updateBossDisplay();
-                showNarrative(`¡Alerta! ${boss.name} ha aparecido. ¡Defiende tu imperio cafetero!`);
-                break;
-            }
-        }
-    }
-}
+// NOTA: spawnBoss eliminado - los bosses ahora aparecen en dungeons específicas
 
 // Luchar contra el boss
 function fightBoss() {

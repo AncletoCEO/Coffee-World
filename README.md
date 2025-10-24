@@ -110,10 +110,19 @@ exit                   # Salir de mazmorra
 
 ### Desbloqueando Mazmorras
 
-Las dungeons se desbloquean automáticamente al derrotar bosses:
+Las dungeons se desbloquean automáticamente según tu progreso de café:
 
-- **Cafeteria Oscura**: Se desbloquea tras derrotar "Minion de Lucía" (1,000 café)
-- **Bodega Secreta**: Se desbloquea tras derrotar "Niebla Azul" (5,000 café)
+- **Cafetería Oscura**: Se desbloquea con 1,000 café total
+- **Bodega Secreta**: Se desbloquea con 5,000 café total  
+- **Oficina Central**: Se desbloquea con 50,000 café total
+
+### Bosses en Dungeons
+
+**¡IMPORTANTE!** Los bosses ya no aparecen automáticamente en el mundo. Ahora están ubicados en dungeons específicas:
+
+- **Minion de Lucía** se encuentra en la **Cafetería Oscura**
+- **Niebla Azul** custodia la **Bodega Secreta**
+- **Lucía** ha establecido su cuartel en la **Oficina Central**
 
 ### Cómo Explorar Dungeons
 
@@ -128,6 +137,7 @@ Las dungeons se desbloquean automáticamente al derrotar bosses:
    ```bash
    explore cafeteria oscura
    explore bodega secreta
+   explore oficina central
    ```
 
 3. **Navegar:**
@@ -140,9 +150,9 @@ Las dungeons se desbloquean automáticamente al derrotar bosses:
    ```
 
 4. **Combate:**
-   - Al encontrar un monstruo (M), aparece: "⚔️ En combate"
-   - Usa `fight` repetidamente para atacar
-   - Cooldown de 1 segundo entre ataques
+   - **M = Monstruo**: Usa `fight` repetidamente para atacar
+   - **B = Boss**: Enfréntate al jefe final de la dungeon
+   - Cooldown de 1 segundo entre ataques (dungeons) vs 2 segundos (bosses)
 
 5. **Salir:**
 
@@ -152,8 +162,9 @@ Las dungeons se desbloquean automáticamente al derrotar bosses:
 
 ### Monstruos y Recompensas
 
-- **Café Amargo** (Cafeteria Oscura): 150 HP, 30 café de recompensa
+- **Café Amargo** (Cafetería Oscura): 150 HP, 30 café de recompensa
 - **Grano Maldito** (Bodega Secreta): 300 HP, 100 café de recompensa
+- **Empleado Hipnotizado** (Oficina Central): 400 HP, 150 café de recompensa
 
 **Tip:** Mejora tu Carisma y Fuerza Cafetera para hacer más daño en dungeons.
 
