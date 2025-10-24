@@ -23,14 +23,15 @@ let consoleVisible = false;
 let currentBoss = null;
 let defeatedBosses = [];
 let bosses = [
-    { name: "Minion de Lucía", health: 50, maxHealth: 50, reward: 25, spawnAt: 1000 },
-    { name: "Niebla Azul", health: 500, maxHealth: 500, reward: 200, spawnAt: 5000 },
-    { name: "Lucía", health: 1000, maxHealth: 1000, reward: 1000, spawnAt: 100000 }
+    { name: "Minion de Lucía", health: 200, maxHealth: 200, reward: 50, spawnAt: 1000 },
+    { name: "Niebla Azul", health: 800, maxHealth: 800, reward: 300, spawnAt: 5000 },
+    { name: "Lucía", health: 2000, maxHealth: 2000, reward: 1500, spawnAt: 50000 }
 ];
 
 // Variables de cooldown
 let lastMailTime = 0;
 let lastWorkTime = 0;
+let lastFightTime = 0;
 
 // Variables de exploración
 let inDungeon = false;
@@ -130,6 +131,7 @@ function loadGame() {
             }
             lastMailTime = parseInt(data.lastMailTime) || 0;
             lastWorkTime = parseInt(data.lastWorkTime) || 0;
+            lastFightTime = parseInt(data.lastFightTime) || 0;
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -163,6 +165,7 @@ function resetGameData() {
         defeatedBosses = [];
         lastMailTime = 0;
         lastWorkTime = 0;
+        lastFightTime = 0;
         
         // Resetear upgrades
         for (const key in upgrades) {
@@ -198,7 +201,8 @@ function saveGame() {
         defeatedBosses,
         dungeons,
         lastMailTime,
-        lastWorkTime
+        lastWorkTime,
+        lastFightTime
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -217,7 +221,8 @@ function saveToCSV() {
         defeatedBosses: JSON.stringify(defeatedBosses),
         dungeons: JSON.stringify(dungeons),
         lastMailTime,
-        lastWorkTime
+        lastWorkTime,
+        lastFightTime
     };
     const csvContent = 'data:text/csv;charset=utf-8,' + 
         Object.keys(data).join(',') + '\n' + 
@@ -256,6 +261,7 @@ function loadFromCSV(event) {
         if (data.dungeons) dungeons = JSON.parse(data.dungeons);
         lastMailTime = parseInt(data.lastMailTime) || 0;
         lastWorkTime = parseInt(data.lastWorkTime) || 0;
+        lastFightTime = parseInt(data.lastFightTime) || 0;
         
         updateDisplay();
         updateAchievements();
@@ -602,8 +608,13 @@ function updateStory() {
         }
     }
     
-    currentActDisplay.textContent = currentStoryAct.act;
-    actDescriptionDisplay.textContent = currentStoryAct.desc;
+    // Actualizar elementos del DOM si existen
+    if (currentActDisplay) {
+        currentActDisplay.textContent = currentStoryAct.act;
+    }
+    if (actDescriptionDisplay) {
+        actDescriptionDisplay.textContent = currentStoryAct.desc;
+    }
     
     // Mostrar narrativa especial en logros importantes
     const nextAct = storyActs.find(act => act.threshold > totalCoffee);
@@ -613,24 +624,43 @@ function updateStory() {
             showNarrative(`🎯 ${progress}% completado hacia: ${nextAct.act}`);
         }
     }
+    
+    // Mostrar narrativa del acto actual si es nuevo
+    const lastAct = localStorage.getItem('lastStoryAct');
+    if (lastAct !== currentStoryAct.act) {
+        showNarrative(currentStoryAct.narrative);
+        localStorage.setItem('lastStoryAct', currentStoryAct.act);
+        consoleLog(`📖 ${currentStoryAct.act}: ${currentStoryAct.desc}`);
+    }
 
     // Mostrar créditos al final
     const creditsSection = document.getElementById('credits');
-    if (totalCoffee >= 100000) {
-        creditsSection.style.display = 'block';
-        if (!achievements.includes('Leyenda Cafetera')) {
-            achievements.push('Leyenda Cafetera');
-            consoleLog('🏆 ¡LOGRO ÉPICO DESBLOQUEADO: Leyenda Cafetera!');
-            updateAchievements();
+    if (creditsSection) {
+        if (totalCoffee >= 100000) {
+            creditsSection.style.display = 'block';
+            if (!achievements.includes('Leyenda Cafetera')) {
+                achievements.push('Leyenda Cafetera');
+                consoleLog('🏆 ¡LOGRO ÉPICO DESBLOQUEADO: Leyenda Cafetera!');
+                updateAchievements();
+            }
+        } else {
+            creditsSection.style.display = 'none';
         }
-    } else {
-        creditsSection.style.display = 'none';
     }
 }
 
 // Mostrar mensaje narrativo
 function showNarrative(message) {
-    narrativeTextDisplay.textContent = message;
+    if (narrativeTextDisplay) {
+        narrativeTextDisplay.textContent = message;
+        // Agregar una animación sutil para que el usuario note el cambio
+        narrativeTextDisplay.style.opacity = '0.7';
+        setTimeout(() => {
+            if (narrativeTextDisplay) {
+                narrativeTextDisplay.style.opacity = '1';
+            }
+        }, 100);
+    }
 }
 
 // Actualizar botón de mail
@@ -685,6 +715,9 @@ function updateDisplay() {
     
     // Actualizar botón de mail
     updateMailButton();
+    
+    // Actualizar display del boss para cooldowns
+    updateBossDisplay();
 }
 
 // Funciones de exploración
@@ -770,11 +803,10 @@ function produceCoffee() {
     coffee += cps;
     totalCoffee += cps;
     spawnBoss();
-    if (currentBoss) {
-        fightBoss(); // Auto-combat
-    }
+    // Los bosses ya no pelean automáticamente - el jugador debe usar el botón
     updateDisplay();
     checkAchievements();
+    updateStory(); // Asegurar que la historia se actualice
     saveGame();
 }
 
@@ -932,8 +964,21 @@ function updateBossDisplay() {
         bossNameDisplay.textContent = currentBoss.name;
         bossHealthDisplay.textContent = Math.floor(currentBoss.health);
         bossMaxHealthDisplay.textContent = currentBoss.maxHealth;
-        dpsDisplay.textContent = charisma + coffeeStrength;
+        dpsDisplay.textContent = Math.max(1, Math.floor((charisma + coffeeStrength) * 0.5));
         fightBossButton.style.display = 'inline-block';
+        
+        // Actualizar cooldown del botón de luchar
+        const remaining = Math.max(0, 2000 - (Date.now() - lastFightTime));
+        if (remaining > 0) {
+            const seconds = Math.ceil(remaining / 1000);
+            fightBossButton.textContent = `Luchar (${seconds}s)`;
+            fightBossButton.disabled = true;
+            fightBossButton.classList.add('cooldown');
+        } else {
+            fightBossButton.textContent = 'Luchar contra Boss';
+            fightBossButton.disabled = false;
+            fightBossButton.classList.remove('cooldown');
+        }
     } else {
         bossNameDisplay.textContent = 'Ninguno';
         bossHealthDisplay.textContent = '0';
@@ -959,23 +1004,38 @@ function spawnBoss() {
 
 // Luchar contra el boss
 function fightBoss() {
-    if (currentBoss) {
-        const damage = charisma + coffeeStrength;
-        currentBoss.health -= damage;
-        if (currentBoss.health <= 0) {
-            coffee += currentBoss.reward;
-            totalCoffee += currentBoss.reward;
-            achievements.push(`Derrotaste a ${currentBoss.name}`);
-            updateAchievements();
-            defeatedBosses.push(currentBoss.name);
-            showNarrative(`¡Victoria! Derrotaste a ${currentBoss.name}. ¡Tu imperio cafetero crece!`);
-            playBossDefeatSound();
-            currentBoss = null;
-        }
-        updateBossDisplay();
-        updateDisplay();
-        saveGame();
+    if (!currentBoss) {
+        consoleLog('No hay boss activo para luchar.');
+        return;
     }
+    
+    // Cooldown de 2 segundos entre ataques
+    if (Date.now() - lastFightTime < 2000) {
+        const remaining = Math.ceil((2000 - (Date.now() - lastFightTime)) / 1000);
+        consoleLog(`Espera ${remaining} segundos antes de atacar de nuevo.`);
+        return;
+    }
+    
+    const damage = Math.max(1, Math.floor((charisma + coffeeStrength) * 0.5)); // Reducir daño para combates más largos
+    currentBoss.health -= damage;
+    lastFightTime = Date.now();
+    
+    consoleLog(`¡Atacas a ${currentBoss.name}! Daño: ${damage}. Vida restante: ${Math.max(0, currentBoss.health)}/${currentBoss.maxHealth}`);
+    
+    if (currentBoss.health <= 0) {
+        coffee += currentBoss.reward;
+        totalCoffee += currentBoss.reward;
+        achievements.push(`Derrotaste a ${currentBoss.name}`);
+        updateAchievements();
+        defeatedBosses.push(currentBoss.name);
+        showNarrative(`¡Victoria! Derrotaste a ${currentBoss.name}. ¡Tu imperio cafetero crece!`);
+        consoleLog(`🏆 ¡Victoria! Derrotaste a ${currentBoss.name} y ganaste ${currentBoss.reward} café.`);
+        playBossDefeatSound();
+        currentBoss = null;
+    }
+    updateBossDisplay();
+    updateDisplay();
+    saveGame();
 }
 
 // Eventos especiales
