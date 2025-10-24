@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AncletoCoffeeWorld: El Mundo Cafetero Incremental</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/terminal-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AncletoCoffeeWorld</h1>
+            <p>¡Construye tu imperio cafetero! Confía en mí: soy Ancleto, el mejor CEO del mundo.</p>
+            <div class="header-controls">
+                <button id="soundToggle" class="control-btn">Sonido: ON</button>
+                <button id="consoleToggle" class="control-btn">Consola: OFF</button>
+                <button id="resetGame" class="control-btn">🔄 Reset</button>
+            </div>
+        </header>
+
+        <div id="narrative">
+            <p id="narrativeText">Bienvenido a mi mundo cafetero. ¡Empieza recolectando café!</p>
+        </div>
+
+        <main id="game">
+            <section id="stats" class="game-section">
+                <h2>⚡ Estadísticas</h2>
+                <div class="stat-item">
+                    <span class="stat-label">Granos de Café:</span>
+                    <span class="stat-value" id="coffee">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Producción/Seg:</span>
+                    <span class="stat-value" id="cps">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Recolectado:</span>
+                    <span class="stat-value" id="totalCoffee">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Carisma:</span>
+                    <span class="stat-value" id="charisma">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Fuerza Cafetera:</span>
+                    <span class="stat-value" id="coffeeStrength">0</span>
+                </div>
+            </section>
+
+            <section id="upgrades" class="game-section">
+                <h2>🛒 Upgrades</h2>
+                <button id="upgrade1" class="upgrade-btn">Máquina Verde: +1 CPS (Costo: 10 café)</button>
+                <button id="upgrade2" class="upgrade-btn">Charlas Motivacionales: +5 CPS (Costo: 100 café)</button>
+                <button id="upgrade3" class="upgrade-btn">Tamper de Acero: +20 CPS (Costo: 500 café)</button>
+                <button id="upgrade4" class="upgrade-btn">Café Colombiano: +2 Carisma (Costo: 200 café)</button>
+                <button id="upgrade5" class="upgrade-btn">Perros Guardianes: +10 Fuerza Cafetera (Costo: 1000 café)</button>
+                <button id="upgrade6" class="upgrade-btn">Lista de Vergüenza: +50 CPS (Costo: 5000 café)</button>
+                <button id="upgrade7" class="upgrade-btn">Viernes de Cupping: +100 CPS (Costo: 10000 café)</button>
+                <button id="upgrade8" class="upgrade-btn">Sifón Japonés: +5 Carisma (Costo: 20000 café)</button>
+                <button id="upgrade9" class="upgrade-btn">Filtros SQL: +20 Fuerza Cafetera (Costo: 50000 café)</button>
+                <button id="upgrade10" class="upgrade-btn">Comunicaciones Corporativas: +200 CPS (Costo: 100000 café)</button>
+            </section>
+
+            <section id="story" class="game-section">
+                <h2>📖 Historia</h2>
+                <p id="currentAct">Acto 1: Fundación de la Cultura Cafetera</p>
+                <p id="actDescription">Como Ancleto, decides que el café no es solo un break, sino un ritual diario. Comienzas recolectando café básico automáticamente.</p>
+            </section>
+
+            <section id="combat" class="game-section">
+                <h2>⚔️ Combate Idle</h2>
+                <div class="boss-info">
+                    <p>Boss Actual: <span id="bossName">Ninguno</span></p>
+                    <p>Vida del Boss: <span id="bossHealth">0</span>/<span id="bossMaxHealth">0</span></p>
+                    <div class="boss-health-bar">
+                        <div class="boss-health-fill" id="bossHealthBar" style="width: 0%;"></div>
+                    </div>
+                    <p>Daño por Segundo: <span id="dps">0</span></p>
+                </div>
+                <button id="fightBoss" class="upgrade-btn" style="display:none;">¡Luchar!</button>
+            </section>
+
+            <section id="events-achievements" class="game-section">
+                <h2>🎯 Eventos & Logros</h2>
+                <button id="donateBtn" class="upgrade-btn">Donar Café (Costo: 100, Bonus: +10% CPS temporal)</button>
+                <button id="sendMailBtn" class="upgrade-btn action-btn">Enviar Mail Corporativo (+50 café)</button>
+                <div style="margin-top: 15px;">
+                    <h3 style="color: #8B4513; margin-bottom: 10px;">Logros:</h3>
+                    <ul id="achievementList" style="text-align: left; font-size: 12px;">
+                        <!-- Logros se agregarán dinámicamente -->
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <section id="console">
+            <h2>💻 Consola de Comandos</h2>
+            <div id="consoleOutput"></div>
+            <input type="text" id="consoleInput" placeholder="Escribe un comando (ej: buy machine, fight)">
+        </section>
+
+        <section id="credits" style="display: none;">
+            <h2>🏆 Créditos</h2>
+            <p><strong>Desarrollado por:</strong> GitHub Copilot</p>
+            <p><strong>Historia y Concepto:</strong> Ancleto y su mundo cafetero</p>
+            <p><strong>Personajes:</strong> Ancleto, Damian Arganaraz, Lucía, Matías</p>
+            <p><strong>¡Gracias por jugar!</strong></p>
+            <p>Fin de la historia. Has construido un imperio cafetero legendario.</p>
+        </section>
+
+        <footer></footer>
+    </div>
+
+    <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+    <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+/* Estilos adicionales para botones de combate */
+.combat-btn {
+    background: #001100;
+    color: #ff4444;
+    border: 2px solid #660000;
+    border-radius: 0;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.combat-btn:hover {
+    background: #002200;
+    border-color: #ff0000;
+    color: #ff6666;
+    text-shadow: 0 0 8px #ff0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+/* Botones de acción general */
+.action-btn {
+    background: #001100;
+    color: #00ff00;
+    border: 2px solid #003300;
+    border-radius: 0;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.action-btn:hover {
+    background: #002200;
+    border-color: #00ff00;
+    color: #00ffff;
+    text-shadow: 0 0 8px #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.action-btn:disabled {
+    background: #000000;
+    color: #333333;
+    border-color: #222222;
+    cursor: not-allowed;
+    text-shadow: none;
+    box-shadow: none;
+}
+
+/* Estilo especial para botones en cooldown */
+.action-btn.cooldown {
+    background: #110000;
+    color: #666666;
+    border-color: #330000;
+    animation: cooldown-pulse 1s infinite;
+}
+
+@keyframes cooldown-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+}
+
+/* Elementos de entrada de texto estilo terminal */
+input[type="text"], input[type="number"], textarea {
+    background: #000000;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    border-radius: 0;
+    padding: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+/* ASCII Art containers */
+.ascii-art {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 1;
+    color: #00ff00;
+    text-align: center;
+    margin: 10px 0;
+    white-space: pre;
+}
+
+/* Efectos de texto terminal */
+.terminal-text {
+    font-family: 'Courier New', monospace;
+    color: #00ff00;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.terminal-error {
+    color: #ff0000;
+    text-shadow: 0 0 5px #ff0000;
+}
+
+.terminal-warning {
+    color: #ffff00;
+    text-shadow: 0 0 5px #ffff00;
+}
+
+.terminal-success {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
+}
