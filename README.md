@@ -1,8 +1,8 @@
-# AncletoCoffeeWorld: El Mundo Cafetero Incremental de Ancleto
+# Ancleto's Coffee World: El Mundo Cafetero Incremental de Ancleto
 
 ## 🎮 Descripción del Proyecto
 
-AncletoCoffeeWorld es un juego incremental de navegador enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
+Ancleto's Coffee World es un juego incremental de navegador enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
 
 El juego se ejecuta directamente en el navegador, sin instalación, con progreso automático y sistema de guardado robusto.
 
@@ -106,7 +106,58 @@ explore [mazmorra]     # Entrar a mazmorra
 go [north/south/east/west]  # Moverse en mazmorra
 exit                   # Salir de mazmorra
 
-# Utilidades
+## 🏰 Sistema de Dungeons
+
+### Desbloqueando Mazmorras
+
+Las dungeons se desbloquean automáticamente al derrotar bosses:
+
+- **Cafeteria Oscura**: Se desbloquea tras derrotar "Minion de Lucía" (1,000 café)
+- **Bodega Secreta**: Se desbloquea tras derrotar "Niebla Azul" (5,000 café)
+
+### Cómo Explorar Dungeons
+
+1. **Listar mazmorras disponibles:**
+
+   ```bash
+   dungeons
+   ```
+
+2. **Entrar a una mazmorra:**
+
+   ```bash
+   explore cafeteria oscura
+   explore bodega secreta
+   ```
+
+3. **Navegar:**
+
+   ```bash
+   go north    # Ir al norte
+   go south    # Ir al sur  
+   go east     # Ir al este
+   go west     # Ir al oeste
+   ```
+
+4. **Combate:**
+   - Al encontrar un monstruo (M), aparece: "⚔️ En combate"
+   - Usa `fight` repetidamente para atacar
+   - Cooldown de 1 segundo entre ataques
+
+5. **Salir:**
+
+   ```bash
+   exit        # Salir de la mazmorra actual
+   ```
+
+### Monstruos y Recompensas
+
+- **Café Amargo** (Cafeteria Oscura): 150 HP, 30 café de recompensa
+- **Grano Maldito** (Bodega Secreta): 300 HP, 100 café de recompensa
+
+**Tip:** Mejora tu Carisma y Fuerza Cafetera para hacer más daño en dungeons.
+
+## 🛠️ Utilidades
 list upgrades          # Listar todas las mejoras
 list achievements      # Mostrar logros obtenidos
 savecsv / loadcsv     # Backup/restore en CSV

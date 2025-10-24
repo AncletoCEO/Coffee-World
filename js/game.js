@@ -1,4 +1,4 @@
-// AncletoCoffeeWorld - Lógica del Juego
+// Ancleto's Coffee World - Lógica del Juego
 
 // Variables del juego
 let coffee = 0;
@@ -183,7 +183,7 @@ function resetGameData() {
         updateBossDisplay();
         updateStory();
         updateMailButton();
-        consoleLog('Juego reseteado. ¡Bienvenido de nuevo a AncletoCoffeeWorld!');
+        consoleLog('Juego reseteado. ¡Bienvenido de nuevo a Ancleto\'s Coffee World!');
     }
 }
 
@@ -1256,5 +1256,5 @@ consoleLog(`
   \\_____\\___/|_| |_|\\___\\___|  \\_____|_|\\___/|_|   \\__|    \\/  \\/ \\___/|_|  |_|\\__,_(_)  
                                                                                         
 `);
-consoleLog('Bienvenido a AncletoCoffeeWorld. Escribe "help" para comandos.');
+consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
 setInterval(produceCoffee, 1000); // Producir cada segundo
