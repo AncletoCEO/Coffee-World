@@ -82,13 +82,33 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Visual Dungeon Display -->
+                <div id="dungeonVisualContainer" style="display: none;">
+                    <h3>🗺️ Mapa de la Dungeon</h3>
+                    <div id="dungeonMap" class="dungeon-map"></div>
+                    <div class="dungeon-controls-buttons">
+                        <button id="moveUpBtn" class="movement-btn">↑ Norte</button>
+                        <div class="horizontal-controls">
+                            <button id="moveLeftBtn" class="movement-btn">← Oeste</button>
+                            <button id="fightBtn" class="fight-btn">⚔️ Atacar</button>
+                            <button id="moveRightBtn" class="movement-btn">→ Este</button>
+                        </div>
+                        <button id="moveDownBtn" class="movement-btn">↓ Sur</button>
+                        <button id="exitDungeonBtn" class="exit-btn">🚪 Salir de Dungeon</button>
+                    </div>
+                    <div id="dungeonInfo" class="dungeon-info-display">
+                        <p><strong>Leyenda:</strong> @ = Tú, M = Monstruo, B = Boss, E = Salida, # = Pared</p>
+                    </div>
+                </div>
+                
                 <div class="dungeon-list">
                     <h3>🏰 Dungeons Disponibles:</h3>
                     <div id="dungeonButtons"></div>
                 </div>
                 <div class="dungeon-info">
-                    <p><strong>💡 Tip:</strong> Explora dungeons para encontrar bosses y avanzar la historia.</p>
-                    <p><strong>🎮 Controles:</strong> Usa comandos como 'up', 'down', 'left', 'right', 'fight' en la consola.</p>
+                    <p><strong>💡 Tip:</strong> Haz clic en una dungeon para explorarla visualmente.</p>
+                    <p><strong>🎮 Controles:</strong> Usa los botones de movimiento para navegar y encontrar bosses.</p>
                 </div>
             </section>
 

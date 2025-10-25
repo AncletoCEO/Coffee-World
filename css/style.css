@@ -409,3 +409,98 @@ footer {
         grid-row: 3;
     }
 }
+
+/* Dungeon Visual Interface */
+.dungeon-map {
+    background: #001100;
+    border: 2px solid #00ff00;
+    padding: 10px;
+    margin: 10px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    line-height: 1.2;
+    text-align: center;
+    min-height: 200px;
+    overflow: auto;
+}
+
+.dungeon-controls-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.horizontal-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.movement-btn, .fight-btn, .exit-btn {
+    background: #001100;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    padding: 8px 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    text-shadow: 0 0 3px #00ff00;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.movement-btn:hover, .fight-btn:hover, .exit-btn:hover {
+    background: #003300;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+.fight-btn {
+    background: #110000;
+    color: #ff6666;
+    border-color: #ff6666;
+    text-shadow: 0 0 3px #ff6666;
+    font-weight: bold;
+}
+
+.fight-btn:hover {
+    background: #330000;
+    box-shadow: 0 0 8px rgba(255, 102, 102, 0.3);
+}
+
+.fight-btn:disabled {
+    background: #000000;
+    color: #333333;
+    border-color: #333333;
+    cursor: not-allowed;
+    text-shadow: none;
+    box-shadow: none;
+}
+
+.exit-btn {
+    background: #000011;
+    color: #ffff00;
+    border-color: #ffff00;
+    text-shadow: 0 0 3px #ffff00;
+}
+
+.exit-btn:hover {
+    background: #000033;
+    box-shadow: 0 0 8px rgba(255, 255, 0, 0.3);
+}
+
+.dungeon-info-display {
+    background: #000011;
+    border: 1px solid #ffff00;
+    padding: 8px;
+    margin: 10px 0;
+    font-size: 11px;
+    color: #ffff00;
+    text-align: center;
+}
+
+@keyframes boss-pulse {
+    from { opacity: 0.7; }
+    to { opacity: 1.0; }
+}
