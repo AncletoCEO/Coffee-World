@@ -962,17 +962,25 @@ function updateStory() {
     
     for (let i = dialogues.length - 1; i >= 0; i--) {
         if (totalCoffee >= dialogues[i].threshold) {
-            // Verificar si hay un boss que debe ser derrotado para este acto
+            // FIXED: Verificar progresión de actos con lógica mejorada
+            const dialogueActNumber = extractActNumber(dialogues[i].act);
+            
+            // Verificar si hay un boss obligatorio para este nivel de progreso
             const requiredBoss = bosses.find(boss => {
-                // Si el diálogo pertenece a un acto que tiene boss, verificar que esté derrotado
-                const actNumber = extractActNumber(dialogues[i].act);
-                return boss.act === actNumber && totalCoffee >= boss.actEnd;
+                // El boss es requerido si:
+                // 1. Es del acto actual o anterior
+                // 2. Ya debería haber spawneado
+                // 3. Su acto ya debería haber terminado según el café total
+                return boss.act <= dialogueActNumber && 
+                       totalCoffee >= boss.spawnAt && 
+                       totalCoffee >= boss.actEnd;
             });
             
-            // Si hay un boss requerido para este acto, verificar que esté derrotado
+            // Si hay un boss requerido que no ha sido derrotado, BLOQUEAR progresión
             if (requiredBoss && !defeatedBosses.includes(requiredBoss.name)) {
-                // No podemos avanzar hasta derrotar al boss del acto
-                continue;
+                // Saltar este diálogo y los siguientes hasta derrotar al boss
+                consoleLog(`⚠️ PROGRESIÓN BLOQUEADA: Debes derrotar a ${requiredBoss.name} antes de continuar.`);
+                break;
             }
             
             currentDialogue = dialogues[i];
@@ -1002,12 +1010,12 @@ function updateStory() {
         if (pendingBoss) {
             storyContent += `
                 <div style="color: #ff6666; margin-top: 15px; border: 1px solid #ff6666; padding: 10px;">
-                    <strong>⚔️ BOSS DISPONIBLE:</strong> ${pendingBoss.name}<br>
-                    <em>Debes derrotar a este boss para continuar la historia.</em><br>
+                    <strong>⚔️ BOSS OBLIGATORIO:</strong> ${pendingBoss.name}<br>
+                    <em>DEBES derrotar a este boss para continuar la historia.</em><br>
                     <strong>CÓMO ENFRENTARLO:</strong><br>
-                    1. Ve a la sección "Dungeons"<br>
-                    2. Entra a "${getDungeonDisplayName(pendingBoss.dungeon)}"<br>
-                    3. Navega hasta el boss (B) y usa 'fight'
+                    1. Ve a la sección "Dungeons & Exploración"<br>
+                    2. Haz clic en "${getDungeonDisplayName(pendingBoss.dungeon)}" ⚔️<br>
+                    3. Navega hasta el boss (B) y usa 'fight' en la consola
                 </div>
             `;
         }
@@ -1033,7 +1041,7 @@ function updateStory() {
     // Mostrar créditos al final
     const creditsSection = document.getElementById('credits');
     if (creditsSection) {
-        if (totalCoffee >= 100000) {
+        if (totalCoffee >= 100000 && defeatedBosses.length >= 6) { // Requiere derrotar todos los bosses
             creditsSection.style.display = 'block';
             if (!achievements.includes('Leyenda Cafetera')) {
                 achievements.push('Leyenda Cafetera');
@@ -1137,6 +1145,16 @@ function updateDisplay() {
         button.disabled = coffee < cost;
     }
 
+    // Actualizar botón de donación - solo habilitado si hay suficiente café
+    if (donateBtn) {
+        donateBtn.disabled = coffee < 100;
+        if (coffee >= 100) {
+            donateBtn.classList.remove('disabled');
+        } else {
+            donateBtn.classList.add('disabled');
+        }
+    }
+
     // Desbloquear mazmorras según café total
     if (!dungeons.salaReuniones.unlocked && totalCoffee >= dungeons.salaReuniones.unlockAt) {
         dungeons.salaReuniones.unlocked = true;
@@ -1219,11 +1237,31 @@ function enterDungeon(name) {
         consoleLog('Mazmorra no disponible.');
         return;
     }
+    
     inDungeon = true;
     currentDungeon = dungeons[name];
     playerPos = { x: 2, y: 3 }; // Posición inicial
-    consoleLog(`Entrando a ${name.replace(/([A-Z])/g, ' $1').toLowerCase()}...`);
+    
+    // FIXED: Verificar si hay un boss disponible en esta dungeon y spawnearlo
+    const availableBoss = bosses.find(b => 
+        b.dungeon === name && 
+        !defeatedBosses.includes(b.name) && 
+        totalCoffee >= b.spawnAt
+    );
+    
+    if (availableBoss) {
+        // Resetear la salud del boss si es necesario
+        if (availableBoss.health <= 0) {
+            availableBoss.health = availableBoss.maxHealth;
+        }
+        consoleLog(`⚔️ BOSS DETECTADO: ${availableBoss.name} está esperándote en esta dungeon.`);
+    }
+    
+    consoleLog(`Entrando a ${getDungeonDisplayName(name)}...`);
+    consoleLog(`Usa 'up', 'down', 'left', 'right' para moverte.`);
+    consoleLog(`Busca la 'B' en el mapa para encontrar al boss.`);
     displayMap();
+    updateDungeonDisplay();
 }
 
 function exitDungeon() {
@@ -1271,20 +1309,26 @@ function movePlayer(dx, dy) {
             };
         }
     } else if (tile === 'B') {
-        // Encontrar boss de la dungeon
-        const bossName = currentDungeon.bossName;
-        const boss = bosses.find(b => b.name === bossName);
+        // FIXED: Encontrar y spawnear boss de la dungeon
+        const dungeonName = Object.keys(dungeons).find(key => dungeons[key] === currentDungeon);
+        const boss = bosses.find(b => 
+            b.dungeon === dungeonName && 
+            !defeatedBosses.includes(b.name) &&
+            totalCoffee >= b.spawnAt
+        );
         
-        if (boss && !defeatedBosses.includes(boss.name)) {
-            consoleLog(`¡Encuentras a ${bossName}! El jefe final de esta mazmorra.`);
+        if (boss) {
+            consoleLog(`⚔️ ¡Encuentras a ${boss.name}! El jefe final de esta mazmorra.`);
             consoleLog(`Vida: ${boss.health}/${boss.maxHealth}`);
             consoleLog(`Usa 'fight' para enfrentar al boss.`);
             
             // Activar boss como enemigo actual
             currentBoss = { ...boss };
             updateDungeonDisplay();
-        } else if (defeatedBosses.includes(bossName)) {
-            consoleLog(`El lugar donde derrotaste a ${bossName}. Solo quedan recuerdos de café amargo.`);
+        } else if (defeatedBosses.includes(currentDungeon.bossName)) {
+            consoleLog(`El lugar donde derrotaste a ${currentDungeon.bossName}. Solo quedan recuerdos de café amargo.`);
+        } else {
+            consoleLog('El boss de esta mazmorra aún no está disponible. Necesitas más progreso.');
         }
     } else if (newX === currentDungeon.exit.x && newY === currentDungeon.exit.y) {
         consoleLog('¡Encontraste la salida!');
@@ -1548,7 +1592,11 @@ function updateDungeonButtons() {
                 button.style.border = '2px solid #ff6666';
             }
             
-            button.onclick = () => enterDungeon(dungeonKey);
+            // FIXED: Asegurar que el event listener funcione correctamente
+            button.addEventListener('click', function() {
+                enterDungeon(dungeonKey);
+            });
+            
             dungeonButtonsContainer.appendChild(button);
         }
     });

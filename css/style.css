@@ -249,6 +249,16 @@ main {
     box-shadow: none;
 }
 
+.upgrade-btn.disabled {
+    background: #000000 !important;
+    color: #333333 !important;
+    border-color: #222222 !important;
+    cursor: not-allowed !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    opacity: 0.5;
+}
+
 .boss-info {
     background: #110000;
     color: #ff0000;
