@@ -38,6 +38,16 @@ let lastFightTime = 0;
 let donateEndTime = 0; // Tiempo cuando termina el efecto de donar
 let lastDonateTime = 0; // Última vez que se donó (para cooldown)
 
+// Límites por acto para evitar progreso muy rápido
+let actLimits = {
+    1: { maxCoffee: 1000, maxCoffeeStrength: 10 },
+    2: { maxCoffee: 5000, maxCoffeeStrength: 25 },
+    3: { maxCoffee: 10000, maxCoffeeStrength: 50 },
+    4: { maxCoffee: 20000, maxCoffeeStrength: 75 },
+    5: { maxCoffee: 35000, maxCoffeeStrength: 100 },
+    6: { maxCoffee: 50000, maxCoffeeStrength: 150 }
+};
+
 // Variables de desarrollo (ocultas)
 let devModeEnabled = false;
 let devCommands = [];
@@ -1139,6 +1149,13 @@ function extractActNumber(actString) {
     return match ? parseInt(match[1]) : 1;
 }
 
+function getCurrentAct() {
+    if (currentDialogueIndex >= 0 && currentDialogueIndex < dialogues.length) {
+        return extractActNumber(dialogues[currentDialogueIndex].act);
+    }
+    return 1; // Por defecto acto 1
+}
+
 function getDungeonDisplayName(dungeonKey) {
     const displayNames = {
         'salaReuniones': 'Sala de Reuniones',
@@ -1521,6 +1538,27 @@ function buyUpgrade(upgradeKey) {
     }
     
     const cost = upgrade.cost * Math.pow(1.15, upgrade.owned);
+    
+    // Verificar límites por acto
+    const currentAct = getCurrentAct();
+    const limits = actLimits[currentAct];
+    
+    if (limits) {
+        // Verificar límite de café total
+        if (totalCoffee >= limits.maxCoffee) {
+            showNarrative(`¡Límite de acto alcanzado! Derrota al boss del Acto ${currentAct} para desbloquear más upgrades.`);
+            consoleLog(`⚠️ Límite de Acto ${currentAct}: Máximo ${limits.maxCoffee} café alcanzado. Derrota al boss para continuar.`);
+            return;
+        }
+        
+        // Verificar límite de fuerza cafetera para upgrades que la aumentan
+        if (upgrade.coffeeStrengthIncrease && coffeeStrength >= limits.maxCoffeeStrength) {
+            showNarrative(`¡Límite de fuerza cafetera alcanzado! Derrota al boss del Acto ${currentAct} para aumentar el límite.`);
+            consoleLog(`⚠️ Límite de Fuerza Cafetera: Máximo ${limits.maxCoffeeStrength} alcanzado en Acto ${currentAct}.`);
+            return;
+        }
+    }
+    
     if (coffee >= cost) {
         coffee -= cost;
         upgrade.owned++;
@@ -1782,22 +1820,30 @@ function fightDungeonBoss() {
 
 // Eventos especiales
 function donate() {
+    console.log('Donate called. Current time:', Date.now(), 'Last donate time:', lastDonateTime);
+    console.log('Time difference:', Date.now() - lastDonateTime, 'Required:', 300000);
+
     // FIXED: Cooldown de 5 minutos entre donaciones
     if (Date.now() - lastDonateTime < 300000) { // 5 minutos = 300,000 ms
         const remaining = Math.ceil((300000 - (Date.now() - lastDonateTime)) / 1000);
+        console.log('Cooldown active, remaining seconds:', remaining);
         showNarrative(`Espera ${remaining} segundos antes de donar de nuevo.`);
         return;
     }
 
+    console.log('Cooldown passed, checking coffee:', coffee);
     if (coffee >= 100) {
         coffee -= 100;
         // FIXED: Bonus temporal de 10% por 1 minuto (60,000 ms)
         donateEndTime = Date.now() + 60000; // 1 minuto
         lastDonateTime = Date.now();
+        console.log('Donate successful. New donateEndTime:', donateEndTime, 'New lastDonateTime:', lastDonateTime);
         showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 1 minuto.");
         playEventSound();
         updateDisplay();
         saveGame();
+    } else {
+        console.log('Not enough coffee for donate');
     }
 }
 
