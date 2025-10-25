@@ -4,9 +4,10 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - '.github/**'
-      - 'README.md'
-      - '*.md'
+      - '.github/workflows/**'
+
+permissions:
+  contents: write
 
 jobs:
   update-version:
@@ -18,11 +19,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+        fetch-depth: 0
 
     - name: Get commit count for version
       id: version
@@ -47,6 +44,16 @@ jobs:
       run: |
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
+        
+        git add package.json index.html
+        
+        if git diff --staged --quiet; then
+          echo "No hay cambios de versión para commitear"
+        else
+          git commit -m "🔖 Auto-update version to v${{ steps.version.outputs.version }} [skip-version]"
+          git push
+          echo "✅ Versión commiteada y pusheada a main"
+        fi
         
         git add package.json index.html
         

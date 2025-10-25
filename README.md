@@ -1,41 +1,41 @@
 # Ancleto's Coffee World: El Mundo Cafetero Incremental de Ancleto
 
-##  Descripción del Proyecto
+## Descripción del Proyecto
 
 Ancleto's Coffee World es un juego incremental de navegador enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
 
 El juego se ejecuta directamente en el navegador, sin instalación, con progreso automático y sistema de guardado robusto.
 
-## ✨ Características Principales
+## Características Principales
 
-### 🎯 Mecánicas Core
+### Mecánicas Core
 - **Producción automática** de café cada segundo
 - **10 upgrades únicos** con escalado de precio dinámico
 - **Sistema de estadísticas** (Café, CPS, Carisma, Fuerza Cafetera)
 - **Combate automático** contra 3 bosses principales
 - **Cooldowns estratégicos** (Mail: 2min, Work: 5seg)
 
-### 📖 Historia Narrativa
+### Historia Narrativa
 - **7 actos completos** con progresión rica
 - **Personajes del universo Ancleto** (Damian, Matías, Lucía)
 - **Narrativa dinámica** que evoluciona con el progreso
 - **Humor corporativo** integrado en gameplay
 
-### 🎮 Funcionalidades Avanzadas
+### Funcionalidades Avanzadas
 - **Sistema de consola** con 20+ comandos
 - **Dungeons ASCII explorables** (2 mazmorras)
 - **Sistema de logros** expandido (25+ achievements)
 - **Guardado automático** + export/import CSV
 - **Botón de reset** con confirmación
 
-### 🎨 Diseño Retro Terminal
+### Diseño Retro Terminal
 - **Estética terminal** con verde sobre negro (#00ff00/#000000)
 - **Fuente monoespaciada** Courier New
 - **Efectos de resplandor** y animaciones CSS
 - **UI responsive** con CSS Grid
 - **Feedback sonoro** para todas las acciones
 
-## 🚀 Cómo Empezar
+## Cómo Empezar
 
 1. **Clona el repositorio**: `git clone https://github.com/noctamjam/Coffee-World.git`
 2. **Abre `index.html`** en cualquier navegador moderno
@@ -43,14 +43,14 @@ El juego se ejecuta directamente en el navegador, sin instalación, con progreso
 4. **Compra upgrades** para acelerar tu progreso
 5. **Explora la consola** escribiendo `help` para comandos
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+) vanilla
 - **Almacenamiento**: LocalStorage + CSV backup
 - **Audio**: Web Audio API para efectos de sonido
 - **Estilo**: CSS Grid, Terminal aesthetics
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 Coffee-World/
@@ -70,9 +70,10 @@ Coffee-World/
 └── README.md             # Este archivo
 ```
 
-## 🎯 Progresión del Juego
+## Progresión del Juego
 
 ### Etapas de Progreso
+
 - **0-100 café**: Fundación básica
 - **100-1,000 café**: Crisis de Arganaraz
 - **1,000-5,000 café**: Cruzada contra Lucía
@@ -82,11 +83,12 @@ Coffee-World/
 - **100,000+ café**: Maestría absoluta
 
 ### Bosses
+
 1. **Minion de Lucía** (1,000 café) - Recompensa: 25 café
 2. **Niebla Azul** (5,000 café) - Recompensa: 200 café
 3. **Lucía** (100,000 café) - Recompensa: 1,000 café
 
-## 🎮 Comandos de Consola
+## Comandos de Consola
 
 ```bash
 # Comandos básicos
@@ -105,8 +107,9 @@ dungeons               # Listar mazmorras disponibles
 explore [mazmorra]     # Entrar a mazmorra
 go [north/south/east/west]  # Moverse en mazmorra
 exit                   # Salir de mazmorra
+```
 
-## 🏰 Sistema de Dungeons
+## Sistema de Dungeons
 
 ### Desbloqueando Mazmorras
 
@@ -127,13 +130,11 @@ Las dungeons se desbloquean automáticamente según tu progreso de café:
 ### Cómo Explorar Dungeons
 
 1. **Listar mazmorras disponibles:**
-
    ```bash
    dungeons
    ```
 
 2. **Entrar a una mazmorra:**
-
    ```bash
    explore cafeteria oscura
    explore bodega secreta
@@ -141,7 +142,6 @@ Las dungeons se desbloquean automáticamente según tu progreso de café:
    ```
 
 3. **Navegar:**
-
    ```bash
    go north    # Ir al norte
    go south    # Ir al sur  
@@ -168,24 +168,26 @@ Las dungeons se desbloquean automáticamente según tu progreso de café:
 
 **Tip:** Mejora tu Carisma y Fuerza Cafetera para hacer más daño en dungeons.
 
-## 🛠️ Utilidades
+## Utilidades
+
+```bash
 list upgrades          # Listar todas las mejoras
 list achievements      # Mostrar logros obtenidos
 savecsv / loadcsv     # Backup/restore en CSV
 fixnan                # Corregir valores corruptos
 ```
 
-## 🏆 Logros Principales
+## Logros Principales
 
-- 🌱 **Primeros 100 granos** - Alcanza 100 café total
-- ⚡ **Producción decente** - Logra 10 CPS
-- 😊 **Carismático** - Obtén 10 de carisma
-- 💪 **Fuerte Cafetero** - Consigue 20 de fuerza
-- 🏆 **Café Milenario** - Recolecta 1,000 café total
-- 👑 **Emperador del Café** - Domina con 100,000 café
-- 🏅 **Maestro Cafetero** - Derrota a los 3 bosses
+- **Primeros 100 granos** - Alcanza 100 café total
+- **Producción decente** - Logra 10 CPS
+- **Carismático** - Obtén 10 de carisma
+- **Fuerte Cafetero** - Consigue 20 de fuerza
+- **Café Milenario** - Recolecta 1,000 café total
+- **Emperador del Café** - Domina con 100,000 café
+- **Maestro Cafetero** - Derrota a los 3 bosses
 
-## 🔧 Solución de Problemas
+## Solución de Problemas
 
 ### Si aparecen valores "NaN":
 1. Abre la consola del juego
@@ -196,14 +198,14 @@ fixnan                # Corregir valores corruptos
 1. Usa el botón "Reset" en la interfaz
 2. O comando `reset` en consola (requiere confirmación)
 
-## 🎨 Personalización
+## Personalización
 
 El juego utiliza variables CSS para fácil personalización:
 - `--terminal-green`: #00ff00 (texto principal)
 - `--terminal-black`: #000000 (fondo)
 - `--terminal-cyan`: #00ffff (acentos)
 
-## 🤝 Contribución
+## Contribución
 
 Este es un proyecto educativo. Las contribuciones son bienvenidas:
 1. Fork el repositorio
@@ -211,11 +213,11 @@ Este es un proyecto educativo. Las contribuciones son bienvenidas:
 3. Commit tus cambios
 4. Abre un Pull Request
 
-## 📜 Licencia
+## Licencia
 
 Este proyecto es de código abierto y está disponible bajo la licencia MIT. Ver `LICENSE` para más detalles.
 
-## 👨‍💼 Créditos
+## Créditos
 
 **Creado por**: El universo de Ancleto  
 **Inspirado en**: Cultura cafetera y juegos incrementales clásicos  
@@ -223,4 +225,4 @@ Este proyecto es de código abierto y está disponible bajo la licencia MIT. Ver
 
 ---
 
-*"Confía en mí: soy Ancleto, el mejor CEO del mundo. ¡Este juego será un éxito!"* ☕👑
+*"Confía en mí: soy Ancleto, el mejor CEO del mundo. ¡Este juego será un éxito!"*
