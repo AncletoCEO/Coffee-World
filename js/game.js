@@ -711,6 +711,8 @@ function getLastDialogueIndexForAct(actNumber) {
 }
 
 // Función utilitaria para validar y corregir valores numéricos
+function validateGameValues() {
+    if (isNaN(coffee) || coffee < 0) coffee = 0;
     if (isNaN(totalCoffee) || totalCoffee < 0) totalCoffee = 0;
     if (isNaN(cps) || cps < 0) cps = 0;
     if (isNaN(charisma) || charisma < 0) charisma = 0;
