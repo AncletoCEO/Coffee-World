@@ -23,12 +23,12 @@ let consoleVisible = false;
 let currentBoss = null;
 let defeatedBosses = [];
 let bosses = [
-    { name: "Empleado Rebelde", health: 150, maxHealth: 150, reward: 30, spawnAt: 300, dungeon: "salaReuniones" },
-    { name: "Crisis Ortográfica", health: 250, maxHealth: 250, reward: 75, spawnAt: 1000, dungeon: "cafeteriaOscura" },
-    { name: "Minion de Lucía", health: 400, maxHealth: 400, reward: 150, spawnAt: 5000, dungeon: "casaDamian" },
-    { name: "Sonrisa Inquebrantable", health: 800, maxHealth: 800, reward: 400, spawnAt: 20000, dungeon: "bodegaSecreta" },
-    { name: "Niebla Azul", health: 1200, maxHealth: 1200, reward: 800, spawnAt: 40000, dungeon: "posadaPerros" },
-    { name: "Lucía Final", health: 3000, maxHealth: 3000, reward: 2000, spawnAt: 70000, dungeon: "oficinaCentral" }
+    { name: "Damián Rebelde", health: 200, maxHealth: 200, reward: 100, spawnAt: 750, dungeon: "salaReuniones", act: 1, actEnd: 1000 },
+    { name: "Crisis de Arganaraz", health: 400, maxHealth: 400, reward: 200, spawnAt: 4000, dungeon: "cafeteriaOscura", act: 2, actEnd: 5000 },
+    { name: "Minion de Lucía", health: 600, maxHealth: 600, reward: 400, spawnAt: 8500, dungeon: "casaDamian", act: 3, actEnd: 10000 },
+    { name: "Sonrisa Inquebrantable", health: 1000, maxHealth: 1000, reward: 800, spawnAt: 17500, dungeon: "bodegaSecreta", act: 4, actEnd: 20000 },
+    { name: "Niebla Azul", health: 1500, maxHealth: 1500, reward: 1200, spawnAt: 27500, dungeon: "posadaPerros", act: 5, actEnd: 30000 },
+    { name: "Lucía Final", health: 3000, maxHealth: 3000, reward: 2000, spawnAt: 47500, dungeon: "oficinaCentral", act: 6, actEnd: 50000 }
 ];
 
 // Variables de cooldown
@@ -335,9 +335,9 @@ let playerPos = { x: 0, y: 0 };
 let dungeons = {
     salaReuniones: {
         unlocked: false,
-        unlockAt: 300,
-        bossName: "Empleado Rebelde",
-        story: "La sala donde Damián respondió 'yo hago lo que quiero', desafiando la cultura cafeteril...",
+        unlockAt: 750,
+        bossName: "Damián Rebelde",
+        story: "La sala donde todo comenzó. Damián se rebela contra las donaciones y la cultura cafetera antes de su renuncia...",
         map: [
             ['#','#','#','#','#'],
             ['#','.','B','.','#'],
@@ -350,9 +350,9 @@ let dungeons = {
     },
     cafeteriaOscura: {
         unlocked: false,
-        unlockAt: 1000,
-        bossName: "Crisis Ortográfica",
-        story: "Donde las palabras se escriben mal y la gramática muere. Aquí habita el espíritu de 'yo havlo como quiero'...",
+        unlockAt: 4000,
+        bossName: "Crisis de Arganaraz",
+        story: "La cafetería donde Arganaraz tuvo su crisis existencial y envió su dramática renuncia operística...",
         map: [
             ['#','#','#','#','#','#'],
             ['#','.','M','.','B','#'],
@@ -360,13 +360,13 @@ let dungeons = {
             ['#','M','P','.','E','#'],
             ['#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Error Tipográfico', health: 150, reward: 30 } },
+        monsters: { M: { name: 'Delirio Administrativo', health: 200, reward: 40 } },
         boss: { x: 4, y: 1 },
         exit: { x: 4, y: 3 }
     },
     casaDamian: {
         unlocked: false,
-        unlockAt: 5000,
+        unlockAt: 8500,
         bossName: "Minion de Lucía",
         story: "La casa de Damián en Posadas, custodiada por 19 perros guardianes. Aquí Lucía estableció su primera base...",
         map: [
@@ -377,13 +377,13 @@ let dungeons = {
             ['#','.','.','.','.','E','#'],
             ['#','#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Perro Hipnotizado', health: 200, reward: 50 } },
+        monsters: { M: { name: 'Perro Hipnotizado', health: 300, reward: 60 } },
         boss: { x: 5, y: 2 },
         exit: { x: 5, y: 4 }
     },
     bodegaSecreta: {
         unlocked: false,
-        unlockAt: 20000,
+        unlockAt: 17500,
         bossName: "Sonrisa Inquebrantable",
         story: "En las profundidades donde Ancleto se escondió, la sonrisa de Lucía persiste entre las sombras...",
         map: [
@@ -394,13 +394,13 @@ let dungeons = {
             ['#','.','.','.','.','E','#'],
             ['#','#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Recuerdo Doloroso', health: 300, reward: 100 } },
+        monsters: { M: { name: 'Recuerdo Doloroso', health: 400, reward: 80 } },
         boss: { x: 5, y: 2 },
         exit: { x: 5, y: 4 }
     },
     posadaPerros: {
         unlocked: false,
-        unlockAt: 40000,
+        unlockAt: 27500,
         bossName: "Niebla Azul",
         story: "Las afueras de Posadas donde la misteriosa niebla azul se alza sobre los posos de café...",
         map: [
@@ -412,13 +412,13 @@ let dungeons = {
             ['#','M','.','P','.','M','E','#'],
             ['#','#','#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Niebla Tóxica', health: 400, reward: 150 } },
+        monsters: { M: { name: 'Niebla Tóxica', health: 500, reward: 100 } },
         boss: { x: 4, y: 4 },
         exit: { x: 6, y: 5 }
     },
     oficinaCentral: {
         unlocked: false,
-        unlockAt: 70000,
+        unlockAt: 47500,
         bossName: "Lucía Final",
         story: "La oficina central, último bastión donde Lucía hace su resistencia final antes de ser neutralizada...",
         map: [
@@ -431,7 +431,7 @@ let dungeons = {
             ['#','.','.','.','P','.','M','E','#'],
             ['#','#','#','#','#','#','#','#','#']
         ],
-        monsters: { M: { name: 'Sonrisa Hipnótica', health: 500, reward: 200 } },
+        monsters: { M: { name: 'Sonrisa Hipnótica', health: 600, reward: 120 } },
         boss: { x: 5, y: 4 },
         exit: { x: 7, y: 6 }
     }
@@ -954,12 +954,25 @@ function handleCommand(command) {
 // Actualizar historia
 // Actualizar historia con diálogos progresivos
 function updateStory() {
-    // Encontrar el diálogo actual basado en el progreso
+    // Encontrar el diálogo actual basado en el progreso Y bosses derrotados
     let currentDialogue = dialogues[0];
     let newDialogueIndex = 0;
     
     for (let i = dialogues.length - 1; i >= 0; i--) {
         if (totalCoffee >= dialogues[i].threshold) {
+            // Verificar si hay un boss que debe ser derrotado para este acto
+            const requiredBoss = bosses.find(boss => {
+                // Si el diálogo pertenece a un acto que tiene boss, verificar que esté derrotado
+                const actNumber = extractActNumber(dialogues[i].act);
+                return boss.act === actNumber && totalCoffee >= boss.actEnd;
+            });
+            
+            // Si hay un boss requerido para este acto, verificar que esté derrotado
+            if (requiredBoss && !defeatedBosses.includes(requiredBoss.name)) {
+                // No podemos avanzar hasta derrotar al boss del acto
+                continue;
+            }
+            
             currentDialogue = dialogues[i];
             newDialogueIndex = i;
             break;
@@ -971,11 +984,30 @@ function updateStory() {
         currentActDisplay.textContent = currentDialogue.act;
     }
     if (actDescriptionDisplay) {
-        // Mostrar el diálogo completo en la sección de historia
-        actDescriptionDisplay.innerHTML = `
+        // Verificar si hay un boss pendiente para mostrar advertencia
+        const currentAct = extractActNumber(currentDialogue.act);
+        const pendingBoss = bosses.find(boss => 
+            boss.act === currentAct && 
+            totalCoffee >= boss.spawnAt && 
+            !defeatedBosses.includes(boss.name)
+        );
+        
+        let storyContent = `
             <h4>${currentDialogue.title}</h4>
             <p><strong>${currentDialogue.narrator}:</strong> ${currentDialogue.message}</p>
         `;
+        
+        if (pendingBoss) {
+            storyContent += `
+                <div style="color: #ff6666; margin-top: 15px; border: 1px solid #ff6666; padding: 10px;">
+                    <strong>⚔️ BOSS DISPONIBLE:</strong> ${pendingBoss.name}<br>
+                    <em>Debes derrotar a este boss para continuar la historia.</em><br>
+                    <small>Ve a la dungeon: ${getDungeonDisplayName(pendingBoss.dungeon)}</small>
+                </div>
+            `;
+        }
+        
+        actDescriptionDisplay.innerHTML = storyContent;
     }
     
     // Mostrar nuevo diálogo si hemos progresado
@@ -1007,6 +1039,24 @@ function updateStory() {
             creditsSection.style.display = 'none';
         }
     }
+}
+
+// Funciones auxiliares para el sistema de actos
+function extractActNumber(actString) {
+    const match = actString.match(/Acto (\d+)/);
+    return match ? parseInt(match[1]) : 1;
+}
+
+function getDungeonDisplayName(dungeonKey) {
+    const displayNames = {
+        'salaReuniones': 'Sala de Reuniones',
+        'cafeteriaOscura': 'Cafetería Oscura', 
+        'casaDamian': 'Casa de Damián',
+        'bodegaSecreta': 'Bodega Secreta',
+        'posadaPerros': 'Posada de los Perros',
+        'oficinaCentral': 'Oficina Central'
+    };
+    return displayNames[dungeonKey] || dungeonKey;
 }
 
 // Mostrar nuevo diálogo cuando se alcanza un hito
@@ -1086,27 +1136,27 @@ function updateDisplay() {
     if (!dungeons.salaReuniones.unlocked && totalCoffee >= dungeons.salaReuniones.unlockAt) {
         dungeons.salaReuniones.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Sala de Reuniones!');
-        showNarrative('La sala donde todo comenzó... donde Damián declaró su rebeldía contra la cultura cafetera.');
+        showNarrative('⚔️ BOSS DEL ACTO 1: Damián Rebelde está disponible. Derrótalo para continuar la historia.');
     }
     if (!dungeons.cafeteriaOscura.unlocked && totalCoffee >= dungeons.cafeteriaOscura.unlockAt) {
         dungeons.cafeteriaOscura.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Cafetería Oscura!');
-        showNarrative('Donde las palabras se escriben mal y la gramática muere. "Yo havlo como quiero" resuena aquí...');
+        showNarrative('⚔️ BOSS DEL ACTO 2: Crisis de Arganaraz te espera. La historia no avanzará hasta derrotarlo.');
     }
     if (!dungeons.casaDamian.unlocked && totalCoffee >= dungeons.casaDamian.unlockAt) {
         dungeons.casaDamian.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Casa de Damián!');
-        showNarrative('La casa en Posadas, custodiada por 19 perros. Aquí Lucía estableció su primera base...');
+        showNarrative('⚔️ BOSS DEL ACTO 3: Minion de Lucía custodiado por 19 perros. Derrótalo para avanzar.');
     }
     if (!dungeons.bodegaSecreta.unlocked && totalCoffee >= dungeons.bodegaSecreta.unlockAt) {
         dungeons.bodegaSecreta.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Bodega Secreta!');
-        showNarrative('Donde Ancleto se escondió. Su sonrisa inquebrantable persiste entre las sombras...');
+        showNarrative('⚔️ BOSS DEL ACTO 4: Sonrisa Inquebrantable acecha en las sombras. Derrótala para continuar.');
     }
     if (!dungeons.posadaPerros.unlocked && totalCoffee >= dungeons.posadaPerros.unlockAt) {
         dungeons.posadaPerros.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Posada de los Perros!');
-        showNarrative('Las afueras de Posadas donde la misteriosa niebla azul se alza sobre los posos...');
+        showNarrative('⚔️ BOSS DEL ACTO 5: Niebla Azul se alza sobre los posos. Derrótala para el acto final.');
     }
     if (!dungeons.oficinaCentral.unlocked && totalCoffee >= dungeons.oficinaCentral.unlockAt) {
         dungeons.oficinaCentral.unlocked = true;
