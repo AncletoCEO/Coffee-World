@@ -36,6 +36,7 @@ let lastMailTime = 0;
 let lastWorkTime = 0;
 let lastFightTime = 0;
 let donateEndTime = 0; // Tiempo cuando termina el efecto de donar
+let lastDonateTime = 0; // Última vez que se donó (para cooldown)
 
 // Variables de desarrollo (ocultas)
 let devModeEnabled = false;
@@ -520,6 +521,7 @@ function loadGame() {
             lastWorkTime = parseInt(data.lastWorkTime) || 0;
             lastFightTime = parseInt(data.lastFightTime) || 0;
             donateEndTime = parseInt(data.donateEndTime) || 0;
+            lastDonateTime = parseInt(data.lastDonateTime) || 0;
             currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
@@ -543,7 +545,10 @@ function loadGame() {
 // Resetear juego
 function resetGameData() {
     if (confirm('¿Estás seguro de que quieres eliminar toda tu partida y empezar de cero? Esta acción no se puede deshacer.')) {
+        // Eliminar datos del localStorage
         localStorage.removeItem('ancletoCoffeeWorld');
+
+        // Resetear todas las variables en memoria
         coffee = 0;
         totalCoffee = 0;
         cps = 0;
@@ -556,25 +561,27 @@ function resetGameData() {
         lastWorkTime = 0;
         lastFightTime = 0;
         donateEndTime = 0;
+        lastDonateTime = 0;
         currentDialogueIndex = 0;
-        
+
         // Resetear upgrades
         for (const key in upgrades) {
             upgrades[key].owned = 0;
         }
-        
+
         // Resetear dungeons
         for (const name in dungeons) {
             dungeons[name].unlocked = false;
             dungeons[name].map = JSON.parse(JSON.stringify(dungeons[name].map)); // Reset map
         }
-        
-        updateDisplay();
-        updateAchievements();
-        updateDungeonDisplay();
-        updateStory();
-        updateMailButton();
-        consoleLog('Juego reseteado. ¡Bienvenido de nuevo a Ancleto\'s Coffee World!');
+
+        // Mostrar mensaje de confirmación
+        consoleLog('Juego reseteado completamente. Refrescando página...');
+
+        // Refrescar la página después de un breve delay para que se vea el mensaje
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
     }
 }
 
@@ -595,6 +602,7 @@ function saveGame() {
         lastWorkTime,
         lastFightTime,
         donateEndTime,
+        lastDonateTime,
         currentDialogueIndex
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
@@ -780,15 +788,26 @@ function handleStatusCommand() {
 
 function handleExploreCommand(target) {
     const dungeonMap = {
+        'sala reuniones': 'salaReuniones',
+        'sala de reuniones': 'salaReuniones',
         'cafeteria oscura': 'cafeteriaOscura',
-        'bodega secreta': 'bodegaSecreta'
+        'cafetería oscura': 'cafeteriaOscura',
+        'casa damian': 'casaDamian',
+        'casa de damian': 'casaDamian',
+        'casa de damián': 'casaDamian',
+        'bodega secreta': 'bodegaSecreta',
+        'posada perros': 'posadaPerros',
+        'posada de perros': 'posadaPerros',
+        'posada de los perros': 'posadaPerros',
+        'oficina central': 'oficinaCentral'
     };
-    
-    const dungeonKey = dungeonMap[target];
+
+    const dungeonKey = dungeonMap[target.toLowerCase()];
     if (dungeonKey) {
         enterDungeon(dungeonKey);
     } else {
-        consoleLog('Mazmorras disponibles: cafeteria oscura, bodega secreta (si desbloqueadas)');
+        consoleLog('Mazmorras disponibles: sala reuniones, cafeteria oscura, casa damian, bodega secreta, posada perros, oficina central (si desbloqueadas)');
+        consoleLog('Ejemplos: explore "casa de damian", explore "oficina central"');
     }
 }
 
@@ -1005,37 +1024,37 @@ function updateStory() {
     let currentDialogue = dialogues[0];
     let newDialogueIndex = 0;
 
-    // FIXED: Lógica mejorada para progresión secuencial por actos
-    // Solo permitir avanzar al siguiente acto después de derrotar el boss correspondiente
+    // FIXED: Lógica más restrictiva para progresión ACTO POR ACTO
+    // Solo permitir avanzar al siguiente acto después de derrotar TODOS los bosses requeridos
     const currentAct = extractActNumber(dialogues[currentDialogueIndex].act);
 
     for (let i = 0; i < dialogues.length; i++) {
         const dialogueActNumber = extractActNumber(dialogues[i].act);
 
-        // Solo permitir acceso a actos que ya han sido desbloqueados por bosses derrotados
-        if (dialogueActNumber > currentAct + 1) {
-            // No permitir saltar más de un acto a la vez
+        // REGLA ESTRICTA: No se puede acceder a un acto si no se han derrotado TODOS los bosses anteriores
+        let canAccessThisAct = true;
+
+        // Verificar que todos los bosses de actos anteriores estén derrotados
+        for (let actNum = 1; actNum < dialogueActNumber; actNum++) {
+            const requiredBoss = bosses.find(boss => boss.act === actNum);
+            if (requiredBoss && !defeatedBosses.includes(requiredBoss.name)) {
+                canAccessThisAct = false;
+                break;
+            }
+        }
+
+        // Si no se pueden acceder a este acto, parar aquí
+        if (!canAccessThisAct) {
             break;
         }
 
-        // Verificar si hay un boss obligatorio para este acto
-        const requiredBoss = bosses.find(boss => boss.act === dialogueActNumber);
-
-        // Si es el acto actual o el siguiente, verificar condiciones
-        if (dialogueActNumber <= currentAct + 1) {
-            if (totalCoffee >= dialogues[i].threshold) {
-                // Para actos posteriores al 1, requerir que el boss del acto anterior esté derrotado
-                if (dialogueActNumber > 1) {
-                    const previousActBoss = bosses.find(boss => boss.act === dialogueActNumber - 1);
-                    if (previousActBoss && !defeatedBosses.includes(previousActBoss.name)) {
-                        // Boss del acto anterior no derrotado, no permitir progreso
-                        break;
-                    }
-                }
-
-                currentDialogue = dialogues[i];
-                newDialogueIndex = i;
-            }
+        // Si tenemos suficiente café para este diálogo, usarlo
+        if (totalCoffee >= dialogues[i].threshold) {
+            currentDialogue = dialogues[i];
+            newDialogueIndex = i;
+        } else {
+            // Si no tenemos suficiente café, parar (aunque podríamos acceder al acto)
+            break;
         }
     }
     
@@ -1294,19 +1313,26 @@ function displayMap() {
 
 function enterDungeon(name) {
     console.log('enterDungeon called with:', name); // Debug
+    console.log('Dungeons available:', Object.keys(dungeons)); // Debug
+    console.log('Dungeon unlocked status:', dungeons[name]?.unlocked); // Debug
+
     if (!dungeons[name] || !dungeons[name].unlocked) {
+        console.log('Dungeon not available or not unlocked'); // Debug
         showNarrative('Mazmorra no disponible.');
         return;
     }
-    
+
+    console.log('Entering dungeon:', name); // Debug
     inDungeon = true;
     currentDungeon = dungeons[name];
     playerPos = { x: 2, y: 3 }; // Posición inicial
-    
+
     // FIXED: Ocultar sección de upgrades mientras esté en dungeon
     const upgradesSection = document.getElementById('upgrades');
+    console.log('Hiding upgrades section:', !!upgradesSection); // Debug
     if (upgradesSection) {
         upgradesSection.style.display = 'none';
+        console.log('Upgrades section hidden'); // Debug
     }
     
     // FIXED: Verificar si hay un boss disponible en esta dungeon y spawnearlo
@@ -1671,30 +1697,39 @@ function updateDungeonDisplay() {
 
 // Actualizar botones de dungeons disponibles
 function updateDungeonButtons() {
-    if (!dungeonButtonsContainer) return;
-    
+    console.log('updateDungeonButtons called'); // Debug
+    if (!dungeonButtonsContainer) {
+        console.log('dungeonButtonsContainer not found'); // Debug
+        return;
+    }
+
     dungeonButtonsContainer.innerHTML = '';
-    
+    console.log('Available dungeons:', Object.keys(dungeons)); // Debug
+
     Object.keys(dungeons).forEach(dungeonKey => {
         const dungeon = dungeons[dungeonKey];
+        console.log(`Checking dungeon ${dungeonKey}: unlocked = ${dungeon.unlocked}`); // Debug
         if (dungeon.unlocked) {
+            console.log(`Creating button for ${dungeonKey}`); // Debug
             const button = document.createElement('button');
             button.className = 'upgrade-btn';
             button.textContent = `🏰 ${getDungeonDisplayName(dungeonKey)}`;
-            
+
             // Verificar si hay boss disponible
             const boss = bosses.find(b => b.dungeon === dungeonKey && !defeatedBosses.includes(b.name) && totalCoffee >= b.spawnAt);
             if (boss) {
                 button.textContent += ` ⚔️`;
                 button.style.border = '2px solid #ff6666';
             }
-            
+
             // FIXED: Asegurar que el event listener funcione correctamente
             button.addEventListener('click', function() {
+                console.log(`Button clicked for dungeon: ${dungeonKey}`); // Debug
                 enterDungeon(dungeonKey);
             });
-            
+
             dungeonButtonsContainer.appendChild(button);
+            console.log(`Button added for ${dungeonKey}`); // Debug
         }
     });
     
@@ -1747,11 +1782,19 @@ function fightDungeonBoss() {
 
 // Eventos especiales
 function donate() {
+    // FIXED: Cooldown de 5 minutos entre donaciones
+    if (Date.now() - lastDonateTime < 300000) { // 5 minutos = 300,000 ms
+        const remaining = Math.ceil((300000 - (Date.now() - lastDonateTime)) / 1000);
+        showNarrative(`Espera ${remaining} segundos antes de donar de nuevo.`);
+        return;
+    }
+
     if (coffee >= 100) {
         coffee -= 100;
-        // FIXED: Aplicar bonus temporal de 10% por 5 minutos (300,000 ms)
-        donateEndTime = Date.now() + 300000; // 5 minutos
-        showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 5 minutos.");
+        // FIXED: Bonus temporal de 10% por 1 minuto (60,000 ms)
+        donateEndTime = Date.now() + 60000; // 1 minuto
+        lastDonateTime = Date.now();
+        showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 1 minuto.");
         playEventSound();
         updateDisplay();
         saveGame();
