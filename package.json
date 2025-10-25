@@ -1,12 +1,12 @@
 {
   "name": "ancleto-coffee-world",
-  "version": "2.1.49",
+  "version": "2.1.51",
   "description": "¡Construye tu imperio cafetero! El juego incremental de Ancleto, el mejor CEO del mundo.",
   "main": "index.html",
   "scripts": {
     "start": "python -m http.server 8000",
     "dev": "python -m http.server 3000",
-    "version": "2.1.49"
+    "version": "2.1.51"
   },
   "repository": {
     "type": "git",
