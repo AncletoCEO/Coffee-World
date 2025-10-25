@@ -36,6 +36,10 @@ let lastMailTime = 0;
 let lastWorkTime = 0;
 let lastFightTime = 0;
 
+// Variables de desarrollo (ocultas)
+let devModeEnabled = false;
+let devCommands = [];
+
 // Sistema de diálogos progresivos basado en la historia completa de mails
 let currentDialogueIndex = 0;
 let dialogues = [
@@ -860,6 +864,22 @@ function handleHelpCommand() {
     consoleLog('=== OTROS ===');
     consoleLog('donate, mail, work, list [upgrades/achievements], boss');
     consoleLog('savecsv, loadcsv, fixnan - Utilidades');
+    
+    if (devModeEnabled) {
+        consoleLog('');
+        consoleLog('🔧 === MODO DESARROLLO ACTIVADO ===');
+        consoleLog('devhelp - Ver todos los comandos de desarrollo');
+        consoleLog('devinfo - Ver estado de desarrollo');
+        consoleLog('devlog - Ver historial de comandos de desarrollo');
+        consoleLog('');
+        consoleLog('🚀 COMANDOS RÁPIDOS DE DESARROLLO:');
+        consoleLog('setcoffee [amount] - Establecer café');
+        consoleLog('settotal [amount] - Establecer café total');
+        consoleLog('unlockall - Desbloquear todas las dungeons');
+        consoleLog('jumpact [1-6] - Saltar al acto específico');
+        consoleLog('spawnboss [name] - Spawnear boss específico');
+        consoleLog('defeatboss [name] - Marcar boss como derrotado');
+    }
 }
 
 // Comandos de cheat
@@ -954,6 +974,17 @@ function handleCommand(command) {
     const parts = command.toLowerCase().split(' ');
     const action = parts[0];
     const target = parts.slice(1).join(' ');
+
+    // Comando secreto para activar modo desarrollo
+    if (command === 'ancletomejorceodelmundotestcafetero') {
+        activateDevMode();
+        return;
+    }
+    
+    // Comandos de desarrollo (solo si está activado)
+    if (devModeEnabled && handleDevCommand(action, target)) {
+        return;
+    }
 
     const commandHandler = commands[action];
     if (commandHandler) {
@@ -2013,6 +2044,328 @@ function movePlayerVisual(dx, dy) {
     updateVisualDungeonDisplay();
     updateDungeonDisplay();
 }
+
+// ========================================
+// SISTEMA DE DESARROLLO SECRETO
+// ========================================
+
+function activateDevMode() {
+    devModeEnabled = true;
+    devCommands = [];
+    consoleLog('');
+    consoleLog('🔧 ==============================');
+    consoleLog('🔧   MODO DESARROLLO ACTIVADO   ');
+    consoleLog('🔧 ==============================');
+    consoleLog('🔧 ¡Bienvenido al modo de pruebas secreto!');
+    consoleLog('🔧 Escribe "devhelp" para ver todos los comandos.');
+    consoleLog('🔧 Escribe "help" para ver comandos normales + desarrollo.');
+    consoleLog('🔧 ¡Usa estos poderes con sabiduría, Ancleto!');
+    consoleLog('🔧 ==============================');
+    logDevCommand('activateDevMode', 'Modo desarrollo activado');
+}
+
+function handleDevCommand(command, target) {
+    if (!devModeEnabled) return false;
+    
+    const devCommands = {
+        'devhelp': () => showDevHelp(),
+        'devinfo': () => showDevInfo(),
+        'devlog': () => showDevLog(),
+        'setcoffee': (amount) => setResource('coffee', amount),
+        'settotal': (amount) => setResource('totalCoffee', amount),
+        'setcps': (amount) => setResource('cps', amount),
+        'setcharisma': (amount) => setResource('charisma', amount),
+        'setstrength': (amount) => setResource('coffeeStrength', amount),
+        'unlockall': () => unlockAllDungeons(),
+        'spawnboss': (name) => spawnSpecificBoss(name),
+        'defeatboss': (name) => defeatSpecificBoss(name),
+        'resetbosses': () => resetAllBosses(),
+        'jumpact': (actNumber) => jumpToAct(actNumber),
+        'addachievement': (name) => addCustomAchievement(name),
+        'clearachievements': () => clearAllAchievements(),
+        'listbosses': () => listAllBosses(),
+        'forcedialogue': (index) => forceDialogue(index),
+        'nextdialogue': () => forceNextDialogue(),
+        'teleport': (coords) => teleportPlayer(coords),
+        'godmode': () => toggleGodMode()
+    };
+    
+    const handler = devCommands[command];
+    if (handler) {
+        logDevCommand(command, target);
+        handler(target);
+        return true;
+    }
+    
+    return false;
+}
+
+function showDevHelp() {
+    consoleLog('🔧 ======== COMANDOS DE DESARROLLO ========');
+    consoleLog('🔧 RECURSOS:');
+    consoleLog('🔧 • setcoffee [amount] - Establecer café actual');
+    consoleLog('🔧 • settotal [amount] - Establecer café total');
+    consoleLog('🔧 • setcps [amount] - Establecer CPS');
+    consoleLog('🔧 • setcharisma [amount] - Establecer carisma');
+    consoleLog('🔧 • setstrength [amount] - Establecer fuerza cafetera');
+    consoleLog('🔧');
+    consoleLog('🔧 DUNGEONS Y BOSSES:');
+    consoleLog('🔧 • unlockall - Desbloquear todas las dungeons');
+    consoleLog('🔧 • listbosses - Ver estado de todos los bosses');
+    consoleLog('🔧 • spawnboss [name] - Spawnear boss específico');
+    consoleLog('🔧 • defeatboss [name] - Marcar boss como derrotado');
+    consoleLog('🔧 • resetbosses - Resetear todos los bosses');
+    consoleLog('🔧');
+    consoleLog('🔧 PROGRESIÓN:');
+    consoleLog('🔧 • jumpact [1-6] - Saltar al acto específico');
+    consoleLog('🔧 • forcedialogue [index] - Forzar diálogo específico');
+    consoleLog('🔧 • nextdialogue - Avanzar al siguiente diálogo');
+    consoleLog('🔧');
+    consoleLog('🔧 LOGROS:');
+    consoleLog('🔧 • addachievement [name] - Agregar logro personalizado');
+    consoleLog('🔧 • clearachievements - Limpiar todos los logros');
+    consoleLog('🔧');
+    consoleLog('🔧 UTILIDADES:');
+    consoleLog('🔧 • devinfo - Ver estado completo de desarrollo');
+    consoleLog('🔧 • devlog - Ver historial de comandos');
+    consoleLog('🔧 • teleport [x] [y] - Teletransportarse en dungeon');
+    consoleLog('🔧 • godmode - Activar/desactivar modo dios');
+    consoleLog('🔧 =======================================');
+}
+
+function showDevInfo() {
+    consoleLog('🔧 ======== INFORMACIÓN DE DESARROLLO ========');
+    consoleLog(`🔧 Modo desarrollo: ${devModeEnabled ? 'ACTIVADO' : 'DESACTIVADO'}`);
+    consoleLog(`🔧 Comandos ejecutados: ${devCommands.length}`);
+    consoleLog(`🔧 En dungeon: ${inDungeon ? 'SÍ' : 'NO'}`);
+    consoleLog(`🔧 Dungeon actual: ${currentDungeon ? Object.keys(dungeons).find(key => dungeons[key] === currentDungeon) : 'Ninguna'}`);
+    consoleLog(`🔧 Boss actual: ${currentBoss ? currentBoss.name : 'Ninguno'}`);
+    consoleLog(`🔧 Bosses derrotados: ${defeatedBosses.length}/6`);
+    consoleLog(`🔧 Diálogo actual: ${currentDialogueIndex}/${dialogues.length - 1}`);
+    consoleLog(`🔧 Dungeons desbloqueadas: ${Object.values(dungeons).filter(d => d.unlocked).length}/6`);
+    consoleLog(`🔧 Logros: ${achievements.length}`);
+    consoleLog('🔧 ========================================');
+}
+
+function showDevLog() {
+    consoleLog('🔧 ======== HISTORIAL DE COMANDOS ========');
+    if (devCommands.length === 0) {
+        consoleLog('🔧 No hay comandos registrados aún.');
+    } else {
+        devCommands.slice(-10).forEach((entry, index) => {
+            consoleLog(`🔧 ${devCommands.length - 10 + index + 1}. ${entry.time} - ${entry.command} ${entry.target || ''}`);
+        });
+        if (devCommands.length > 10) {
+            consoleLog(`🔧 ... y ${devCommands.length - 10} más`);
+        }
+    }
+    consoleLog('🔧 ====================================');
+}
+
+function setResource(resourceName, amount) {
+    const value = parseInt(amount) || 0;
+    
+    switch(resourceName) {
+        case 'coffee':
+            coffee = value;
+            break;
+        case 'totalCoffee':
+            totalCoffee = value;
+            break;
+        case 'cps':
+            cps = value;
+            break;
+        case 'charisma':
+            charisma = value;
+            break;
+        case 'coffeeStrength':
+            coffeeStrength = value;
+            break;
+    }
+    
+    consoleLog(`🔧 ${resourceName} establecido a ${value}`);
+    updateDisplay();
+    updateStory();
+    saveGame();
+}
+
+function unlockAllDungeons() {
+    Object.keys(dungeons).forEach(key => {
+        dungeons[key].unlocked = true;
+    });
+    consoleLog('🔧 Todas las dungeons desbloqueadas');
+    updateDisplay();
+    saveGame();
+}
+
+function spawnSpecificBoss(name) {
+    const boss = bosses.find(b => b.name.toLowerCase().includes(name.toLowerCase()));
+    if (boss) {
+        currentBoss = { ...boss };
+        currentBoss.health = currentBoss.maxHealth;
+        consoleLog(`🔧 Boss ${boss.name} spawneado con ${boss.health} de vida`);
+        updateDungeonDisplay();
+    } else {
+        consoleLog(`🔧 Boss "${name}" no encontrado. Bosses disponibles:`);
+        bosses.forEach(b => consoleLog(`🔧 • ${b.name}`));
+    }
+}
+
+function defeatSpecificBoss(name) {
+    const boss = bosses.find(b => b.name.toLowerCase().includes(name.toLowerCase()));
+    if (boss) {
+        if (!defeatedBosses.includes(boss.name)) {
+            defeatedBosses.push(boss.name);
+            coffee += boss.reward;
+            totalCoffee += boss.reward;
+            consoleLog(`🔧 Boss ${boss.name} marcado como derrotado (+${boss.reward} café)`);
+            updateDisplay();
+            updateStory();
+            saveGame();
+        } else {
+            consoleLog(`🔧 Boss ${boss.name} ya estaba derrotado`);
+        }
+    } else {
+        consoleLog(`🔧 Boss "${name}" no encontrado`);
+    }
+}
+
+function resetAllBosses() {
+    defeatedBosses = [];
+    bosses.forEach(boss => {
+        boss.health = boss.maxHealth;
+    });
+    currentBoss = null;
+    consoleLog('🔧 Todos los bosses reseteados');
+    updateDisplay();
+    updateStory();
+    saveGame();
+}
+
+function jumpToAct(actNumber) {
+    const act = parseInt(actNumber);
+    if (act >= 1 && act <= 6) {
+        // Encontrar el primer diálogo del acto
+        const actDialogue = dialogues.find(d => d.act.includes(`Acto ${act}`));
+        if (actDialogue) {
+            totalCoffee = actDialogue.threshold;
+            currentDialogueIndex = dialogues.indexOf(actDialogue);
+            consoleLog(`🔧 Saltando al Acto ${act} (café total: ${totalCoffee})`);
+            updateDisplay();
+            updateStory();
+            saveGame();
+        }
+    } else {
+        consoleLog('🔧 Número de acto inválido (1-6)');
+    }
+}
+
+function addCustomAchievement(name) {
+    if (name && !achievements.includes(name)) {
+        achievements.push(name);
+        consoleLog(`🔧 Logro "${name}" agregado`);
+        updateAchievements();
+        saveGame();
+    } else {
+        consoleLog('🔧 Nombre de logro inválido o ya existe');
+    }
+}
+
+function clearAllAchievements() {
+    achievements = [];
+    consoleLog('🔧 Todos los logros eliminados');
+    updateAchievements();
+    saveGame();
+}
+
+function listAllBosses() {
+    consoleLog('🔧 ======== ESTADO DE BOSSES ========');
+    bosses.forEach((boss, index) => {
+        const defeated = defeatedBosses.includes(boss.name) ? '✅' : '❌';
+        const available = totalCoffee >= boss.spawnAt ? '🟢' : '🔴';
+        consoleLog(`🔧 ${index + 1}. ${boss.name} ${defeated} ${available}`);
+        consoleLog(`🔧    Acto: ${boss.act}, Spawn: ${boss.spawnAt}, Dungeon: ${boss.dungeon}`);
+    });
+    consoleLog('🔧 ===============================');
+}
+
+function forceDialogue(index) {
+    const dialogueIndex = parseInt(index);
+    if (dialogueIndex >= 0 && dialogueIndex < dialogues.length) {
+        currentDialogueIndex = dialogueIndex;
+        const dialogue = dialogues[dialogueIndex];
+        totalCoffee = dialogue.threshold;
+        consoleLog(`🔧 Forzando diálogo ${dialogueIndex}: "${dialogue.title}"`);
+        updateStory();
+        updateDisplay();
+        saveGame();
+    } else {
+        consoleLog(`🔧 Índice inválido (0-${dialogues.length - 1})`);
+    }
+}
+
+function forceNextDialogue() {
+    if (currentDialogueIndex < dialogues.length - 1) {
+        currentDialogueIndex++;
+        const dialogue = dialogues[currentDialogueIndex];
+        totalCoffee = dialogue.threshold;
+        consoleLog(`🔧 Avanzando al siguiente diálogo: "${dialogue.title}"`);
+        updateStory();
+        updateDisplay();
+        saveGame();
+    } else {
+        consoleLog('🔧 Ya estás en el último diálogo');
+    }
+}
+
+function teleportPlayer(coords) {
+    if (!inDungeon) {
+        consoleLog('🔧 Debes estar en una dungeon para teletransportarte');
+        return;
+    }
+    
+    const parts = coords.split(' ');
+    const x = parseInt(parts[0]);
+    const y = parseInt(parts[1]);
+    
+    if (isNaN(x) || isNaN(y)) {
+        consoleLog('🔧 Uso: teleport [x] [y]');
+        return;
+    }
+    
+    if (x >= 0 && x < currentDungeon.map[0].length && y >= 0 && y < currentDungeon.map.length) {
+        playerPos.x = x;
+        playerPos.y = y;
+        consoleLog(`🔧 Teletransportado a (${x}, ${y})`);
+        updateVisualDungeonDisplay();
+        updateDungeonDisplay();
+    } else {
+        consoleLog('🔧 Coordenadas fuera de los límites del mapa');
+    }
+}
+
+function toggleGodMode() {
+    coffee = 999999;
+    totalCoffee = 999999;
+    cps = 9999;
+    charisma = 999;
+    coffeeStrength = 999;
+    consoleLog('🔧 MODO DIOS ACTIVADO - Recursos al máximo');
+    updateDisplay();
+    saveGame();
+}
+
+function logDevCommand(command, target) {
+    devCommands.push({
+        command: command,
+        target: target,
+        time: new Date().toLocaleTimeString()
+    });
+}
+
+// ========================================
+// FIN DEL SISTEMA DE DESARROLLO
+// ========================================
 
 // Iniciar el juego
 // Inicialización cuando el DOM esté listo
