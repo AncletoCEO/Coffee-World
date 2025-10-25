@@ -1043,7 +1043,7 @@ function updateStory() {
 
     // FIXED: Lógica más restrictiva para progresión ACTO POR ACTO
     // Solo permitir avanzar al siguiente acto después de derrotar TODOS los bosses requeridos
-    const currentAct = extractActNumber(dialogues[currentDialogueIndex].act);
+    const currentDialogueAct = extractActNumber(dialogues[currentDialogueIndex].act);
 
     for (let i = 0; i < dialogues.length; i++) {
         const dialogueActNumber = extractActNumber(dialogues[i].act);
@@ -1096,9 +1096,9 @@ function updateStory() {
     }
     if (actDescriptionDisplay) {
         // Verificar si hay un boss pendiente para mostrar advertencia
-        const currentAct = extractActNumber(currentDialogue.act);
+        const dialogueAct = extractActNumber(currentDialogue.act);
         const pendingBoss = bosses.find(boss => 
-            boss.act === currentAct && 
+            boss.act === dialogueAct && 
             totalCoffee >= boss.spawnAt && 
             !defeatedBosses.includes(boss.name)
         );
@@ -2664,15 +2664,14 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners(); // Configurar event listeners primero
     initAudio();
     loadGame();
-    consoleLog(`
-   _____                      _____ _            _   __          __        _     _ _   
-  / ____|                    / ____| |          | |  \\ \\        / /       | |   | | |  
- | |     ___  _ __  ___ ___  | |    | | ___  _ __| |_  \\ \\  /\\  / /__  _ __| | __| | |  
- | |    / _ \\| '_ \\/ __/ _ \\ | |    | |/ _ \\| '__| __|  \\ \\/  \\/ / _ \\| '__| |/ _\` | |  
- | |___| (_) | | | | (_|  __/ | |____| | (_) | |  | |_    \\  /\\  / (_) | |  | | (_| |_|  
-  \\_____\\___/|_| |_|\\___\\___|  \\_____|_|\\___/|_|   \\__|    \\/  \\/ \\___/|_|  |_|\\__,_(_)  
-                                                                                        
-`);
+console.log(`%c
+   _____                .__          __       /\        _________         _____  _____                __      __            .__       .___
+  /  _  \   ____   ____ |  |   _____/  |_  ___)/ ______ \_   ___ \  _____/ ____\/ ____\____   ____   /  \    /  \___________|  |    __| _/
+ /  /_\  \ /    \_/ ___\|  | _/ __ \   __\/  _ \/  ___/ /    \  \/ /  _ \   __\\   __\/ __ \_/ __ \  \   \/\/   /  _ \_  __ \  |   / __ | 
+/    |    \   |  \  \___|  |_\  ___/|  | (  <_> )___ \  \     \___(  <_> )  |   |  | \  ___/\  ___/   \        (  <_> )  | \/  |__/ /_/ | 
+\____|__  /___|  /\___  >____/\___  >__|  \____/____  >  \______  /\____/|__|   |__|  \___  >\___  >   \__/\  / \____/|__|  |____/\____ | 
+        \/     \/     \/          \/                \/          \/                        \/     \/         \/                         \/ 
+`, `font-family: monospace`);
     consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
     setInterval(produceCoffee, 1000); // Producir cada segundo
 });
