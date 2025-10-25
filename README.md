@@ -1,53 +1,91 @@
 # Ancleto's Coffee World: El Mundo Cafetero Incremental de Ancleto
 
+🎮 **¡JUEGA AHORA!** → [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/)
+
+[![Estado del Deployment](https://img.shields.io/website?url=https%3A//ancletoceo.github.io/Coffee-World/)](https://ancletoceo.github.io/Coffee-World/)
+[![Versión](https://img.shields.io/github/package-json/v/AncletoCEO/Coffee-World)](https://github.com/AncletoCEO/Coffee-World)
+[![Commits](https://img.shields.io/github/commit-activity/m/AncletoCEO/Coffee-World)](https://github.com/AncletoCEO/Coffee-World/commits/main)
+[![GitHub Pages](https://img.shields.io/badge/deployment-github%20pages-blue)](https://ancletoceo.github.io/Coffee-World/)
+
 ## Descripción del Proyecto
 
 Ancleto's Coffee World es un juego incremental de navegador enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
 
-El juego se ejecuta directamente en el navegador, sin instalación, con progreso automático y sistema de guardado robusto.
+**Disponible para jugar online**: El juego se ejecuta directamente en GitHub Pages, sin instalación, con progreso automático y sistema de guardado robusto.
 
 ## Características Principales
 
 ### Mecánicas Core
+
 - **Producción automática** de café cada segundo
 - **10 upgrades únicos** con escalado de precio dinámico
 - **Sistema de estadísticas** (Café, CPS, Carisma, Fuerza Cafetera)
-- **Combate automático** contra 3 bosses principales
-- **Cooldowns estratégicos** (Mail: 2min, Work: 5seg)
+- **6 bosses específicos por acto** con progresión obligatoria
+- **Cooldowns estratégicos** (Mail: 2min, Donaciones: cooldown variable)
 
 ### Historia Narrativa
-- **7 actos completos** con progresión rica
-- **Personajes del universo Ancleto** (Damian, Matías, Lucía)
-- **Narrativa dinámica** que evoluciona con el progreso
-- **Humor corporativo** integrado en gameplay
+
+- **6 actos completos** con progresión rica basada en derrota de bosses
+- **Personajes del universo Ancleto** (Damián, Matías, Lucía, Crisis de Arganaraz)
+- **40+ diálogos progresivos** que evolucionan con el progreso total
+- **Humor corporativo** integrado en gameplay y narrativa
+- **Sistema de bloqueo por bosses** - debes derrotar cada boss para avanzar la historia
 
 ### Funcionalidades Avanzadas
-- **Sistema de consola** con 20+ comandos
-- **Dungeons ASCII explorables** (2 mazmorras)
+
+- **Sistema de consola** con 20+ comandos interactivos
+- **6 Dungeons ASCII explorables** con bosses específicos
 - **Sistema de logros** expandido (25+ achievements)
-- **Guardado automático** + export/import CSV
-- **Botón de reset** con confirmación
+- **Guardado automático** en LocalStorage + export/import CSV
+- **Sistema de versionado automático** con GitHub Actions
+- **Botón de reset** con confirmación de seguridad
 
 ### Diseño Retro Terminal
+
 - **Estética terminal** con verde sobre negro (#00ff00/#000000)
-- **Fuente monoespaciada** Courier New
-- **Efectos de resplandor** y animaciones CSS
-- **UI responsive** con CSS Grid
-- **Feedback sonoro** para todas las acciones
+- **Fuente monoespaciada** Courier New para autenticidad
+- **Efectos de resplandor** y animaciones CSS suaves
+- **UI responsive** con CSS Grid moderno
+- **Feedback sonoro** para todas las acciones importantes
+- **Interfaz de dungeons** unificada y fácil de usar
 
 ## Cómo Empezar
 
-1. **Clona el repositorio**: `git clone https://github.com/noctamjam/Coffee-World.git`
+### Opción 1: Jugar Online (Recomendado)
+**¡Simplemente ve a**: [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/) y comienza a jugar inmediatamente!
+
+### Opción 2: Desarrollo Local
+1. **Clona el repositorio**: `git clone https://github.com/AncletoCEO/Coffee-World.git`
 2. **Abre `index.html`** en cualquier navegador moderno
-3. **Comienza recolectando café** automáticamente
-4. **Compra upgrades** para acelerar tu progreso
-5. **Explora la consola** escribiendo `help` para comandos
+3. **O usa servidor local**: `python -m http.server 8000` o `npm start`
 
-## Tecnologías
+### Primeros Pasos en el Juego
+1. **Comienza recolectando café** automáticamente
+2. **Compra tu primera mejora** (Máquina Verde - 10 café)
+3. **Explora la consola** escribiendo `help` para comandos
+4. **Ve a Dungeons** cuando tengas 750+ café para enfrentar tu primer boss
+5. **Sigue la historia** - cada acto requiere derrotar un boss específico
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+) vanilla
-- **Almacenamiento**: LocalStorage + CSV backup
-- **Audio**: Web Audio API para efectos de sonido
+## Tecnologías y Arquitectura
+
+### Frontend
+- **HTML5 Semántico**: Estructura accesible y bien organizada
+- **CSS3 Moderno**: Grid, Flexbox, Custom Properties, Animaciones
+- **JavaScript ES6+ Vanilla**: Sin frameworks, código limpio y eficiente
+- **Web Audio API**: Efectos de sonido inmersivos
+- **CSS Grid Layout**: Diseño responsive y adaptable
+
+### Almacenamiento y Persistencia
+- **LocalStorage**: Guardado automático del progreso
+- **CSV Export/Import**: Backup manual y transferencia de datos
+- **Validación de datos**: Protección contra corrupción (fixnan)
+- **Auto-save**: Guardado continuo cada acción importante
+
+### Deployment y CI/CD
+- **GitHub Pages**: Hosting automático y gratuito
+- **GitHub Actions**: Versionado automático en cada commit
+- **Auto-versioning**: Numeración basada en cantidad de commits
+- **Deployment continuo**: Actualización automática del sitio
 - **Estilo**: CSS Grid, Terminal aesthetics
 
 ## Estructura del Proyecto
@@ -70,43 +108,66 @@ Coffee-World/
 └── README.md             # Este archivo
 ```
 
-## Progresión del Juego
+## Progresión del Juego y Sistema de Bosses
 
-### Etapas de Progreso
+### Mecánica de Progresión Narrativa
 
-- **0-100 café**: Fundación básica
-- **100-1,000 café**: Crisis de Arganaraz
-- **1,000-5,000 café**: Cruzada contra Lucía
-- **5,000-20,000 café**: Ascenso y reconocimientos
-- **20,000-50,000 café**: Viajes globales
-- **50,000-100,000 café**: Revolución tecnológica
-- **100,000+ café**: Maestría absoluta
+**IMPORTANTE**: La historia ahora está **bloqueada por bosses**. Debes derrotar cada boss específico para avanzar al siguiente acto.
 
-### Bosses
+### Los 6 Actos y sus Bosses Obligatorios
 
-1. **Minion de Lucía** (1,000 café) - Recompensa: 25 café
-2. **Niebla Azul** (5,000 café) - Recompensa: 200 café
-3. **Lucía** (100,000 café) - Recompensa: 1,000 café
+1. **Acto 1: Fundación** (750+ café) → **Damián Rebelde** en Sala de Reuniones
+2. **Acto 2: Crisis** (4,000+ café) → **Crisis de Arganaraz** en Cafetería Oscura  
+3. **Acto 3: Confrontación** (8,500+ café) → **Minion de Lucía** en Casa de Damián
+4. **Acto 4: Ascenso** (17,500+ café) → **Sonrisa Inquebrantable** en Bodega Secreta
+5. **Acto 5: Viajes** (27,500+ café) → **Niebla Azul** en Posada de Perros
+6. **Acto 6: Maestría** (47,500+ café) → **Lucía Final** en Oficina Central
 
-## Comandos de Consola
+### Dungeons y Ubicaciones
 
+Cada boss tiene su dungeon específica que se desbloquea automáticamente:
+
+- **Sala de Reuniones** (750 café) - Damián Rebelde
+- **Cafetería Oscura** (4,000 café) - Crisis de Arganaraz  
+- **Casa de Damián** (8,500 café) - Minion de Lucía
+- **Bodega Secreta** (17,500 café) - Sonrisa Inquebrantable
+- **Posada de Perros** (27,500 café) - Niebla Azul
+- **Oficina Central** (47,500 café) - Lucía Final
+
+## Comandos de Consola Completos
+
+### Comandos Básicos
 ```bash
-# Comandos básicos
-help                    # Lista todos los comandos
-status                  # Muestra estadísticas actuales
-save / load            # Guardar/cargar progreso
+help                    # Lista todos los comandos disponibles
+status                  # Muestra estadísticas actuales completas
+save / load            # Guardar/cargar progreso manualmente
+reset                  # Reiniciar juego (requiere confirmación)
+```
 
-# Compras y acciones
-buy [upgrade]          # Comprar mejora específica
-work                   # Trabajar por café (5s cooldown)
-mail                   # Enviar mail corporativo (2min cooldown)
-fight                  # Atacar boss actual
+### Compras y Economía
+```bash
+buy [upgrade]          # Comprar mejora específica (ej: buy machine)
+list upgrades          # Ver todas las mejoras disponibles
+work                   # Trabajar por café extra (5s cooldown)
+mail                   # Enviar mail corporativo (+50 café, 2min cooldown)
+donate                 # Donar café por bonus temporal CPS
+```
 
-# Exploración
+### Exploración y Combate
+```bash
 dungeons               # Listar mazmorras disponibles
-explore [mazmorra]     # Entrar a mazmorra
-go [north/south/east/west]  # Moverse en mazmorra
-exit                   # Salir de mazmorra
+explore [mazmorra]     # Entrar a mazmorra específica
+up/down/left/right     # Moverse en mazmorra (o go [dirección])
+fight                  # Atacar enemigo o boss actual
+exit                   # Salir de mazmorra actual
+```
+
+### Utilidades y Debug
+```bash
+list achievements      # Mostrar todos los logros obtenidos
+savecsv / loadcsv     # Backup/restore en formato CSV
+fixnan                # Corregir valores corruptos automáticamente
+credits               # Mostrar créditos del juego
 ```
 
 ## Sistema de Dungeons
@@ -187,23 +248,136 @@ fixnan                # Corregir valores corruptos
 - **Emperador del Café** - Domina con 100,000 café
 - **Maestro Cafetero** - Derrota a los 3 bosses
 
-## Solución de Problemas
+## Logros y Achievements
 
-### Si aparecen valores "NaN":
-1. Abre la consola del juego
-2. Escribe `fixnan`
-3. El problema se corregirá automáticamente
+El juego incluye 25+ logros que reconocen diferentes hitos:
 
-### Para resetear completamente:
+### Logros de Progreso
+
+- **Primeros 100 granos** - Alcanza 100 café total
+- **Producción decente** - Logra 10 CPS
+- **Café Milenario** - Recolecta 1,000 café total
+- **Emperador del Café** - Domina con 100,000 café total
+
+### Logros de Combate
+
+- **Maestro Cafetero** - Derrota a los 6 bosses principales
+- **Derrotaste a [Boss]** - Por cada boss específico derrotado
+- **Explorador de Dungeons** - Explora todas las mazmorras
+
+### Logros de Estadísticas
+
+- **Carismático** - Obtén 10 de carisma
+- **Fuerte Cafetero** - Consigue 20 de fuerza cafetera
+- **Producción Industrial** - Alcanza 200+ CPS
+
+## Información de Desarrollo
+
+### Estado del Proyecto
+
+- **Estado**: ✅ Completamente funcional y deployado
+- **Versión actual**: Auto-incrementada con cada commit
+- **Última actualización**: Continua via GitHub Actions
+- **Hosting**: GitHub Pages con deployment automático
+
+### Tecnologías de Desarrollo
+
+- **Control de versiones**: Git + GitHub
+- **CI/CD**: GitHub Actions para versionado automático
+- **Testing**: Manual + validación en múltiples navegadores
+- **Deployment**: GitHub Pages con SSL automático
+
+### Métricas del Proyecto
+
+- **Líneas de código**: ~1,800 líneas JavaScript
+- **Commits**: Auto-tracked en número de versión
+- **Archivos**: HTML, CSS, JS completamente vanilla
+- **Peso total**: < 500KB (sin dependencias externas)
+
+## Performance y Compatibilidad
+
+### Navegadores Soportados
+
+- ✅ Chrome 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Edge 90+
+- ✅ Opera 76+
+
+### Características Técnicas
+
+- **Framerate**: 60 FPS consistente
+- **Memoria**: < 50MB uso típico
+- **Almacenamiento**: LocalStorage (< 1MB)
+- **Offline**: Funciona sin conexión después de la carga inicial
+- **Mobile**: Responsive design para dispositivos móviles
+
+## Solución de Problemas y FAQ
+
+### Problemas Comunes
+
+**P: Aparecen valores "NaN" en las estadísticas**
+R: Abre la consola del juego y escribe `fixnan` - el problema se corregirá automáticamente
+
+**P: Los botones no responden**
+R: Recarga la página. Si persiste, limpia la caché del navegador
+
+**P: Se perdió el progreso**
+R: El juego guarda automáticamente. Verifica que LocalStorage esté habilitado
+
+**P: No aparecen los bosses**
+R: Los bosses están en dungeons específicas. Ve a la sección "Dungeons & Exploración"
+
+### Comandos de Emergencia
+
+```bash
+reset               # Reiniciar completamente (con confirmación)
+fixnan             # Reparar valores corruptos
+savecsv            # Crear backup manual
+loadcsv            # Restaurar desde backup
+```
+
+### Para Resetear Completamente
+
 1. Usa el botón "Reset" en la interfaz
 2. O comando `reset` en consola (requiere confirmación)
+3. O limpia manualmente LocalStorage del navegador
 
-## Personalización
+## Personalización y Modding
 
-El juego utiliza variables CSS para fácil personalización:
-- `--terminal-green`: #00ff00 (texto principal)
-- `--terminal-black`: #000000 (fondo)
-- `--terminal-cyan`: #00ffff (acentos)
+### Variables CSS Disponibles
+
+```css
+:root {
+  --terminal-green: #00ff00;    /* Texto principal */
+  --terminal-black: #000000;    /* Fondo */
+  --terminal-cyan: #00ffff;     /* Acentos */
+  --terminal-red: #ff0000;      /* Errores/alertas */
+  --terminal-yellow: #ffff00;   /* Advertencias */
+}
+```
+
+### Archivos Modificables
+
+- `css/style.css` - Estilos principales y colores
+- `css/terminal-styles.css` - Efectos específicos de terminal
+- `js/game.js` - Lógica del juego (¡cuidado con los cambios!)
+
+## Enlaces y Recursos
+
+### Enlaces Principales
+
+- 🎮 **Juego en vivo**: [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/)
+- 📦 **Repositorio**: [https://github.com/AncletoCEO/Coffee-World](https://github.com/AncletoCEO/Coffee-World)
+- 📋 **Issues/Bugs**: [GitHub Issues](https://github.com/AncletoCEO/Coffee-World/issues)
+- 📝 **Documentación**: [Carpeta docs/](https://github.com/AncletoCEO/Coffee-World/tree/main/docs)
+
+### Documentación Técnica
+
+- [`GDD.md`](docs/GDD.md) - Game Design Document completo
+- [`TechnicalSpec.md`](docs/TechnicalSpec.md) - Especificaciones técnicas
+- [`COMPLETITUD.md`](docs/COMPLETITUD.md) - Análisis de completitud del proyecto
+- [`Roadmap.md`](docs/Roadmap.md) - Plan de desarrollo y futuras características
 
 ## Contribución
 
