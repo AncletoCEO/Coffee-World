@@ -1,0 +1,29 @@
+{
+  "name": "ancleto-coffee-world",
+  "version": "2.1.0",
+  "description": "¡Construye tu imperio cafetero! El juego incremental de Ancleto, el mejor CEO del mundo.",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 3000",
+    "version": "npm version patch --no-git-tag-version && node update-version.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AncletoCEO/Coffee-World.git"
+  },
+  "keywords": [
+    "incremental-game",
+    "coffee",
+    "idle-game",
+    "javascript",
+    "ancleto",
+    "ceo"
+  ],
+  "author": "Ancleto Molinari <ancleto@coffee-world.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AncletoCEO/Coffee-World/issues"
+  },
+  "homepage": "https://github.com/AncletoCEO/Coffee-World#readme"
+}
