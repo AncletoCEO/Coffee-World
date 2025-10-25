@@ -294,6 +294,93 @@ El juego incluye 25+ logros que reconocen diferentes hitos:
 - **Archivos**: HTML, CSS, JS completamente vanilla
 - **Peso total**: < 500KB (sin dependencias externas)
 
+## Modo de Desarrollo y Testing
+
+### Activación del Modo Secreto
+
+Para desarrolladores y testers, existe un **modo de desarrollo oculto** con herramientas avanzadas de testing:
+
+**🔐 Comando de Activación:**
+```bash
+ancletomejorceodelmundotestcafetero
+```
+
+> **Nota**: Este comando debe escribirse exactamente en la consola del juego. No hay pistas visuales de su existencia en el gameplay normal.
+
+### Comandos de Desarrollo Disponibles
+
+Una vez activado el modo desarrollo, tendrás acceso a herramientas avanzadas de testing:
+
+#### 📊 Manipulación de Recursos
+```bash
+setcoffee [cantidad]      # Establecer café actual
+settotal [cantidad]       # Establecer café total recolectado  
+setcps [cantidad]         # Establecer café por segundo
+setcharisma [cantidad]    # Establecer carisma
+setstrength [cantidad]    # Establecer fuerza cafetera
+godmode                   # Maximizar todos los recursos
+```
+
+#### 🏰 Control de Dungeons y Bosses
+```bash
+unlockall                 # Desbloquear todas las dungeons
+listbosses                # Ver estado detallado de todos los bosses
+spawnboss [nombre]        # Forzar aparición de boss específico
+defeatboss [nombre]       # Marcar boss como derrotado
+resetbosses               # Resetear estado de todos los bosses
+```
+
+#### 📖 Control de Progresión
+```bash
+jumpact [1-6]             # Saltar al acto específico
+forcedialogue [índice]    # Forzar diálogo específico
+nextdialogue              # Avanzar al siguiente diálogo
+```
+
+#### 🏆 Sistema de Logros
+```bash
+addachievement [nombre]   # Agregar logro personalizado
+clearachievements         # Limpiar todos los logros
+```
+
+#### 🚀 Utilidades Avanzadas
+```bash
+devinfo                   # Ver estado completo de desarrollo
+devlog                    # Ver historial de comandos con timestamps
+devhelp                   # Ver ayuda completa de comandos
+teleport [x] [y]          # Teletransportarse en dungeons
+```
+
+### Ejemplos de Uso para Testing
+
+**Testing rápido de progresión:**
+```bash
+ancletomejorceodelmundotestcafetero
+jumpact 4
+unlockall
+```
+
+**Testing de bosses:**
+```bash
+spawnboss Crisis
+defeatboss Damián  
+listbosses
+```
+
+**Testing de recursos:**
+```bash
+setcoffee 999999
+godmode
+```
+
+### Características del Modo Desarrollo
+
+- **🔒 Completamente oculto**: Sin pistas en el gameplay normal
+- **📝 Logging completo**: Todos los comandos registrados con timestamps
+- **🔧 Integración perfecta**: Los comandos se mezclan con el sistema normal
+- **🧪 Testing exhaustivo**: Herramientas para probar cada aspecto del juego
+- **💾 Persistencia**: Los cambios se guardan automáticamente
+
 ## Performance y Compatibilidad
 
 ### Navegadores Soportados
