@@ -463,8 +463,6 @@ const consoleOutput = document.getElementById('consoleOutput');
 const consoleInput = document.getElementById('consoleInput');
 const csvFileInput = document.getElementById('csvFileInput');
 
-// Event listeners
-csvFileInput.addEventListener('change', loadFromCSV);
 const upgradeButtons = {
     upgrade1: document.getElementById('upgrade1'),
     upgrade2: document.getElementById('upgrade2'),
@@ -1653,44 +1651,46 @@ function updateAchievements() {
     });
 }
 
-// Event listeners para botones
-upgradeButtons.upgrade1.addEventListener('click', () => buyUpgrade('upgrade1'));
-upgradeButtons.upgrade2.addEventListener('click', () => buyUpgrade('upgrade2'));
-upgradeButtons.upgrade3.addEventListener('click', () => buyUpgrade('upgrade3'));
-upgradeButtons.upgrade4.addEventListener('click', () => buyUpgrade('upgrade4'));
-upgradeButtons.upgrade5.addEventListener('click', () => buyUpgrade('upgrade5'));
-upgradeButtons.upgrade6.addEventListener('click', () => buyUpgrade('upgrade6'));
-upgradeButtons.upgrade7.addEventListener('click', () => buyUpgrade('upgrade7'));
-upgradeButtons.upgrade8.addEventListener('click', () => buyUpgrade('upgrade8'));
-upgradeButtons.upgrade9.addEventListener('click', () => buyUpgrade('upgrade9'));
-upgradeButtons.upgrade10.addEventListener('click', () => buyUpgrade('upgrade10'));
+// Event listeners para botones - se configuran cuando el DOM esté listo
+function setupEventListeners() {
+    upgradeButtons.upgrade1.addEventListener('click', () => buyUpgrade('upgrade1'));
+    upgradeButtons.upgrade2.addEventListener('click', () => buyUpgrade('upgrade2'));
+    upgradeButtons.upgrade3.addEventListener('click', () => buyUpgrade('upgrade3'));
+    upgradeButtons.upgrade4.addEventListener('click', () => buyUpgrade('upgrade4'));
+    upgradeButtons.upgrade5.addEventListener('click', () => buyUpgrade('upgrade5'));
+    upgradeButtons.upgrade6.addEventListener('click', () => buyUpgrade('upgrade6'));
+    upgradeButtons.upgrade7.addEventListener('click', () => buyUpgrade('upgrade7'));
+    upgradeButtons.upgrade8.addEventListener('click', () => buyUpgrade('upgrade8'));
+    upgradeButtons.upgrade9.addEventListener('click', () => buyUpgrade('upgrade9'));
+    upgradeButtons.upgrade10.addEventListener('click', () => buyUpgrade('upgrade10'));
 
-// NOTA: fightBossButton eliminado - combate ahora es solo en dungeons
+    // NOTA: fightBossButton eliminado - combate ahora es solo en dungeons
 
-soundToggle.addEventListener('click', toggleSound);
+    soundToggle.addEventListener('click', toggleSound);
 
-consoleToggle.addEventListener('click', () => {
-    consoleVisible = !consoleVisible;
-    const consoleSection = document.getElementById('console');
-    consoleSection.style.display = consoleVisible ? 'block' : 'none';
-    consoleToggle.textContent = `Consola: ${consoleVisible ? 'ON' : 'OFF'}`;
-});
+    consoleToggle.addEventListener('click', () => {
+        consoleVisible = !consoleVisible;
+        const consoleSection = document.getElementById('console');
+        consoleSection.style.display = consoleVisible ? 'block' : 'none';
+        consoleToggle.textContent = `Consola: ${consoleVisible ? 'ON' : 'OFF'}`;
+    });
 
-resetGame.addEventListener('click', resetGameData);
+    resetGame.addEventListener('click', resetGameData);
 
-donateBtn.addEventListener('click', donate);
-sendMailBtn.addEventListener('click', sendMail);
+    donateBtn.addEventListener('click', donate);
+    sendMailBtn.addEventListener('click', sendMail);
 
-consoleInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        const command = consoleInput.value.trim();
-        if (command) {
-            consoleLog(`> ${command}`);
-            handleCommand(command);
-            consoleInput.value = '';
+    consoleInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const command = consoleInput.value.trim();
+            if (command) {
+                consoleLog(`> ${command}`);
+                handleCommand(command);
+                consoleInput.value = '';
+            }
         }
-    }
-});
+    });
+}
 
 // Sonidos
 let audioContext;
@@ -1737,9 +1737,12 @@ function toggleSound() {
 }
 
 // Iniciar el juego
-initAudio();
-loadGame();
-consoleLog(`
+// Inicialización cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    setupEventListeners(); // Configurar event listeners primero
+    initAudio();
+    loadGame();
+    consoleLog(`
    _____                      _____ _            _   __          __        _     _ _   
   / ____|                    / ____| |          | |  \\ \\        / /       | |   | | |  
  | |     ___  _ __  ___ ___  | |    | | ___  _ __| |_  \\ \\  /\\  / /__  _ __| | __| | |  
@@ -1748,5 +1751,6 @@ consoleLog(`
   \\_____\\___/|_| |_|\\___\\___|  \\_____|_|\\___/|_|   \\__|    \\/  \\/ \\___/|_|  |_|\\__,_(_)  
                                                                                         
 `);
-consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
-setInterval(produceCoffee, 1000); // Producir cada segundo
+    consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
+    setInterval(produceCoffee, 1000); // Producir cada segundo
+});
