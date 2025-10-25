@@ -1412,33 +1412,38 @@ function updateDisplay() {
         }
     }
 
-    // Desbloquear mazmorras según café total
+    // Desbloquear mazmorras según progreso de historia (bosses derrotados)
     if (!dungeons.salaReuniones.unlocked && totalCoffee >= dungeons.salaReuniones.unlockAt) {
         dungeons.salaReuniones.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Sala de Reuniones!');
         showNarrative('⚔️ BOSS DEL ACTO 1: Damián Rebelde está disponible. Derrótalo para continuar la historia.');
     }
-    if (!dungeons.cafeteriaOscura.unlocked && totalCoffee >= dungeons.cafeteriaOscura.unlockAt) {
+    // Acto 2: Requiere derrotar al boss del Acto 1
+    if (!dungeons.cafeteriaOscura.unlocked && totalCoffee >= dungeons.cafeteriaOscura.unlockAt && defeatedBosses.includes("Damián Rebelde")) {
         dungeons.cafeteriaOscura.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Cafetería Oscura!');
         showNarrative('⚔️ BOSS DEL ACTO 2: Crisis de Arganaraz te espera. La historia no avanzará hasta derrotarlo.');
     }
-    if (!dungeons.casaDamian.unlocked && totalCoffee >= dungeons.casaDamian.unlockAt) {
+    // Acto 3: Requiere derrotar al boss del Acto 2
+    if (!dungeons.casaDamian.unlocked && totalCoffee >= dungeons.casaDamian.unlockAt && defeatedBosses.includes("Crisis de Arganaraz")) {
         dungeons.casaDamian.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Casa de Damián!');
         showNarrative('⚔️ BOSS DEL ACTO 3: Minion de Lucía custodiado por 19 perros. Derrótalo para avanzar.');
     }
-    if (!dungeons.bodegaSecreta.unlocked && totalCoffee >= dungeons.bodegaSecreta.unlockAt) {
+    // Acto 4: Requiere derrotar al boss del Acto 3
+    if (!dungeons.bodegaSecreta.unlocked && totalCoffee >= dungeons.bodegaSecreta.unlockAt && defeatedBosses.includes("Minion de Lucía")) {
         dungeons.bodegaSecreta.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Bodega Secreta!');
         showNarrative('⚔️ BOSS DEL ACTO 4: Sonrisa Inquebrantable acecha en las sombras. Derrótala para continuar.');
     }
-    if (!dungeons.posadaPerros.unlocked && totalCoffee >= dungeons.posadaPerros.unlockAt) {
+    // Acto 5: Requiere derrotar al boss del Acto 4
+    if (!dungeons.posadaPerros.unlocked && totalCoffee >= dungeons.posadaPerros.unlockAt && defeatedBosses.includes("Sonrisa Inquebrantable")) {
         dungeons.posadaPerros.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Posada de los Perros!');
         showNarrative('⚔️ BOSS DEL ACTO 5: Niebla Azul se alza sobre los posos. Derrótala para el acto final.');
     }
-    if (!dungeons.oficinaCentral.unlocked && totalCoffee >= dungeons.oficinaCentral.unlockAt) {
+    // Acto 6: Requiere derrotar al boss del Acto 5
+    if (!dungeons.oficinaCentral.unlocked && totalCoffee >= dungeons.oficinaCentral.unlockAt && defeatedBosses.includes("Niebla Azul")) {
         dungeons.oficinaCentral.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Oficina Central!');
         showNarrative('El último bastión donde Lucía hace su resistencia final antes de ser neutralizada...');
@@ -1937,8 +1942,15 @@ function updateDungeonButtons() {
             button.className = 'upgrade-btn';
             button.textContent = `🏰 ${getDungeonDisplayName(dungeonKey)}`;
 
-            // Verificar si hay boss disponible
-            const boss = bosses.find(b => b.dungeon === dungeonKey && !defeatedBosses.includes(b.name) && totalCoffee >= b.spawnAt);
+            // Verificar si hay boss disponible (solo si todos los bosses anteriores están derrotados)
+            const boss = bosses.find(b => {
+                if (b.dungeon === dungeonKey && !defeatedBosses.includes(b.name) && totalCoffee >= b.spawnAt) {
+                    // Verificar que todos los bosses de actos anteriores estén derrotados
+                    const previousBosses = bosses.filter(prevBoss => prevBoss.act < b.act);
+                    return previousBosses.every(prevBoss => defeatedBosses.includes(prevBoss.name));
+                }
+                return false;
+            });
             if (boss) {
                 button.textContent += ` ⚔️`;
                 button.style.border = '2px solid #ff6666';
