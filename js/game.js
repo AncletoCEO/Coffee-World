@@ -1218,20 +1218,23 @@ function updateMailButton() {
     }
 }
 
-// Actualizar botón de donar
-function updateDonateButton() {
-    const remaining = Math.max(0, 300000 - (Date.now() - lastDonateTime)); // 5 minutos cooldown
-    if (remaining > 0) {
+// Actualizar indicador de efecto de donar
+function updateDonateEffectIndicator() {
+    const donateEffectIndicator = document.getElementById('donateEffectIndicator');
+    const donateTimeRemaining = document.getElementById('donateTimeRemaining');
+    
+    if (Date.now() < donateEndTime) {
+        // Efecto activo - mostrar indicador
+        const remaining = Math.max(0, donateEndTime - Date.now());
         const seconds = Math.ceil(remaining / 1000);
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        donateBtn.textContent = `Donar (${minutes}:${secs.toString().padStart(2, '0')})`;
-        donateBtn.disabled = true;
-        donateBtn.classList.add('cooldown');
+        
+        donateTimeRemaining.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+        donateEffectIndicator.style.display = 'flex';
     } else {
-        donateBtn.textContent = 'Donar Café (Costo: 100, Bonus: +10% CPS temporal)';
-        donateBtn.disabled = false;
-        donateBtn.classList.remove('cooldown');
+        // Efecto terminado - ocultar indicador
+        donateEffectIndicator.style.display = 'none';
     }
 }
 
@@ -1305,6 +1308,9 @@ function updateDisplay() {
     
     // Actualizar botón de donar
     updateDonateButton();
+    
+    // Actualizar indicador de efecto de donar
+    updateDonateEffectIndicator();
     
     // Actualizar display de dungeons para mostrar estado actual
     updateDungeonDisplay();
@@ -1879,6 +1885,7 @@ function donate() {
         playEventSound();
         updateDisplay();
         updateDonateButton(); // Actualizar el botón después de donar
+        updateDonateEffectIndicator(); // Mostrar el indicador del efecto
         saveGame();
     } else {
         console.log('Not enough coffee for donate');

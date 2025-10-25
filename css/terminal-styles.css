@@ -117,3 +117,39 @@ input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
     color: #00ffff;
     text-shadow: 0 0 5px #00ffff;
 }
+
+/* Indicador de efecto de donar */
+.effect-indicator {
+    background: #001100;
+    border: 1px solid #00ff00;
+    border-radius: 3px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    text-shadow: 0 0 3px #00ff00;
+    animation: effect-glow 2s ease-in-out infinite alternate;
+}
+
+.effect-icon {
+    font-size: 14px;
+    color: #00ff00;
+}
+
+.effect-text {
+    color: #00ff00;
+    font-weight: bold;
+}
+
+.effect-timer {
+    color: #ffff00;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ffff00;
+}
+
+@keyframes effect-glow {
+    from { box-shadow: 0 0 5px #00ff00; }
+    to { box-shadow: 0 0 10px #00ff00, 0 0 15px #00ff00; }
+}
