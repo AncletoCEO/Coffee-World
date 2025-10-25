@@ -40,12 +40,12 @@ let lastDonateTime = 0; // Última vez que se donó (para cooldown)
 
 // Límites por acto para evitar progreso muy rápido
 let actLimits = {
-    1: { maxCoffee: 1000, maxCoffeeStrength: 10 },
-    2: { maxCoffee: 5000, maxCoffeeStrength: 25 },
-    3: { maxCoffee: 10000, maxCoffeeStrength: 50 },
-    4: { maxCoffee: 20000, maxCoffeeStrength: 75 },
-    5: { maxCoffee: 35000, maxCoffeeStrength: 100 },
-    6: { maxCoffee: 50000, maxCoffeeStrength: 150 }
+    1: { maxCoffee: 5000, maxCoffeeStrength: 25 },
+    2: { maxCoffee: 15000, maxCoffeeStrength: 50 },
+    3: { maxCoffee: 30000, maxCoffeeStrength: 75 },
+    4: { maxCoffee: 50000, maxCoffeeStrength: 100 },
+    5: { maxCoffee: 75000, maxCoffeeStrength: 125 },
+    6: { maxCoffee: 100000, maxCoffeeStrength: 150 }
 };
 
 // Variables de desarrollo (ocultas)
@@ -1150,10 +1150,13 @@ function extractActNumber(actString) {
 }
 
 function getCurrentAct() {
-    if (currentDialogueIndex >= 0 && currentDialogueIndex < dialogues.length) {
-        return extractActNumber(dialogues[currentDialogueIndex].act);
-    }
-    return 1; // Por defecto acto 1
+    // Determinar acto basado en progreso real (totalCoffee) en lugar de diálogos
+    if (totalCoffee >= 50000) return 6; // Acto 6
+    if (totalCoffee >= 35000) return 5; // Acto 5
+    if (totalCoffee >= 20000) return 4; // Acto 4
+    if (totalCoffee >= 10000) return 3; // Acto 3
+    if (totalCoffee >= 5000) return 2;  // Acto 2
+    return 1; // Acto 1 - café < 5000
 }
 
 function getDungeonDisplayName(dungeonKey) {
