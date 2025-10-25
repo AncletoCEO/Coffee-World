@@ -2681,14 +2681,25 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners(); // Configurar event listeners primero
     initAudio();
     loadGame();
-console.log(`%c
-   _____                .__          __       /\        _________         _____  _____                __      __            .__       .___
-  /  _  \   ____   ____ |  |   _____/  |_  ___)/ ______ \_   ___ \  _____/ ____\/ ____\____   ____   /  \    /  \___________|  |    __| _/
- /  /_\  \ /    \_/ ___\|  | _/ __ \   __\/  _ \/  ___/ /    \  \/ /  _ \   __\\   __\/ __ \_/ __ \  \   \/\/   /  _ \_  __ \  |   / __ | 
-/    |    \   |  \  \___|  |_\  ___/|  | (  <_> )___ \  \     \___(  <_> )  |   |  | \  ___/\  ___/   \        (  <_> )  | \/  |__/ /_/ | 
-\____|__  /___|  /\___  >____/\___  >__|  \____/____  >  \______  /\____/|__|   |__|  \___  >\___  >   \__/\  / \____/|__|  |____/\____ | 
-        \/     \/     \/          \/                \/          \/                        \/     \/         \/                         \/ 
-`, `font-family: monospace`);
+    // Mostrar ASCII art en la consola del juego
+    const asciiArt = `
+   _____                .__          __       /\\        _________         _____  _____                __      __            .__       .___
+  /  _  \\   ____   ____ |  |   _____/  |_  ___)/ ______ \\_   ___ \\  _____/ ____\\/ ____\\____   ____   /  \\    /  \\___________|  |    __| _/
+ /  /_\\  \\ /    \\_/ ___\\|  | _/ __ \\   __\\/  _ \\/  ___/ /    \\  \\/ /  _ \\   __\\\\   __\\/ __ \\_/ __ \\  \\   \\/\\/   /  _ \\_  __ \\  |   / __ | 
+/    |    \\   |  \\  \\___|  |_\\  ___/|  | (  <_> )___ \\  \\     \\___(  <_> )  |   |  | \\  ___/\\  ___/   \\        (  <_> )  | \\/  |__/ /_/ | 
+\\____|__  /___|  /\\___  >____/\\___  >__|  \\____/____  >  \\______  /\\____/|__|   |__|  \\___  >\\___  >   \\__/\\  / \\____/|__|  |____/\\____ | 
+        \\/     \\/     \\/          \\/                \\/          \\/                        \\/     \\/         \\/                         \\/ 
+`;
+    const asciiLines = asciiArt.trim().split('\n');
+    asciiLines.forEach(line => {
+        const p = document.createElement('p');
+        p.textContent = line;
+        p.style.fontFamily = 'monospace';
+        p.style.fontSize = '12px';
+        p.style.lineHeight = '1';
+        p.style.margin = '2px 0';
+        consoleOutput.appendChild(p);
+    });
     consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
     setInterval(produceCoffee, 1000); // Producir cada segundo
 });
