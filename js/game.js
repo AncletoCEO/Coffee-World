@@ -168,133 +168,133 @@ let dialogues = [
         narrator: "Ancleto"
     },
     {
-        threshold: 3500,
+        relativeThreshold: 0.06, // 6% del acto 2 (3500 café relativo en acto de 5000)
         act: "Acto 2: Charla TED - Sufíes",
         title: "Rituales Sufíes del Siglo XV",
         message: "En Yemen, los sufíes usaban café para vigilia. Su proceso: tostado lento en cobre, molienda manual, infusión con reposo. El café como activo social.",
         narrator: "Ancleto"
     },
     {
-        threshold: 4000,
+        relativeThreshold: 0.08, // 8% del acto 2 (4000 café relativo en acto de 5000)
         act: "Acto 2: Charla TED - Constantinopla",
         title: "Escuelas de Sabios",
         message: "Siglo XVI: nacen las cafeterías en Constantinopla. Eran centros de debate y poesía, llamadas 'Kıraat Khane' o casas de lectura.",
         narrator: "Ancleto"
     },
     {
-        threshold: 4500,
+        relativeThreshold: 0.1, // 10% del acto 2 (4500 café relativo en acto de 5000)
         act: "Acto 2: Equipo Salesforce",
         title: "Integración Uruguaya",
         message: "Ofrecí a Damián un equipo uruguayo de Salesforce: arquitectos, consultores y desarrolladores. Su huso horario encaja perfecto con nuestra franja.",
         narrator: "Ancleto"
     },
     {
-        threshold: 5000,
-        act: "Acto 3: Resistencia de Arganaraz",
+        relativeThreshold: 0.12, // 12% del acto 2 (5000 café relativo en acto de 5000) - Fin del Acto 2
+        act: "Acto 2: Resistencia de Arganaraz",
         title: "Orden Tácita de Alejamiento",
         message: "Arganaraz rechazó Salesforce: 'Hay una orden tácita de alejamiento profesional. Me mudé a Posadas con 19 perros guardianes.'",
         narrator: "Arganaraz"
     },
     {
-        threshold: 5500,
-        act: "Acto 3: Lucía se Revela",
+        relativeThreshold: 0.14, // 14% del acto 2 (5500 café relativo en acto de 5000)
+        act: "Acto 2: Lucía se Revela",
         title: "La Infiltración Silenciosa",
         message: "Debo confesar algo terrible: Lucía lleva un año hospedándose en casa de Damián, usando su wifi y dejando su libreta en el escritorio.",
         narrator: "Ancleto"
     },
     {
-        threshold: 6000,
+        relativeThreshold: 0.0, // 0% del acto 3 (10000 café relativo en acto de 10000)
         act: "Acto 3: Amenaza Sistémica",
         title: "Sonrisa Inquebrantable",
         message: "Lucía no solo vive en casa de Damián: su sonrisa inquebrantable y cafetera portátil se han instalado en hogares de todos los empleados.",
         narrator: "Ancleto"
     },
     {
-        threshold: 7000,
+        relativeThreshold: 0.1, // 10% del acto 3 (11000 café relativo en acto de 10000)
         act: "Acto 3: Miedo de Ancleto",
         title: "También Estoy Asustado",
         message: "Debo confesarte algo: también estoy asustado. Lucía posa con su sonrisa indestructible como el Rostro de Espresso Supremo.",
         narrator: "Ancleto"
     },
     {
-        threshold: 8000,
+        relativeThreshold: 0.2, // 20% del acto 3 (12000 café relativo en acto de 10000)
         act: "Acto 3: Llamado a la Resistencia",
         title: "Pedido de Auxilio Cafetero",
         message: "Apelando a tu generosidad: prepárate un espresso triple, necesitamos fuerza. Tu experiencia con perros guardianes es nuestra esperanza.",
         narrator: "Ancleto"
     },
     {
-        threshold: 9000,
+        relativeThreshold: 0.3, // 30% del acto 3 (13000 café relativo en acto de 10000)
         act: "Acto 3: Respuesta de Arganaraz",
         title: "Lealtad en el Universo Cafetero",
         message: "Arganaraz respondió: 'No voy a soltarte la mano. Si algo nos queda es la lealtad entre quienes distinguimos un ristretto de una sonrisa falsa.'",
         narrator: "Arganaraz"
     },
     {
-        threshold: 10000,
-        act: "Acto 4: Amenaza Sistémica",
+        relativeThreshold: 0.4, // 40% del acto 3 (14000 café relativo en acto de 10000) - Fin del Acto 3
+        act: "Acto 3: Resistencia con Blend Propio",
         title: "Resistencia con Blend Propio",
         message: "'Estamos ante una amenaza sistémica. Vamos a resistir con blend propio, temple y convicción de que ningún aroma puede doblegar nuestra voluntad.'",
         narrator: "Arganaraz"
     },
     {
-        threshold: 12000,
+        relativeThreshold: 0.0, // 0% del acto 4 (20000 café relativo en acto de 10000)
         act: "Acto 4: Damián Generoso",
         title: "El 900% de Aportes",
         message: "Buenos días Damián: tu generosísima transferencia del 900% llegó con retraso por coordinación bancaria. Lamento el inconveniente.",
         narrator: "Ancleto"
     },
     {
-        threshold: 15000,
+        relativeThreshold: 0.1, // 10% del acto 4 (21000 café relativo en acto de 10000)
         act: "Acto 4: Vicepresidente Junior",
         title: "Ascenso de Damián",
         message: "Para reconocer tu aporte extraordinario: serás Vicepresidente Junior de Cultura Cafetera. Validarás el primer espresso y supervisarás la Lista de Vergüenza.",
         narrator: "Ancleto"
     },
     {
-        threshold: 18000,
+        relativeThreshold: 0.2, // 20% del acto 4 (22000 café relativo en acto de 10000)
         act: "Acto 4: Ancleto 100% Real",
         title: "Aclaración de Identidad",
         message: "Soy 100% real, no fake. Mi nombre es Ancleto con 'n', legalmente distinto de cualquier Anacleto. Consultá el Boletín Oficial si tenés dudas.",
         narrator: "Ancleto"
     },
     {
-        threshold: 20000,
+        relativeThreshold: 0.3, // 30% del acto 4 (23000 café relativo en acto de 10000) - Fin del Acto 4
         act: "Acto 4: Sacrificio Personal",
         title: "La Pérdida de Todo",
         message: "Lucía hizo desaparecer a mi esposa, mis hijos... incluso mi hámster con ojitos de espuma. Cada aroma me habla de lo que perdí.",
         narrator: "Ancleto"
     },
     {
-        threshold: 25000,
+        relativeThreshold: 0.4, // 40% del acto 4 (24000 café relativo en acto de 10000)
         act: "Acto 4: Últimas Palabras",
         title: "Cuídate, No Te Queda Mucho",
         message: "Te lo digo con el corazón en la mano: cuídate. Tu orden de alejamiento no bastará. Ella avanza sin prisa con esa sonrisa inquebrantable.",
         narrator: "Ancleto"
     },
     {
-        threshold: 30000,
+        relativeThreshold: 0.0, // 0% del acto 5 (30000 café relativo en acto de 20000)
         act: "Acto 5: Desaparición",
         title: "Respuesta Automática",
         message: "Ancleto no está disponible. Se encuentra en misión crítica: contener la infiltración de Lucía y coordinar la resistencia cafeteril.",
         narrator: "Sistema"
     },
     {
-        threshold: 35000,
+        relativeThreshold: 0.1, // 10% del acto 5 (32000 café relativo en acto de 20000)
         act: "Acto 5: En Hiding",
         title: "Mensaje desde las Sombras",
         message: "Me escondo en la bodega, aferrado a mi taza rota. Pero sepan que Ancleto está vivo, y mientras el café fluya, yo regresaré.",
         narrator: "Ancleto"
     },
     {
-        threshold: 40000,
+        relativeThreshold: 0.2, // 20% del acto 5 (34000 café relativo en acto de 20000)
         act: "Acto 5: Promesa de Venganza",
         title: "Volveré con Ristretto Doble",
         message: "Volveré para vengar cada grano robado y honrar la memoria de mi hámster. Escucharán el tamper contra el portafiltro y mi voz reclamando justicia.",
         narrator: "Ancleto"
     },
     {
-        threshold: 45000,
+        relativeThreshold: 0.3, // 30% del acto 5 (36000 café relativo en acto de 20000)
         act: "Acto 5: Preparativos Finales",
         title: "Fondos para la Victoria",
         message: "Con el 900% de Damián, reforzamos defensas: tamper de acero, café colombiano y 19 perros entrenados como Guardia del Blend.",
@@ -702,12 +702,21 @@ function consoleLog(message) {
 }
 
 function getLastDialogueIndexForAct(actNumber) {
-    for (let i = dialogues.length - 1; i >= 0; i--) {
-        if (extractActNumber(dialogues[i].act) === actNumber) {
-            return i;
-        }
+    // Contar diálogos por acto
+    const actCounts = {
+        1: 10, // Acto 1: índices 0-9
+        2: 10, // Acto 2: índices 10-19
+        3: 5,  // Acto 3: índices 20-24
+        4: 4,  // Acto 4: índices 25-28
+        5: 4,  // Acto 5: índices 29-32
+        6: 1   // Acto 6: índice 33+
+    };
+
+    let total = 0;
+    for (let i = 1; i <= actNumber; i++) {
+        total += actCounts[i] || 0;
     }
-    return -1;
+    return total - 1; // Último índice del acto
 }
 
 // Función utilitaria para validar y corregir valores numéricos
