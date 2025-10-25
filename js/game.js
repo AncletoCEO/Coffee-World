@@ -56,105 +56,112 @@ let devCommands = [];
 let currentDialogueIndex = 0;
 let dialogues = [
     {
-        threshold: 0,
+        relativeThreshold: 0.0,  // 0% del acto
         act: "Acto 1: Fundación de la Cultura Cafetera",
         title: "El Inicio del Imperio Cafetero",
         message: "Soy Ancleto, el mejor CEO del mundo. Confía en mí: el café no es solo un break, sino un ritual diario. Comencemos recolectando granos automáticamente.",
         narrator: "Ancleto"
     },
     {
-        threshold: 50,
+        relativeThreshold: 0.01, // 1% del acto
         act: "Acto 1: Primeras Reflexiones",
         title: "La Cultura del Café",
         message: "En esta empresa, el café no es solo una infusión. Es un ritual, es el momento en que las ideas se cruzan y los proyectos se gestan.",
         narrator: "Ancleto"
     },
     {
-        threshold: 100,
+        relativeThreshold: 0.02, // 2% del acto
         act: "Acto 1: Solicitud Inicial",
         title: "Solicitud de Colaboración Financiera",
         message: "Estimado equipo, necesitamos invertir en cafeteras nuevas. Como el mejor CEO del mundo, sé exactamente cómo invertir cada peso para el bien común.",
         narrator: "Ancleto"
     },
     {
-        threshold: 200,
+        relativeThreshold: 0.04, // 4% del acto
         act: "Acto 1: Seguimiento",
         title: "Recordatorio de Donaciones",
         message: "He notado que algunos aún no han concretado su donación. Tu participación es fundamental para que todos disfrutemos de un espacio más ameno.",
         narrator: "Ancleto"
     },
     {
-        threshold: 300,
+        relativeThreshold: 0.06, // 6% del acto
         act: "Acto 1: Primera Resistencia",
         title: "Respuesta Desafiante",
         message: "Damián respondió 'yo hago lo que quiero'. Una actitud preocupante que requiere reflexión y, posiblemente, más café.",
         narrator: "Ancleto"
     },
     {
-        threshold: 400,
+        relativeThreshold: 0.08, // 8% del acto
         act: "Acto 1: Problemas Ortográficos",
         title: "Guerra al Diccionario",
         message: "Su nueva respuesta fue 'yo havlo como quiero'. Ahora declara la guerra tanto a la colaboración como a la gramática básica.",
         narrator: "Ancleto"
     },
     {
-        threshold: 500,
+        relativeThreshold: 0.1, // 10% del acto
         act: "Acto 1: Lista de la Vergüenza",
         title: "Llamado a la Responsabilidad",
         message: "He decidido crear la Lista de la Vergüenza. No como castigo, sino como recordatorio de que en esta empresa todos remamos juntos.",
         narrator: "Ancleto"
     },
     {
-        threshold: 750,
+        relativeThreshold: 0.15, // 15% del acto
         act: "Acto 1: Viajes Globales - Introducción",
         title: "Cruzada Global por la Excelencia",
         message: "He recorrido el mundo en busca de la cafetera perfecta. En Estambul negocié con comerciantes, en Kioto probé sifones alquímicos.",
         narrator: "Ancleto"
     },
     {
-        threshold: 1000,
+        relativeThreshold: 0.2, // 20% del acto - Fin del Acto 1
+        act: "Acto 1: Fin del Acto",
+        title: "Boss del Acto 1: Damián Rebelde",
+        message: "¡Hemos completado el Acto 1! Ahora enfrentaremos a Damián Rebelde para desbloquear el Acto 2. ¡Prepárate para la batalla!",
+        narrator: "Sistema"
+    },
+    {
+        relativeThreshold: 0.0, // 0% del acto 2
         act: "Acto 2: Crisis de Arganaraz",
         title: "Renuncia Operística",
         message: "Recibí una renuncia de Arganaraz: quiere desvincularse pero seguir cobrando. Una ópera barroca de emociones y propuestas laborales kafkianas.",
         narrator: "Ancleto"
     },
     {
-        threshold: 1200,
+        relativeThreshold: 0.014, // 1.4% del acto 2 (1200 café en acto de 10000)
         act: "Acto 2: Consejo Cafetero",
         title: "Tómate un Café y Respirá",
         message: "Le sugerí a Arganaraz: 'Tómate un café, preparalo bien, sentate tranquilo y respirá.' Porque las decisiones importantes no se toman en ayunas.",
         narrator: "Ancleto"
     },
     {
-        threshold: 1500,
+        relativeThreshold: 0.02, // 2% del acto 2 (1500 café en acto de 10000)
         act: "Acto 2: Reflexión de Arganaraz",
         title: "Delirio Administrativo Reconocido",
         message: "Arganaraz respondió: 'Tiene más de ópera barroca que de carta formal. Me dejé llevar por el drama y una pizca de delirio administrativo.'",
         narrator: "Arganaraz"
     },
     {
-        threshold: 1800,
+        relativeThreshold: 0.026, // 2.6% del acto 2 (1800 café en acto de 10000)
         act: "Acto 2: Reconciliación",
         title: "Café Colombiano de Altura",
         message: "Mañana a las 10h espero a Arganaraz con café colombiano de altura y churros de Buenos Aires. El café es diálogo, el café une culturas.",
         narrator: "Ancleto"
     },
     {
-        threshold: 2200,
+        relativeThreshold: 0.034, // 3.4% del acto 2 (2200 café en acto de 10000)
         act: "Acto 2: Matías el Héroe",
         title: "El 200% de Generosidad",
         message: "¡Matías aportó el 200% del monto requerido! Su gesto de entrega y compromiso merece reconocimiento: es nuestro nuevo CEO honorario.",
         narrator: "Ancleto"
     },
     {
-        threshold: 2500,
+        relativeThreshold: 0.04, // 4% del acto 2 (2500 café en acto de 10000)
         act: "Acto 2: CEO Supremo",
         title: "Ascenso de Matías",
         message: "Matías ostenta ahora el título de CEO Supremo del Café y la Cultura Corporativa, con prioridad en la primera taza y veto sobre café instantáneo.",
         narrator: "Ancleto"
     },
     {
-        threshold: 3000,
+        relativeThreshold: 0.05, // 5% del acto 2 (3000 café en acto de 10000)
         act: "Acto 2: Charla TED - Inicio",
         title: "Historia del Café como Civilización",
         message: "Preparé una charla TED: 'Más que cafeína: el café como motor de civilización'. Todo comenzó con Kaldi y sus cabras eufóricas en Etiopía.",
@@ -1040,6 +1047,7 @@ function updateStory() {
 
     for (let i = 0; i < dialogues.length; i++) {
         const dialogueActNumber = extractActNumber(dialogues[i].act);
+        const currentAct = getCurrentAct();
 
         // REGLA ESTRICTA: No se puede acceder a un acto si no se han derrotado TODOS los bosses anteriores
         let canAccessThisAct = true;
@@ -1058,12 +1066,26 @@ function updateStory() {
             break;
         }
 
-        // Si tenemos suficiente café para este diálogo, usarlo
-        if (totalCoffee >= dialogues[i].threshold) {
+        // Verificar si podemos mostrar este diálogo
+        let canShowDialogue = false;
+
+        if (dialogueActNumber < currentAct) {
+            // Diálogos de actos anteriores: siempre disponibles si el acto está desbloqueado
+            canShowDialogue = true;
+        } else if (dialogueActNumber === currentAct) {
+            // Diálogos del acto actual: verificar progreso relativo
+            const actProgress = getActProgress();
+            canShowDialogue = actProgress >= dialogues[i].relativeThreshold;
+        } else {
+            // Diálogos de actos futuros: no disponibles
+            canShowDialogue = false;
+        }
+
+        if (canShowDialogue) {
             currentDialogue = dialogues[i];
             newDialogueIndex = i;
         } else {
-            // Si no tenemos suficiente café, parar (aunque podríamos acceder al acto)
+            // Si no podemos mostrar este diálogo, parar (para mantener orden secuencial)
             break;
         }
     }
@@ -1109,18 +1131,44 @@ function updateStory() {
     }
     
     // Mostrar progreso hacia el siguiente diálogo
-    const nextDialogue = dialogues.find(d => d.threshold > totalCoffee);
+    const currentActNum = getCurrentAct();
+    const actProgress = getActProgress();
+
+    // Encontrar el siguiente diálogo disponible en el acto actual
+    let nextDialogue = null;
+    for (let i = currentDialogueIndex + 1; i < dialogues.length; i++) {
+        const dialogueAct = extractActNumber(dialogues[i].act);
+        if (dialogueAct <= currentActNum) {
+            // Verificar si podemos acceder a este diálogo
+            if (dialogueAct < currentActNum || actProgress >= dialogues[i].relativeThreshold) {
+                nextDialogue = dialogues[i];
+                break;
+            }
+        } else {
+            break; // No podemos acceder a actos futuros
+        }
+    }
+
     if (nextDialogue) {
         // FIXED: Verificar si hay algún boss que debe ser derrotado ANTES del siguiente diálogo
         const nextDialogueAct = extractActNumber(nextDialogue.act);
-        const blockingBoss = bosses.find(boss => 
+        const blockingBoss = bosses.find(boss =>
             boss.act < nextDialogueAct && // Boss de acto anterior
             totalCoffee >= boss.spawnAt && // Ya debería estar disponible
             !defeatedBosses.includes(boss.name) // Pero no ha sido derrotado
         );
-        
+
         if (!blockingBoss) {
-            const progress = Math.floor((totalCoffee / nextDialogue.threshold) * 100);
+            let progress;
+            if (extractActNumber(nextDialogue.act) === currentActNum) {
+                // Diálogo del acto actual: mostrar progreso relativo
+                progress = Math.floor((actProgress / nextDialogue.relativeThreshold) * 100);
+            } else {
+                // Diálogo de acto anterior: mostrar progreso absoluto
+                const threshold = getRelativeThreshold(extractActNumber(nextDialogue.act), nextDialogue.relativeThreshold);
+                progress = Math.floor((totalCoffee / threshold) * 100);
+            }
+
             if (progress >= 90) {
                 consoleLog(`🎯 ${progress}% completado hacia: ${nextDialogue.act}`);
             }
@@ -1157,6 +1205,79 @@ function getCurrentAct() {
     if (totalCoffee >= 10000) return 3; // Acto 3
     if (totalCoffee >= 5000) return 2;  // Acto 2
     return 1; // Acto 1 - café < 5000
+}
+
+function getActProgress() {
+    // Calcular progreso relativo dentro del acto actual (0-1)
+    const currentAct = getCurrentAct();
+    let actStart = 0;
+    let actEnd = 0;
+
+    switch(currentAct) {
+        case 1:
+            actStart = 0;
+            actEnd = 5000;
+            break;
+        case 2:
+            actStart = 5000;
+            actEnd = 15000;
+            break;
+        case 3:
+            actStart = 15000;
+            actEnd = 30000;
+            break;
+        case 4:
+            actStart = 30000;
+            actEnd = 50000;
+            break;
+        case 5:
+            actStart = 50000;
+            actEnd = 75000;
+            break;
+        case 6:
+            actStart = 75000;
+            actEnd = 100000; // Límite máximo para acto 6
+            break;
+    }
+
+    const actRange = actEnd - actStart;
+    const currentProgress = totalCoffee - actStart;
+    return Math.min(Math.max(currentProgress / actRange, 0), 1);
+}
+
+function getRelativeThreshold(act, relativeProgress) {
+    // Convertir progreso relativo (0-1) a café absoluto para el acto dado
+    let actStart = 0;
+    let actEnd = 0;
+
+    switch(act) {
+        case 1:
+            actStart = 0;
+            actEnd = 5000;
+            break;
+        case 2:
+            actStart = 5000;
+            actEnd = 15000;
+            break;
+        case 3:
+            actStart = 15000;
+            actEnd = 30000;
+            break;
+        case 4:
+            actStart = 30000;
+            actEnd = 50000;
+            break;
+        case 5:
+            actStart = 50000;
+            actEnd = 75000;
+            break;
+        case 6:
+            actStart = 75000;
+            actEnd = 100000;
+            break;
+    }
+
+    return actStart + (actEnd - actStart) * relativeProgress;
 }
 
 function getDungeonDisplayName(dungeonKey) {
@@ -2413,7 +2534,8 @@ function jumpToAct(actNumber) {
         // Encontrar el primer diálogo del acto
         const actDialogue = dialogues.find(d => d.act.includes(`Acto ${act}`));
         if (actDialogue) {
-            totalCoffee = actDialogue.threshold;
+            // Calcular el café absoluto correspondiente al relativeThreshold del acto
+            totalCoffee = getRelativeThreshold(act, actDialogue.relativeThreshold);
             currentDialogueIndex = dialogues.indexOf(actDialogue);
             consoleLog(`🔧 Saltando al Acto ${act} (café total: ${totalCoffee})`);
             updateDisplay();
@@ -2459,7 +2581,9 @@ function forceDialogue(index) {
     if (dialogueIndex >= 0 && dialogueIndex < dialogues.length) {
         currentDialogueIndex = dialogueIndex;
         const dialogue = dialogues[dialogueIndex];
-        totalCoffee = dialogue.threshold;
+        // Calcular café absoluto basado en el acto y relativeThreshold del diálogo
+        const actNumber = extractActNumber(dialogue.act);
+        totalCoffee = getRelativeThreshold(actNumber, dialogue.relativeThreshold);
         consoleLog(`🔧 Forzando diálogo ${dialogueIndex}: "${dialogue.title}"`);
         updateStory();
         updateDisplay();
@@ -2473,7 +2597,9 @@ function forceNextDialogue() {
     if (currentDialogueIndex < dialogues.length - 1) {
         currentDialogueIndex++;
         const dialogue = dialogues[currentDialogueIndex];
-        totalCoffee = dialogue.threshold;
+        // Calcular café absoluto basado en el acto y relativeThreshold del diálogo
+        const actNumber = extractActNumber(dialogue.act);
+        totalCoffee = getRelativeThreshold(actNumber, dialogue.relativeThreshold);
         consoleLog(`🔧 Avanzando al siguiente diálogo: "${dialogue.title}"`);
         updateStory();
         updateDisplay();
