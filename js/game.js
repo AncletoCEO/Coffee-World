@@ -1665,7 +1665,7 @@ upgradeButtons.upgrade8.addEventListener('click', () => buyUpgrade('upgrade8'));
 upgradeButtons.upgrade9.addEventListener('click', () => buyUpgrade('upgrade9'));
 upgradeButtons.upgrade10.addEventListener('click', () => buyUpgrade('upgrade10'));
 
-fightBossButton.addEventListener('click', fightBoss);
+// NOTA: fightBossButton eliminado - combate ahora es solo en dungeons
 
 soundToggle.addEventListener('click', toggleSound);
 
