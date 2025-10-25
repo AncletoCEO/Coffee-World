@@ -1342,6 +1342,23 @@ function updateMailButton() {
     }
 }
 
+// Actualizar botón de donar
+function updateDonateButton() {
+    const remaining = Math.max(0, 300000 - (Date.now() - lastDonateTime)); // 5 minutos cooldown
+    if (remaining > 0) {
+        const seconds = Math.ceil(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        donateBtn.textContent = `Donar (${minutes}:${secs.toString().padStart(2, '0')})`;
+        donateBtn.disabled = true;
+        donateBtn.classList.add('cooldown');
+    } else {
+        donateBtn.textContent = 'Donar Café (Costo: 100, Bonus: +10% CPS temporal)';
+        donateBtn.disabled = false;
+        donateBtn.classList.remove('cooldown');
+    }
+}
+
 // Actualizar indicador de efecto de donar
 function updateDonateEffectIndicator() {
     const donateEffectIndicator = document.getElementById('donateEffectIndicator');
