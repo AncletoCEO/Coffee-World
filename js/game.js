@@ -1039,14 +1039,15 @@ function updateStory() {
         showNewDialogue(currentDialogue);
     }
     
-// Mostrar progreso hacia el siguiente diálogo
+    // Mostrar progreso hacia el siguiente diálogo
     const nextDialogue = dialogues.find(d => d.threshold > totalCoffee);
     if (nextDialogue) {
-        // FIXED: No mostrar progreso si hay bosses pendientes que bloquean la progresión
+        // FIXED: Verificar si hay algún boss que debe ser derrotado ANTES del siguiente diálogo
+        const nextDialogueAct = extractActNumber(nextDialogue.act);
         const blockingBoss = bosses.find(boss => 
-            totalCoffee >= boss.spawnAt && 
-            totalCoffee >= boss.actEnd && 
-            !defeatedBosses.includes(boss.name)
+            boss.act < nextDialogueAct && // Boss de acto anterior
+            totalCoffee >= boss.spawnAt && // Ya debería estar disponible
+            !defeatedBosses.includes(boss.name) // Pero no ha sido derrotado
         );
         
         if (!blockingBoss) {
@@ -1057,9 +1058,7 @@ function updateStory() {
         } else {
             consoleLog(`⚠️ Progresión bloqueada por ${blockingBoss.name}. ¡Derrótalo para continuar!`);
         }
-    }
-
-    // Mostrar créditos al final
+    }    // Mostrar créditos al final
     const creditsSection = document.getElementById('credits');
     if (creditsSection) {
         if (totalCoffee >= 100000 && defeatedBosses.length >= 6) { // Requiere derrotar todos los bosses
@@ -1254,6 +1253,7 @@ function displayMap() {
 }
 
 function enterDungeon(name) {
+    console.log('enterDungeon called with:', name); // Debug
     if (!dungeons[name] || !dungeons[name].unlocked) {
         showNarrative('Mazmorra no disponible.');
         return;
@@ -1278,9 +1278,14 @@ function enterDungeon(name) {
         showNarrative(`⚔️ BOSS DETECTADO: ${availableBoss.name} está esperándote en esta dungeon.`);
     }
     
-    // Mostrar interfaz visual de dungeon
-    if (dungeonVisualContainer) {
-        dungeonVisualContainer.style.display = 'block';
+    // FIXED: Mostrar interfaz visual de dungeon con verificaciones
+    const visualContainer = document.getElementById('dungeonVisualContainer');
+    console.log('Visual container found:', !!visualContainer); // Debug
+    if (visualContainer) {
+        visualContainer.style.display = 'block';
+        console.log('Visual container should now be visible'); // Debug
+    } else {
+        console.error('dungeonVisualContainer not found!');
     }
     
     showNarrative(`Entrando a ${getDungeonDisplayName(name)}...`);
@@ -1289,6 +1294,7 @@ function enterDungeon(name) {
 }
 
 function exitDungeon() {
+    console.log('exitDungeon called'); // Debug
     inDungeon = false;
     if (currentDungeon) {
         currentDungeon.currentMonster = null; // Limpiar monstruo actual
@@ -1296,9 +1302,11 @@ function exitDungeon() {
     currentDungeon = null;
     currentBoss = null; // Limpiar boss al salir
     
-    // Ocultar interfaz visual de dungeon
-    if (dungeonVisualContainer) {
-        dungeonVisualContainer.style.display = 'none';
+    // FIXED: Ocultar interfaz visual de dungeon con verificación
+    const visualContainer = document.getElementById('dungeonVisualContainer');
+    console.log('Hiding visual container:', !!visualContainer); // Debug
+    if (visualContainer) {
+        visualContainer.style.display = 'none';
     }
     
     showNarrative('Saliendo de la mazmorra.');
@@ -1821,7 +1829,18 @@ function toggleSound() {
 
 // Visual Dungeon Display Functions
 function updateVisualDungeonDisplay() {
-    if (!inDungeon || !currentDungeon || !dungeonMapDisplay) return;
+    console.log('updateVisualDungeonDisplay called, inDungeon:', inDungeon); // Debug
+    if (!inDungeon || !currentDungeon) {
+        console.log('Not in dungeon or no current dungeon'); // Debug
+        return;
+    }
+    
+    const mapDisplay = document.getElementById('dungeonMap');
+    console.log('Map display element found:', !!mapDisplay); // Debug
+    if (!mapDisplay) {
+        console.error('dungeonMap element not found!');
+        return;
+    }
     
     let mapHTML = '';
     for (let y = 0; y < currentDungeon.map.length; y++) {
@@ -1862,30 +1881,63 @@ function updateVisualDungeonDisplay() {
         mapHTML += rowHTML + '<br>';
     }
     
-    dungeonMapDisplay.innerHTML = mapHTML;
+    mapDisplay.innerHTML = mapHTML;
+    console.log('Map HTML updated:', mapHTML.substring(0, 100)); // Debug
     
     // Actualizar botón de fight
-    if (fightBtn) {
+    const fightButton = document.getElementById('fightBtn');
+    if (fightButton) {
         const canFight = (currentBoss && inDungeon) || (currentDungeon && currentDungeon.currentMonster);
-        fightBtn.disabled = !canFight;
+        fightButton.disabled = !canFight;
     }
 }
 
 function setupVisualDungeonControls() {
-    if (moveUpBtn) {
-        moveUpBtn.addEventListener('click', () => movePlayerVisual(0, -1));
+    console.log('Setting up visual dungeon controls...'); // Debug
+    
+    const moveUpButton = document.getElementById('moveUpBtn');
+    const moveDownButton = document.getElementById('moveDownBtn');
+    const moveLeftButton = document.getElementById('moveLeftBtn');
+    const moveRightButton = document.getElementById('moveRightBtn');
+    const fightButton = document.getElementById('fightBtn');
+    const exitButton = document.getElementById('exitDungeonBtn');
+    
+    console.log('Buttons found:', {
+        up: !!moveUpButton,
+        down: !!moveDownButton,
+        left: !!moveLeftButton,
+        right: !!moveRightButton,
+        fight: !!fightButton,
+        exit: !!exitButton
+    }); // Debug
+    
+    if (moveUpButton) {
+        moveUpButton.addEventListener('click', () => {
+            console.log('Move up clicked'); // Debug
+            movePlayerVisual(0, -1);
+        });
     }
-    if (moveDownBtn) {
-        moveDownBtn.addEventListener('click', () => movePlayerVisual(0, 1));
+    if (moveDownButton) {
+        moveDownButton.addEventListener('click', () => {
+            console.log('Move down clicked'); // Debug
+            movePlayerVisual(0, 1);
+        });
     }
-    if (moveLeftBtn) {
-        moveLeftBtn.addEventListener('click', () => movePlayerVisual(-1, 0));
+    if (moveLeftButton) {
+        moveLeftButton.addEventListener('click', () => {
+            console.log('Move left clicked'); // Debug
+            movePlayerVisual(-1, 0);
+        });
     }
-    if (moveRightBtn) {
-        moveRightBtn.addEventListener('click', () => movePlayerVisual(1, 0));
+    if (moveRightButton) {
+        moveRightButton.addEventListener('click', () => {
+            console.log('Move right clicked'); // Debug
+            movePlayerVisual(1, 0);
+        });
     }
-    if (fightBtn) {
-        fightBtn.addEventListener('click', () => {
+    if (fightButton) {
+        fightButton.addEventListener('click', () => {
+            console.log('Fight clicked'); // Debug
             if (currentBoss && inDungeon) {
                 fightDungeonBoss();
             } else if (currentDungeon && currentDungeon.currentMonster) {
@@ -1893,8 +1945,11 @@ function setupVisualDungeonControls() {
             }
         });
     }
-    if (exitDungeonBtn) {
-        exitDungeonBtn.addEventListener('click', exitDungeon);
+    if (exitButton) {
+        exitButton.addEventListener('click', () => {
+            console.log('Exit clicked'); // Debug
+            exitDungeon();
+        });
     }
 }
 
