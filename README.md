@@ -1,6 +1,6 @@
 # Ancleto's Coffee World: El Mundo Cafetero Incremental de Ancleto
 
-## 🎮 Descripción del Proyecto
+##  Descripción del Proyecto
 
 Ancleto's Coffee World es un juego incremental de navegador enfocado en el universo de Ancleto. El jugador recolecta "granos de café" para mejorar habilidades, derrotar amenazas y construir un imperio cafetero. Combina elementos idle, RPG y humor corporativo con un diseño retro terminal.
 
