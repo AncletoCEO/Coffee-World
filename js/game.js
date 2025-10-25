@@ -1000,33 +1000,38 @@ function updateStory() {
     // Encontrar el diálogo actual basado en el progreso Y bosses derrotados
     let currentDialogue = dialogues[0];
     let newDialogueIndex = 0;
-    
-    for (let i = dialogues.length - 1; i >= 0; i--) {
-        if (totalCoffee >= dialogues[i].threshold) {
-            // FIXED: Verificar progresión de actos con lógica mejorada
-            const dialogueActNumber = extractActNumber(dialogues[i].act);
-            
-            // Verificar si hay un boss obligatorio para este nivel de progreso
-            const requiredBoss = bosses.find(boss => {
-                // El boss es requerido si:
-                // 1. Es del acto actual o anterior
-                // 2. Ya debería haber spawneado
-                // 3. Su acto ya debería haber terminado según el café total
-                return boss.act <= dialogueActNumber && 
-                       totalCoffee >= boss.spawnAt && 
-                       totalCoffee >= boss.actEnd;
-            });
-            
-            // Si hay un boss requerido que no ha sido derrotado, BLOQUEAR progresión
-            if (requiredBoss && !defeatedBosses.includes(requiredBoss.name)) {
-                // Saltar este diálogo y los siguientes hasta derrotar al boss
-                consoleLog(`⚠️ PROGRESIÓN BLOQUEADA: Debes derrotar a ${requiredBoss.name} antes de continuar.`);
-                break;
-            }
-            
-            currentDialogue = dialogues[i];
-            newDialogueIndex = i;
+
+    // FIXED: Lógica mejorada para progresión secuencial por actos
+    // Solo permitir avanzar al siguiente acto después de derrotar el boss correspondiente
+    const currentAct = extractActNumber(dialogues[currentDialogueIndex].act);
+
+    for (let i = 0; i < dialogues.length; i++) {
+        const dialogueActNumber = extractActNumber(dialogues[i].act);
+
+        // Solo permitir acceso a actos que ya han sido desbloqueados por bosses derrotados
+        if (dialogueActNumber > currentAct + 1) {
+            // No permitir saltar más de un acto a la vez
             break;
+        }
+
+        // Verificar si hay un boss obligatorio para este acto
+        const requiredBoss = bosses.find(boss => boss.act === dialogueActNumber);
+
+        // Si es el acto actual o el siguiente, verificar condiciones
+        if (dialogueActNumber <= currentAct + 1) {
+            if (totalCoffee >= dialogues[i].threshold) {
+                // Para actos posteriores al 1, requerir que el boss del acto anterior esté derrotado
+                if (dialogueActNumber > 1) {
+                    const previousActBoss = bosses.find(boss => boss.act === dialogueActNumber - 1);
+                    if (previousActBoss && !defeatedBosses.includes(previousActBoss.name)) {
+                        // Boss del acto anterior no derrotado, no permitir progreso
+                        break;
+                    }
+                }
+
+                currentDialogue = dialogues[i];
+                newDialogueIndex = i;
+            }
         }
     }
     
@@ -1294,6 +1299,12 @@ function enterDungeon(name) {
     currentDungeon = dungeons[name];
     playerPos = { x: 2, y: 3 }; // Posición inicial
     
+    // FIXED: Ocultar sección de upgrades mientras esté en dungeon
+    const upgradesSection = document.getElementById('upgrades');
+    if (upgradesSection) {
+        upgradesSection.style.display = 'none';
+    }
+    
     // FIXED: Verificar si hay un boss disponible en esta dungeon y spawnearlo
     const availableBoss = bosses.find(b => 
         b.dungeon === name && 
@@ -1332,6 +1343,12 @@ function exitDungeon() {
     }
     currentDungeon = null;
     currentBoss = null; // Limpiar boss al salir
+    
+    // FIXED: Mostrar nuevamente la sección de upgrades al salir de dungeon
+    const upgradesSection = document.getElementById('upgrades');
+    if (upgradesSection) {
+        upgradesSection.style.display = 'block';
+    }
     
     // FIXED: Ocultar interfaz visual de dungeon con verificación
     const visualContainer = document.getElementById('dungeonVisualContainer');
