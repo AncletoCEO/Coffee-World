@@ -701,9 +701,16 @@ function consoleLog(message) {
     consoleOutput.scrollTop = consoleOutput.scrollHeight;
 }
 
+function getLastDialogueIndexForAct(actNumber) {
+    for (let i = dialogues.length - 1; i >= 0; i--) {
+        if (extractActNumber(dialogues[i].act) === actNumber) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 // Función utilitaria para validar y corregir valores numéricos
-function validateGameValues() {
-    if (isNaN(coffee) || coffee < 0) coffee = 0;
     if (isNaN(totalCoffee) || totalCoffee < 0) totalCoffee = 0;
     if (isNaN(cps) || cps < 0) cps = 0;
     if (isNaN(charisma) || charisma < 0) charisma = 0;
@@ -1412,38 +1419,38 @@ function updateDisplay() {
         }
     }
 
-    // Desbloquear mazmorras según progreso de historia (bosses derrotados)
+    // Desbloquear mazmorras después de completar toda la historia del acto anterior
     if (!dungeons.salaReuniones.unlocked && totalCoffee >= dungeons.salaReuniones.unlockAt) {
         dungeons.salaReuniones.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Sala de Reuniones!');
         showNarrative('⚔️ BOSS DEL ACTO 1: Damián Rebelde está disponible. Derrótalo para continuar la historia.');
     }
-    // Acto 2: Requiere derrotar al boss del Acto 1
-    if (!dungeons.cafeteriaOscura.unlocked && totalCoffee >= dungeons.cafeteriaOscura.unlockAt && defeatedBosses.includes("Damián Rebelde")) {
+    // Acto 2: Desbloquear después de completar toda la historia del Acto 1
+    if (!dungeons.cafeteriaOscura.unlocked && currentDialogueIndex >= getLastDialogueIndexForAct(1)) {
         dungeons.cafeteriaOscura.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Cafetería Oscura!');
         showNarrative('⚔️ BOSS DEL ACTO 2: Crisis de Arganaraz te espera. La historia no avanzará hasta derrotarlo.');
     }
-    // Acto 3: Requiere derrotar al boss del Acto 2
-    if (!dungeons.casaDamian.unlocked && totalCoffee >= dungeons.casaDamian.unlockAt && defeatedBosses.includes("Crisis de Arganaraz")) {
+    // Acto 3: Desbloquear después de completar toda la historia del Acto 2
+    if (!dungeons.casaDamian.unlocked && currentDialogueIndex >= getLastDialogueIndexForAct(2)) {
         dungeons.casaDamian.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Casa de Damián!');
         showNarrative('⚔️ BOSS DEL ACTO 3: Minion de Lucía custodiado por 19 perros. Derrótalo para avanzar.');
     }
-    // Acto 4: Requiere derrotar al boss del Acto 3
-    if (!dungeons.bodegaSecreta.unlocked && totalCoffee >= dungeons.bodegaSecreta.unlockAt && defeatedBosses.includes("Minion de Lucía")) {
+    // Acto 4: Desbloquear después de completar toda la historia del Acto 3
+    if (!dungeons.bodegaSecreta.unlocked && currentDialogueIndex >= getLastDialogueIndexForAct(3)) {
         dungeons.bodegaSecreta.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Bodega Secreta!');
         showNarrative('⚔️ BOSS DEL ACTO 4: Sonrisa Inquebrantable acecha en las sombras. Derrótala para continuar.');
     }
-    // Acto 5: Requiere derrotar al boss del Acto 4
-    if (!dungeons.posadaPerros.unlocked && totalCoffee >= dungeons.posadaPerros.unlockAt && defeatedBosses.includes("Sonrisa Inquebrantable")) {
+    // Acto 5: Desbloquear después de completar toda la historia del Acto 4
+    if (!dungeons.posadaPerros.unlocked && currentDialogueIndex >= getLastDialogueIndexForAct(4)) {
         dungeons.posadaPerros.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Posada de los Perros!');
         showNarrative('⚔️ BOSS DEL ACTO 5: Niebla Azul se alza sobre los posos. Derrótala para el acto final.');
     }
-    // Acto 6: Requiere derrotar al boss del Acto 5
-    if (!dungeons.oficinaCentral.unlocked && totalCoffee >= dungeons.oficinaCentral.unlockAt && defeatedBosses.includes("Niebla Azul")) {
+    // Acto 6: Desbloquear después de completar toda la historia del Acto 5
+    if (!dungeons.oficinaCentral.unlocked && currentDialogueIndex >= getLastDialogueIndexForAct(5)) {
         dungeons.oficinaCentral.unlocked = true;
         consoleLog('🏰 ¡Nueva mazmorra desbloqueada: Oficina Central!');
         showNarrative('El último bastión donde Lucía hace su resistencia final antes de ser neutralizada...');
