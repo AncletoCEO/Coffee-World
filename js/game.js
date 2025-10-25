@@ -1218,6 +1218,23 @@ function updateMailButton() {
     }
 }
 
+// Actualizar botón de donar
+function updateDonateButton() {
+    const remaining = Math.max(0, 300000 - (Date.now() - lastDonateTime)); // 5 minutos cooldown
+    if (remaining > 0) {
+        const seconds = Math.ceil(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        donateBtn.textContent = `Donar (${minutes}:${secs.toString().padStart(2, '0')})`;
+        donateBtn.disabled = true;
+        donateBtn.classList.add('cooldown');
+    } else {
+        donateBtn.textContent = 'Donar Café (Costo: 100, Bonus: +10% CPS temporal)';
+        donateBtn.disabled = false;
+        donateBtn.classList.remove('cooldown');
+    }
+}
+
 // Actualizar la interfaz
 function updateDisplay() {
     // Validar valores antes de mostrar
@@ -1285,6 +1302,9 @@ function updateDisplay() {
     
     // Actualizar botón de mail
     updateMailButton();
+    
+    // Actualizar botón de donar
+    updateDonateButton();
     
     // Actualizar display de dungeons para mostrar estado actual
     updateDungeonDisplay();
@@ -1543,12 +1563,29 @@ function buyUpgrade(upgradeKey) {
     const currentAct = getCurrentAct();
     const limits = actLimits[currentAct];
     
+    consoleLog(`🔍 BuyUpgrade Debug - Acto: ${currentAct}, Café Total: ${totalCoffee}, Fuerza: ${coffeeStrength}`);
+    
     if (limits) {
+        // Verificar si hay un boss pendiente en el acto actual
+        const pendingBoss = bosses.find(boss => 
+            boss.act === currentAct && 
+            totalCoffee >= boss.spawnAt && 
+            !defeatedBosses.includes(boss.name)
+        );
+        
+        consoleLog(`🔍 Límites Acto ${currentAct}: Max Café ${limits.maxCoffee}, Max Fuerza ${limits.maxCoffeeStrength}`);
+        consoleLog(`🔍 Boss pendiente: ${pendingBoss ? pendingBoss.name : 'Ninguno'}`);
+        
         // Verificar límite de café total
         if (totalCoffee >= limits.maxCoffee) {
-            showNarrative(`¡Límite de acto alcanzado! Derrota al boss del Acto ${currentAct} para desbloquear más upgrades.`);
-            consoleLog(`⚠️ Límite de Acto ${currentAct}: Máximo ${limits.maxCoffee} café alcanzado. Derrota al boss para continuar.`);
-            return;
+            // EXCEPCIÓN: Permitir upgrades de fuerza cafetera si hay boss pendiente
+            if (!pendingBoss || !upgrade.coffeeStrengthIncrease) {
+                showNarrative(`¡Límite de acto alcanzado! Derrota al boss del Acto ${currentAct} para desbloquear más upgrades.`);
+                consoleLog(`⚠️ Límite de Acto ${currentAct}: Máximo ${limits.maxCoffee} café alcanzado. Derrota al boss para continuar.`);
+                return;
+            } else {
+                consoleLog(`⚠️ Límite alcanzado pero permitiendo upgrade de fuerza (${upgradeKey}) para boss ${pendingBoss.name}`);
+            }
         }
         
         // Verificar límite de fuerza cafetera para upgrades que la aumentan
@@ -1841,6 +1878,7 @@ function donate() {
         showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 1 minuto.");
         playEventSound();
         updateDisplay();
+        updateDonateButton(); // Actualizar el botón después de donar
         saveGame();
     } else {
         console.log('Not enough coffee for donate');
