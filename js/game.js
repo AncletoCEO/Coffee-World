@@ -35,6 +35,7 @@ let bosses = [
 let lastMailTime = 0;
 let lastWorkTime = 0;
 let lastFightTime = 0;
+let donateEndTime = 0; // Tiempo cuando termina el efecto de donar
 
 // Variables de desarrollo (ocultas)
 let devModeEnabled = false;
@@ -518,6 +519,7 @@ function loadGame() {
             lastMailTime = parseInt(data.lastMailTime) || 0;
             lastWorkTime = parseInt(data.lastWorkTime) || 0;
             lastFightTime = parseInt(data.lastFightTime) || 0;
+            donateEndTime = parseInt(data.donateEndTime) || 0;
             currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
@@ -553,6 +555,7 @@ function resetGameData() {
         lastMailTime = 0;
         lastWorkTime = 0;
         lastFightTime = 0;
+        donateEndTime = 0;
         currentDialogueIndex = 0;
         
         // Resetear upgrades
@@ -591,6 +594,7 @@ function saveGame() {
         lastMailTime,
         lastWorkTime,
         lastFightTime,
+        donateEndTime,
         currentDialogueIndex
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
@@ -1466,9 +1470,15 @@ function fightDungeonMonster() {
 function produceCoffee() {
     // Validar valores antes de calcular
     validateGameValues();
-    
-    coffee += cps;
-    totalCoffee += cps;
+
+    // FIXED: Calcular CPS efectivo considerando bonus temporal de donate
+    let effectiveCPS = cps;
+    if (Date.now() < donateEndTime) {
+        effectiveCPS *= 1.1; // +10% bonus temporal
+    }
+
+    coffee += effectiveCPS;
+    totalCoffee += effectiveCPS;
     // Los bosses ya no spawean automáticamente - están en dungeons específicas
     updateDisplay();
     checkAchievements();
@@ -1739,8 +1749,9 @@ function fightDungeonBoss() {
 function donate() {
     if (coffee >= 100) {
         coffee -= 100;
-        cps *= 1.1; // +10% temporal
-        showNarrative("¡Gracias por donar! Tu producción aumenta temporalmente.");
+        // FIXED: Aplicar bonus temporal de 10% por 5 minutos (300,000 ms)
+        donateEndTime = Date.now() + 300000; // 5 minutos
+        showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 5 minutos.");
         playEventSound();
         updateDisplay();
         saveGame();
