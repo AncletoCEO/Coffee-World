@@ -443,11 +443,15 @@ const cpsDisplay = document.getElementById('cps');
 const totalCoffeeDisplay = document.getElementById('totalCoffee');
 const charismaDisplay = document.getElementById('charisma');
 const coffeeStrengthDisplay = document.getElementById('coffeeStrength');
-const bossNameDisplay = document.getElementById('bossName');
-const bossHealthDisplay = document.getElementById('bossHealth');
-const bossMaxHealthDisplay = document.getElementById('bossMaxHealth');
-const dpsDisplay = document.getElementById('dps');
-const fightBossButton = document.getElementById('fightBoss');
+// Referencias actualizadas para Dungeons
+const dungeonStatusDisplay = document.getElementById('dungeonStatus');
+const playerPositionDisplay = document.getElementById('playerPosition');
+const dungeonControlsDisplay = document.getElementById('dungeonControls');
+const currentBossNameDisplay = document.getElementById('currentBossName');
+const currentBossHealthDisplay = document.getElementById('currentBossHealth');
+const currentBossMaxHealthDisplay = document.getElementById('currentBossMaxHealth');
+const bossHealthBarDisplay = document.getElementById('bossHealthBar');
+const dungeonButtonsContainer = document.getElementById('dungeonButtons');
 const donateBtn = document.getElementById('donateBtn');
 const sendMailBtn = document.getElementById('sendMailBtn');
 const soundToggle = document.getElementById('soundToggle');
@@ -517,7 +521,7 @@ function loadGame() {
     validateGameValues();
     updateDisplay();
     updateAchievements();
-    updateBossDisplay();
+    updateDungeonDisplay();
     updateStory();
     updateMailButton();
 }
@@ -552,7 +556,7 @@ function resetGameData() {
         
         updateDisplay();
         updateAchievements();
-        updateBossDisplay();
+        updateDungeonDisplay();
         updateStory();
         updateMailButton();
         consoleLog('Juego reseteado. ¡Bienvenido de nuevo a Ancleto\'s Coffee World!');
@@ -640,7 +644,7 @@ function loadFromCSV(event) {
         
         updateDisplay();
         updateAchievements();
-        updateBossDisplay();
+        updateDungeonDisplay();
         updateStory();
         updateMailButton();
         consoleLog('Progreso cargado desde CSV.');
@@ -700,9 +704,9 @@ function handleFightCommand() {
     if (inDungeon && currentDungeon && currentDungeon.currentMonster) {
         fightDungeonMonster();
         consoleLog('Atacando al monstruo de la mazmorra...');
-    } else if (currentBoss) {
-        fightBoss();
-        consoleLog('Atacando al boss...');
+    } else if (currentBoss && inDungeon) {
+        fightDungeonBoss();
+        consoleLog('Atacando al boss de la dungeon...');
     } else {
         consoleLog('No hay enemigos para luchar. Explora dungeons o espera un boss.');
     }
@@ -886,7 +890,7 @@ function handleKillBossCommand() {
         defeatedBosses.push(currentBoss.name);
         consoleLog(`Cheat: ${currentBoss.name} derrotado instantáneamente.`);
         currentBoss = null;
-        updateBossDisplay();
+        updateDungeonDisplay();
         updateDisplay();
         saveGame();
     } else {
@@ -1002,7 +1006,10 @@ function updateStory() {
                 <div style="color: #ff6666; margin-top: 15px; border: 1px solid #ff6666; padding: 10px;">
                     <strong>⚔️ BOSS DISPONIBLE:</strong> ${pendingBoss.name}<br>
                     <em>Debes derrotar a este boss para continuar la historia.</em><br>
-                    <small>Ve a la dungeon: ${getDungeonDisplayName(pendingBoss.dungeon)}</small>
+                    <strong>CÓMO ENFRENTARLO:</strong><br>
+                    1. Ve a la sección "Dungeons"<br>
+                    2. Entra a "${getDungeonDisplayName(pendingBoss.dungeon)}"<br>
+                    3. Navega hasta el boss (B) y usa 'fight'
                 </div>
             `;
         }
@@ -1167,8 +1174,8 @@ function updateDisplay() {
     // Actualizar botón de mail
     updateMailButton();
     
-    // Actualizar display del boss para cooldowns
-    updateBossDisplay();
+    // Actualizar display de dungeons para mostrar estado actual
+    updateDungeonDisplay();
 }
 
 // Funciones de exploración
@@ -1227,7 +1234,9 @@ function exitDungeon() {
         currentDungeon.currentMonster = null; // Limpiar monstruo actual
     }
     currentDungeon = null;
+    currentBoss = null; // Limpiar boss al salir
     consoleLog('Saliendo de la mazmorra.');
+    updateDungeonDisplay(); // Actualizar display al salir
 }
 
 function movePlayer(dx, dy) {
@@ -1275,7 +1284,7 @@ function movePlayer(dx, dy) {
             
             // Activar boss como enemigo actual
             currentBoss = { ...boss };
-            updateBossDisplay();
+            updateDungeonDisplay();
         } else if (defeatedBosses.includes(bossName)) {
             consoleLog(`El lugar donde derrotaste a ${bossName}. Solo quedan recuerdos de café amargo.`);
         }
@@ -1486,42 +1495,77 @@ function checkAchievements() {
     });
 }
 
-// Actualizar display del boss
-function updateBossDisplay() {
-    if (currentBoss) {
-        bossNameDisplay.textContent = currentBoss.name;
-        bossHealthDisplay.textContent = Math.floor(currentBoss.health);
-        bossMaxHealthDisplay.textContent = currentBoss.maxHealth;
-        dpsDisplay.textContent = Math.max(1, Math.floor((charisma + coffeeStrength) * 0.5));
-        fightBossButton.style.display = 'inline-block';
-        
-        // Actualizar cooldown del botón de luchar
-        const remaining = Math.max(0, 2000 - (Date.now() - lastFightTime));
-        if (remaining > 0) {
-            const seconds = Math.ceil(remaining / 1000);
-            fightBossButton.textContent = `Luchar (${seconds}s)`;
-            fightBossButton.disabled = true;
-            fightBossButton.classList.add('cooldown');
+// Actualizar interfaz de dungeons
+function updateDungeonDisplay() {
+    // Actualizar estado general
+    if (dungeonStatusDisplay) {
+        dungeonStatusDisplay.textContent = inDungeon ? `En ${getDungeonDisplayName(Object.keys(dungeons).find(key => dungeons[key] === currentDungeon))}` : 'En la superficie';
+    }
+    
+    if (playerPositionDisplay) {
+        if (inDungeon) {
+            playerPositionDisplay.textContent = `(${playerPos.x}, ${playerPos.y})`;
         } else {
-            fightBossButton.textContent = 'Luchar contra Boss';
-            fightBossButton.disabled = false;
-            fightBossButton.classList.remove('cooldown');
+            playerPositionDisplay.textContent = 'Base Principal';
         }
-    } else {
-        bossNameDisplay.textContent = 'Ninguno';
-        bossHealthDisplay.textContent = '0';
-        bossMaxHealthDisplay.textContent = '0';
-        dpsDisplay.textContent = '0';
-        fightBossButton.style.display = 'none';
+    }
+    
+    // Mostrar/ocultar controles de boss
+    if (dungeonControlsDisplay) {
+        if (currentBoss && inDungeon) {
+            dungeonControlsDisplay.style.display = 'block';
+            if (currentBossNameDisplay) currentBossNameDisplay.textContent = currentBoss.name;
+            if (currentBossHealthDisplay) currentBossHealthDisplay.textContent = Math.max(0, currentBoss.health);
+            if (currentBossMaxHealthDisplay) currentBossMaxHealthDisplay.textContent = currentBoss.maxHealth;
+            if (bossHealthBarDisplay) {
+                const healthPercent = (currentBoss.health / currentBoss.maxHealth) * 100;
+                bossHealthBarDisplay.style.width = `${healthPercent}%`;
+            }
+        } else {
+            dungeonControlsDisplay.style.display = 'none';
+        }
+    }
+    
+    // Actualizar botones de dungeons
+    updateDungeonButtons();
+}
+
+// Actualizar botones de dungeons disponibles
+function updateDungeonButtons() {
+    if (!dungeonButtonsContainer) return;
+    
+    dungeonButtonsContainer.innerHTML = '';
+    
+    Object.keys(dungeons).forEach(dungeonKey => {
+        const dungeon = dungeons[dungeonKey];
+        if (dungeon.unlocked) {
+            const button = document.createElement('button');
+            button.className = 'upgrade-btn';
+            button.textContent = `🏰 ${getDungeonDisplayName(dungeonKey)}`;
+            
+            // Verificar si hay boss disponible
+            const boss = bosses.find(b => b.dungeon === dungeonKey && !defeatedBosses.includes(b.name) && totalCoffee >= b.spawnAt);
+            if (boss) {
+                button.textContent += ` ⚔️`;
+                button.style.border = '2px solid #ff6666';
+            }
+            
+            button.onclick = () => enterDungeon(dungeonKey);
+            dungeonButtonsContainer.appendChild(button);
+        }
+    });
+    
+    if (dungeonButtonsContainer.children.length === 0) {
+        dungeonButtonsContainer.innerHTML = '<p style="color: #666;">No hay dungeons disponibles aún. ¡Recolecta más café!</p>';
     }
 }
 
 // NOTA: spawnBoss eliminado - los bosses ahora aparecen en dungeons específicas
 
-// Luchar contra el boss
-function fightBoss() {
-    if (!currentBoss) {
-        consoleLog('No hay boss activo para luchar.');
+// Luchar contra el boss en dungeons
+function fightDungeonBoss() {
+    if (!currentBoss || !inDungeon) {
+        consoleLog('No hay boss activo en esta dungeon para luchar.');
         return;
     }
     
@@ -1532,7 +1576,7 @@ function fightBoss() {
         return;
     }
     
-    const damage = Math.max(1, Math.floor((charisma + coffeeStrength) * 0.5)); // Reducir daño para combates más largos
+    const damage = Math.max(1, Math.floor((charisma + coffeeStrength) * 0.5));
     currentBoss.health -= damage;
     lastFightTime = Date.now();
     
@@ -1548,8 +1592,11 @@ function fightBoss() {
         consoleLog(`🏆 ¡Victoria! Derrotaste a ${currentBoss.name} y ganaste ${currentBoss.reward} café.`);
         playBossDefeatSound();
         currentBoss = null;
+        
+        // Actualizar la historia después de derrotar un boss
+        updateStory();
     }
-    updateBossDisplay();
+    updateDungeonDisplay();
     updateDisplay();
     saveGame();
 }

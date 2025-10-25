@@ -68,17 +68,29 @@
                 <p id="actDescription">Como Ancleto, decides que el café no es solo un break, sino un ritual diario. Comienzas recolectando café básico automáticamente.</p>
             </section>
 
-            <section id="combat" class="game-section">
-                <h2>⚔️ Combate Idle</h2>
-                <div class="boss-info">
-                    <p>Boss Actual: <span id="bossName">Ninguno</span></p>
-                    <p>Vida del Boss: <span id="bossHealth">0</span>/<span id="bossMaxHealth">0</span></p>
-                    <div class="boss-health-bar">
-                        <div class="boss-health-fill" id="bossHealthBar" style="width: 0%;"></div>
+            <section id="dungeons" class="game-section">
+                <h2>🏰 Dungeons & Exploración</h2>
+                <div class="dungeon-status">
+                    <p>🗺️ Estado: <span id="dungeonStatus">En la superficie</span></p>
+                    <p>📍 Posición: <span id="playerPosition">Base Principal</span></p>
+                    <div id="dungeonControls" style="display: none;">
+                        <p>⚔️ Boss Actual: <span id="currentBossName">Ninguno</span></p>
+                        <p>💚 Vida del Boss: <span id="currentBossHealth">0</span>/<span id="currentBossMaxHealth">0</span></p>
+                        <div class="boss-health-bar">
+                            <div class="boss-health-fill" id="bossHealthBar" style="width: 0%;"></div>
+                        </div>
                     </div>
-                    <p>Daño por Segundo: <span id="dps">0</span></p>
                 </div>
-                <button id="fightBoss" class="upgrade-btn" style="display:none;">¡Luchar!</button>
+                <div class="dungeon-list">
+                    <h3>🏰 Dungeons Disponibles:</h3>
+                    <div id="dungeonButtons">
+                        <!-- Los botones de dungeons se generarán dinámicamente -->
+                    </div>
+                </div>
+                <div class="dungeon-info">
+                    <p><strong>💡 Tip:</strong> Explora dungeons para encontrar bosses y avanzar la historia.</p>
+                    <p><strong>🎮 Controles:</strong> Usa comandos como 'up', 'down', 'left', 'right', 'fight' en la consola.</p>
+                </div>
             </section>
 
             <section id="events-achievements" class="game-section">
