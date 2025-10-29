@@ -15,7 +15,7 @@
 
 ## La Inspiración Cafetera: Los Viajes de Ancleto por el Mundo
 
-¡Hola, soy Ancleto, el fundador del Buen Gusto, la Buena Ortografía y la Cultura Cafetera! Antes de crear este juego épico, emprendí una expedición global para entender el alma del café y traer esa magia a tu pantalla. Cada sorbo, cada ritual, cada aroma me inspiró para hacer de Coffee World el mejor juego del mundo. Déjame contarte mis aventuras cafeteras que dieron vida a esta obra maestra:
+¡  Hola, soy Ancleto, el fundador del Buen Gusto, la Buena Ortografía y la Cultura Cafetera! Antes de crear este juego épico, emprendí una expedición global para entender el alma del café y traer esa magia a tu pantalla. Cada sorbo, cada ritual, cada aroma me inspiró para hacer de Coffee World el mejor juego del mundo. Déjame contarte mis aventuras cafeteras que dieron vida a esta obra maestra:
 
 ### Addis Abeba, Etiopía: El Origen Sagrado
 
