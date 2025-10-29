@@ -9,7 +9,7 @@
 
 ## ¡Bienvenidos al Imperio Cafetero Más Épico del Universo!
 
-¿Estás listo para sumergirte en el **juego más adictivo, divertido y cafetero que jamás hayas probado**? Ancleto's Coffee World no es solo un juego incremental: es una experiencia que combina estrategia, humor corporativo, exploración ASCII y una narrativa que te dejará con sed de más. ¡El mejor juego del mundo, sin exagerar! Porque aquí, cada grano de café cuenta, cada boss derrotado es una victoria épica, y cada sorbo es un paso hacia la dominación cafetera global.
+¿Estás  listo para sumergirte en el **juego más adictivo, divertido y cafetero que jamás hayas probado**? Ancleto's Coffee World no es solo un juego incremental: es una experiencia que combina estrategia, humor corporativo, exploración ASCII y una narrativa que te dejará con sed de más. ¡El mejor juego del mundo, sin exagerar! Porque aquí, cada grano de café cuenta, cada boss derrotado es una victoria épica, y cada sorbo es un paso hacia la dominación cafetera global.
 
 **¡Disponible GRATIS online!** Juega directamente en tu navegador, sin descargas, con guardado automático y un mundo que nunca duerme. ¿Por qué esperar? ¡Tu taza te llama!
 
