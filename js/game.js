@@ -45,6 +45,7 @@ let buenFindePoints = 0;
 let fridayLevel = 0;
 let fridayUnlocked = false;
 let activeThursdayEvents = [];
+let postGameCompleted = false; // Nueva variable para rastrear si se completó el post-game
 let thursdayStats = {
     thursdaysSurvived: 0,
     totalThursdayTime: 0,
@@ -59,6 +60,7 @@ const THURSDAY_EVENT_CHECK_INTERVAL = 300; // Segundos entre verificaciones de e
 const THURSDAY_EVENT_PROBABILITY = 0.4; // Probabilidad de evento en cada verificación
 const THURSDAY_POINT_RETENTION_RATIO = 0.3; // Porcentaje de puntos retenidos al reset
 const FRIDAY_DURATION_MS = 7200000; // 2 horas en milisegundos
+const POST_GAME_COMPLETION_FRIDAYL_LEVEL = 5; // Nivel de viernes para completar el post-game
 let fridayEndTime = 0; // Timestamp cuando termina el viernes
 
 // Límites por acto para evitar progreso muy rápido
@@ -595,6 +597,7 @@ const activeEventsListDisplay = document.getElementById('active-events-list');
 const fridayProgressBar = document.getElementById('friday-progress-bar');
 const useBlessingBtn = document.getElementById('use-blessing-btn');
 const emergencyCoffeeBtn = document.getElementById('emergency-coffee-btn');
+const buenFindeCreditsSection = document.getElementById('buen-finde-credits');
 
 // Cargar progreso desde LocalStorage
 function loadGame() {
@@ -640,6 +643,7 @@ function loadGame() {
                 fridaysUnlocked: 0,
                 bestPointsRecord: 0
             };
+            postGameCompleted = data.postGameCompleted || false;
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -729,7 +733,8 @@ function saveGame() {
         fridayUnlocked,
         fridayEndTime,
         activeThursdayEvents,
-        thursdayStats
+        thursdayStats,
+        postGameCompleted
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -1337,6 +1342,11 @@ function updateStory() {
     if (thursdayModeUnlocked) {
         updateThursdayMode();
     }
+    
+    // Mostrar créditos del Buen Finde si el post-game está completado
+    if (postGameCompleted && buenFindeCreditsSection) {
+        buenFindeCreditsSection.style.display = 'block';
+    }
 }
 
 // Funciones auxiliares para el sistema de actos
@@ -1508,12 +1518,22 @@ function toggleThursdayMode() {
         return;
     }
     
+    const creditsSection = document.getElementById('credits');
+    
     if (thursdayPanel && thursdayPanel.style.display === 'block') {
         thursdayPanel.style.display = 'none';
+        // Restaurar créditos normales cuando se desactiva Thursday Mode
+        if (creditsSection && totalCoffee >= 100000 && defeatedBosses.length >= 6) {
+            creditsSection.style.display = 'block';
+        }
         consoleLog('📴 Feliz Jueves Mode desactivado. ¡Disfruta tu descanso!');
     } else {
         if (thursdayPanel) {
             thursdayPanel.style.display = 'block';
+            // Ocultar créditos normales cuando se activa Thursday Mode
+            if (creditsSection) {
+                creditsSection.style.display = 'none';
+            }
             consoleLog('⏰ Feliz Jueves Mode activado. ¡Bienvenido al jueves eterno!');
             if (thursdayTime === 0) {
                 thursdayTime = 32400; // Empezar a las 9 AM (9*3600)
@@ -1656,10 +1676,38 @@ function unlockFriday() {
     
     showNarrative('🎉 ¡BUEN FINDE! Has sobrevivido el jueves. Disfruta tus bonificaciones.');
     
+    // Verificar si se completó el post-game
+    checkPostGameCompletion();
+    
     // Aplicar bendiciones del viernes
     cpsMultiplier *= 3.0; // +200% CPS
     
     saveGame();
+}
+
+// Verificar si se completó el post-game y mostrar créditos del Buen Finde
+function checkPostGameCompletion() {
+    if (!postGameCompleted && fridayLevel >= POST_GAME_COMPLETION_FRIDAYL_LEVEL) {
+        postGameCompleted = true;
+        
+        consoleLog('');
+        consoleLog('═══════════════════════════════════════════════');
+        consoleLog('🏆 ¡HAS COMPLETADO EL POST-GAME!');
+        consoleLog('═══════════════════════════════════════════════');
+        consoleLog(`¡Alcanzaste el nivel ${fridayLevel} de Buen Finde!`);
+        consoleLog('Has dominado el jueves eterno.');
+        consoleLog('Revisa los créditos especiales del Buen Finde.');
+        consoleLog('═══════════════════════════════════════════════');
+        
+        showNarrative('🏆 ¡Completaste el post-game! Has dominado el jueves eterno.');
+        
+        // Mostrar créditos del Buen Finde
+        if (buenFindeCreditsSection) {
+            buenFindeCreditsSection.style.display = 'block';
+        }
+        
+        saveGame();
+    }
 }
 
 // Terminar viernes y volver al jueves
@@ -2126,6 +2174,12 @@ function produceCoffee() {
     // Actualizar Thursday Mode si está activo
     if (thursdayModeUnlocked && thursdayPanel && thursdayPanel.style.display === 'block') {
         updateThursdayMode();
+        
+        // Ocultar créditos normales mientras Thursday Mode está activo
+        const creditsSection = document.getElementById('credits');
+        if (creditsSection) {
+            creditsSection.style.display = 'none';
+        }
     }
     
     // Verificar si el viernes ha terminado (check persistente)
