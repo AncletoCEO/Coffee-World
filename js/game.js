@@ -54,6 +54,13 @@ let thursdayStats = {
 };
 let cpsMultiplier = 1.0; // Multiplicador de CPS por eventos del jueves
 
+// Constantes del Thursday Mode
+const THURSDAY_EVENT_CHECK_INTERVAL = 300; // Segundos entre verificaciones de eventos
+const THURSDAY_EVENT_PROBABILITY = 0.4; // Probabilidad de evento en cada verificación
+const THURSDAY_POINT_RETENTION_RATIO = 0.3; // Porcentaje de puntos retenidos al reset
+const FRIDAY_DURATION_MS = 7200000; // 2 horas en milisegundos
+let fridayEndTime = 0; // Timestamp cuando termina el viernes
+
 // Límites por acto para evitar progreso muy rápido
 let actLimits = {
     1: { maxCoffee: 5000, maxCoffeeStrength: 25 },
@@ -491,7 +498,11 @@ const thursdayEvents = [
         name: "Mail del Jefe",
         type: "curse",
         duration: 900, // 15 minutos
-        effect: () => { lastMailTime = Date.now() + 60000; }, // Cooldown extra
+        effect: () => { 
+            // Extender cooldown existente en lugar de reemplazarlo
+            const currentCooldown = Math.max(0, 120000 - (Date.now() - lastMailTime));
+            lastMailTime = Date.now() - (120000 - currentCooldown - 60000);
+        },
         removeEffect: () => {},
         probability: 0.25,
         message: "📧 Mail urgente del jefe! Cooldowns duplicados"
@@ -620,6 +631,7 @@ function loadGame() {
             buenFindePoints = parseInt(data.buenFindePoints) || 0;
             fridayLevel = parseInt(data.fridayLevel) || 0;
             fridayUnlocked = data.fridayUnlocked || false;
+            fridayEndTime = parseInt(data.fridayEndTime) || 0;
             activeThursdayEvents = data.activeThursdayEvents || [];
             thursdayStats = data.thursdayStats || {
                 thursdaysSurvived: 0,
@@ -715,6 +727,7 @@ function saveGame() {
         buenFindePoints,
         fridayLevel,
         fridayUnlocked,
+        fridayEndTime,
         activeThursdayEvents,
         thursdayStats
     };
@@ -1526,8 +1539,8 @@ function updateThursdayMode() {
     // Actualizar eventos activos
     updateThursdayEvents();
     
-    // Verificar si es hora de generar un nuevo evento (cada ~5 minutos aprox)
-    if (thursdayTime % 300 === 0 && Math.random() < 0.4) {
+    // Verificar si es hora de generar un nuevo evento
+    if (thursdayTime % THURSDAY_EVENT_CHECK_INTERVAL === 0 && Math.random() < THURSDAY_EVENT_PROBABILITY) {
         triggerRandomThursdayEvent();
     }
     
@@ -1631,6 +1644,7 @@ function unlockFriday() {
     fridayUnlocked = true;
     fridayLevel += 1;
     thursdayStats.fridaysUnlocked += 1;
+    fridayEndTime = Date.now() + FRIDAY_DURATION_MS; // Guardar timestamp de fin
     
     consoleLog('');
     consoleLog('═══════════════════════════════════════════════');
@@ -1644,11 +1658,6 @@ function unlockFriday() {
     
     // Aplicar bendiciones del viernes
     cpsMultiplier *= 3.0; // +200% CPS
-    
-    // Programar fin del viernes
-    setTimeout(() => {
-        endFriday();
-    }, 7200000); // 2 horas reales
     
     saveGame();
 }
@@ -1667,9 +1676,10 @@ function endFriday() {
 // Resetear el jueves para un nuevo ciclo
 function resetThursday() {
     thursdayTime = 32400; // Volver a las 9 AM
-    buenFindePoints = Math.floor(buenFindePoints * 0.3); // Mantener 30% de puntos
+    buenFindePoints = Math.floor(buenFindePoints * THURSDAY_POINT_RETENTION_RATIO); // Mantener porcentaje de puntos
     activeThursdayEvents = [];
     cpsMultiplier = 1.0; // Reset multiplicadores
+    fridayEndTime = 0; // Limpiar timestamp de viernes
     
     consoleLog('🔄 Nuevo jueves comenzando. Son las 9:00 AM...');
     consoleLog(`Puntos Buen Finde: ${buenFindePoints}/${getRequiredFridayPoints()}`);
@@ -2116,6 +2126,11 @@ function produceCoffee() {
     // Actualizar Thursday Mode si está activo
     if (thursdayModeUnlocked && thursdayPanel && thursdayPanel.style.display === 'block') {
         updateThursdayMode();
+    }
+    
+    // Verificar si el viernes ha terminado (check persistente)
+    if (fridayUnlocked && fridayEndTime > 0 && Date.now() >= fridayEndTime) {
+        endFriday();
     }
     
     // Los bosses ya no spawean automáticamente - están en dungeons específicas
