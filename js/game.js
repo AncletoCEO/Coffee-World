@@ -1324,15 +1324,21 @@ function updateStory() {
     }    // Mostrar créditos al final
     const creditsSection = document.getElementById('credits');
     if (creditsSection) {
-        if (totalCoffee >= 100000 && defeatedBosses.length >= 6 && !thursdayModeUnlocked) { // No mostrar créditos si Thursday Mode está desbloqueado
-            creditsSection.style.display = 'block';
+        if (totalCoffee >= 100000 && defeatedBosses.length >= 6) {
+            // Desbloquear el logro primero
             if (!achievements.includes('Leyenda Cafetera')) {
                 achievements.push('Leyenda Cafetera');
                 consoleLog('🏆 ¡LOGRO ÉPICO DESBLOQUEADO: Leyenda Cafetera!');
                 updateAchievements();
             }
-            // Desbloquear Thursday Mode después de ver créditos
+            // Verificar si se debe desbloquear Thursday Mode
             checkThursdayModeUnlock();
+            // Mostrar créditos solo si Thursday Mode no está activado
+            if (!thursdayModeUnlocked) {
+                creditsSection.style.display = 'block';
+            } else {
+                creditsSection.style.display = 'none';
+            }
         } else {
             creditsSection.style.display = 'none';
         }
