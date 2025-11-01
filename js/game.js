@@ -1523,7 +1523,7 @@ function toggleThursdayMode() {
     if (thursdayPanel && thursdayPanel.style.display === 'block') {
         thursdayPanel.style.display = 'none';
         // Restaurar créditos normales cuando se desactiva Thursday Mode
-        if (creditsSection && totalCoffee >= 100000 && defeatedBosses.length >= 6) {
+        if (creditsSection && totalCoffee >= 100000 && defeatedBosses.length >= 6 && !thursdayModeUnlocked) {
             creditsSection.style.display = 'block';
         }
         consoleLog('📴 Feliz Jueves Mode desactivado. ¡Disfruta tu descanso!');
