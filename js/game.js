@@ -38,6 +38,22 @@ let lastFightTime = 0;
 let donateEndTime = 0; // Tiempo cuando termina el efecto de donar
 let lastDonateTime = 0; // Última vez que se donó (para cooldown)
 
+// Variables del Feliz Jueves Mode (Post-Game)
+let thursdayModeUnlocked = false;
+let thursdayTime = 0; // Segundos desde las 9 AM del jueves (0-86400)
+let buenFindePoints = 0;
+let fridayLevel = 0;
+let fridayUnlocked = false;
+let activeThursdayEvents = [];
+let thursdayStats = {
+    thursdaysSurvived: 0,
+    totalThursdayTime: 0,
+    eventsEncountered: {},
+    fridaysUnlocked: 0,
+    bestPointsRecord: 0
+};
+let cpsMultiplier = 1.0; // Multiplicador de CPS por eventos del jueves
+
 // Límites por acto para evitar progreso muy rápido
 let actLimits = {
     1: { maxCoffee: 5000, maxCoffeeStrength: 25 },
@@ -460,6 +476,55 @@ let dungeons = {
     }
 };
 
+// Eventos del Feliz Jueves Mode
+const thursdayEvents = [
+    {
+        name: "Reunión Improvisada",
+        type: "curse",
+        duration: 1800, // 30 minutos en segundos del juego
+        effect: () => { cpsMultiplier *= 0.5; },
+        removeEffect: () => { cpsMultiplier /= 0.5; },
+        probability: 0.3,
+        message: "⚠️ Reunión improvisada! -50% producción por 30 min"
+    },
+    {
+        name: "Mail del Jefe",
+        type: "curse",
+        duration: 900, // 15 minutos
+        effect: () => { lastMailTime = Date.now() + 60000; }, // Cooldown extra
+        removeEffect: () => {},
+        probability: 0.25,
+        message: "📧 Mail urgente del jefe! Cooldowns duplicados"
+    },
+    {
+        name: "Café Agotado",
+        type: "curse",
+        duration: 600, // 10 minutos
+        effect: () => { cpsMultiplier *= 0.3; },
+        removeEffect: () => { cpsMultiplier /= 0.3; },
+        probability: 0.2,
+        message: "☕❌ ¡Máquinas rotas! -70% producción por 10 min"
+    },
+    {
+        name: "Hora Feliz",
+        type: "blessing",
+        duration: 600, // 10 minutos
+        effect: () => { cpsMultiplier *= 2.0; },
+        removeEffect: () => { cpsMultiplier /= 2.0; },
+        probability: 0.15,
+        message: "🎉 ¡Hora Feliz! +100% producción por 10 min"
+    },
+    {
+        name: "Home Office",
+        type: "blessing",
+        duration: 1200, // 20 minutos
+        effect: () => { cpsMultiplier *= 1.5; },
+        removeEffect: () => { cpsMultiplier /= 1.5; },
+        probability: 0.1,
+        message: "🏠 ¡Home Office! +50% producción por 20 min"
+    }
+];
+
 // Elementos del DOM
 const coffeeDisplay = document.getElementById('coffee');
 const cpsDisplay = document.getElementById('cps');
@@ -511,6 +576,15 @@ const upgradeButtons = {
 const achievementList = document.getElementById('achievementList');
 const narrativeTextDisplay = document.getElementById('narrativeText');
 
+// Elementos del DOM para Thursday Mode
+const thursdayPanel = document.getElementById('thursday-panel');
+const thursdayClockDisplay = document.getElementById('thursday-clock');
+const fridayPointsDisplay = document.getElementById('friday-points');
+const activeEventsListDisplay = document.getElementById('active-events-list');
+const fridayProgressBar = document.getElementById('friday-progress-bar');
+const useBlessingBtn = document.getElementById('use-blessing-btn');
+const emergencyCoffeeBtn = document.getElementById('emergency-coffee-btn');
+
 // Cargar progreso desde LocalStorage
 function loadGame() {
     const saved = localStorage.getItem('ancletoCoffeeWorld');
@@ -540,6 +614,20 @@ function loadGame() {
             donateEndTime = parseInt(data.donateEndTime) || 0;
             lastDonateTime = parseInt(data.lastDonateTime) || 0;
             currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
+            // Thursday Mode data
+            thursdayModeUnlocked = data.thursdayModeUnlocked || false;
+            thursdayTime = parseInt(data.thursdayTime) || 0;
+            buenFindePoints = parseInt(data.buenFindePoints) || 0;
+            fridayLevel = parseInt(data.fridayLevel) || 0;
+            fridayUnlocked = data.fridayUnlocked || false;
+            activeThursdayEvents = data.activeThursdayEvents || [];
+            thursdayStats = data.thursdayStats || {
+                thursdaysSurvived: 0,
+                totalThursdayTime: 0,
+                eventsEncountered: {},
+                fridaysUnlocked: 0,
+                bestPointsRecord: 0
+            };
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -620,7 +708,15 @@ function saveGame() {
         lastFightTime,
         donateEndTime,
         lastDonateTime,
-        currentDialogueIndex
+        currentDialogueIndex,
+        // Thursday Mode data
+        thursdayModeUnlocked,
+        thursdayTime,
+        buenFindePoints,
+        fridayLevel,
+        fridayUnlocked,
+        activeThursdayEvents,
+        thursdayStats
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -923,6 +1019,13 @@ function handleHelpCommand() {
     consoleLog('donate, mail, work, list [upgrades/achievements], boss');
     consoleLog('savecsv, loadcsv, fixnan - Utilidades');
     
+    if (thursdayModeUnlocked) {
+        consoleLog('');
+        consoleLog('=== POST-GAME ===');
+        consoleLog('jueves/thursday - Activar/desactivar Feliz Jueves Mode');
+        consoleLog('⏰ Sobrevive el jueves eterno para alcanzar el Buen Finde!');
+    }
+    
     if (devModeEnabled) {
         consoleLog('');
         consoleLog('🔧 === MODO DESARROLLO ACTIVADO ===');
@@ -1000,6 +1103,11 @@ function handleFixNaNCommand() {
     saveGame();
 }
 
+// Comando para activar/desactivar Thursday Mode
+function handleJuevesCommand() {
+    toggleThursdayMode();
+}
+
 // Comandos disponibles
 const commands = {
     buy: handleBuyCommand,
@@ -1018,6 +1126,8 @@ const commands = {
     savecsv: handleSaveCSVCommand,
     loadcsv: handleLoadCSVCommand,
     help: handleHelpCommand,
+    jueves: handleJuevesCommand,
+    thursday: handleJuevesCommand,
     // Cheats
     addcoffee: handleAddCoffeeCommand,
     godmode: handleGodModeCommand,
@@ -1203,9 +1313,16 @@ function updateStory() {
                 consoleLog('🏆 ¡LOGRO ÉPICO DESBLOQUEADO: Leyenda Cafetera!');
                 updateAchievements();
             }
+            // Desbloquear Thursday Mode después de ver créditos
+            checkThursdayModeUnlock();
         } else {
             creditsSection.style.display = 'none';
         }
+    }
+    
+    // Actualizar Thursday Mode si está desbloqueado
+    if (thursdayModeUnlocked) {
+        updateThursdayMode();
     }
 }
 
@@ -1342,6 +1459,284 @@ function showNarrative(message) {
         }, 100);
     }
 }
+
+// ═══════════════════════════════════════════════════════════
+// FELIZ JUEVES MODE - POST-GAME CONTENT
+// ═══════════════════════════════════════════════════════════
+
+// Verificar si se puede desbloquear el Thursday Mode
+function checkThursdayModeUnlock() {
+    if (!thursdayModeUnlocked && 
+        totalCoffee >= 100000 && 
+        defeatedBosses.length >= 6 && 
+        achievements.includes('Leyenda Cafetera')) {
+        
+        thursdayModeUnlocked = true;
+        consoleLog('');
+        consoleLog('═══════════════════════════════════════════════');
+        consoleLog('🎉 ¡FELIZ JUEVES MODE DESBLOQUEADO!');
+        consoleLog('═══════════════════════════════════════════════');
+        consoleLog('Has completado la historia... pero el jueves nunca termina.');
+        consoleLog('¿Estás listo para el Feliz Jueves Mode?');
+        consoleLog('');
+        consoleLog('Cada día es jueves y solo los más fuertes llegan al finde.');
+        consoleLog('Usa el comando "jueves" para activar el modo.');
+        consoleLog('═══════════════════════════════════════════════');
+        
+        showNarrative('🎉 ¡FELIZ JUEVES MODE desbloqueado! El jueves eterno te espera. Usa "jueves" en la consola.');
+        saveGame();
+    }
+}
+
+// Activar/Desactivar Thursday Mode
+function toggleThursdayMode() {
+    if (!thursdayModeUnlocked) {
+        consoleLog('❌ Debes completar la historia primero para desbloquear el Feliz Jueves Mode.');
+        return;
+    }
+    
+    if (thursdayPanel && thursdayPanel.style.display === 'block') {
+        thursdayPanel.style.display = 'none';
+        consoleLog('📴 Feliz Jueves Mode desactivado. ¡Disfruta tu descanso!');
+    } else {
+        if (thursdayPanel) {
+            thursdayPanel.style.display = 'block';
+            consoleLog('⏰ Feliz Jueves Mode activado. ¡Bienvenido al jueves eterno!');
+            if (thursdayTime === 0) {
+                thursdayTime = 32400; // Empezar a las 9 AM (9*3600)
+                consoleLog('Son las 9:00 AM del jueves. Comienza tu jornada...');
+            }
+        }
+    }
+}
+
+// Actualizar el Thursday Mode cada tick
+function updateThursdayMode() {
+    if (!thursdayModeUnlocked || !thursdayPanel || thursdayPanel.style.display !== 'block') {
+        return;
+    }
+    
+    // Incrementar tiempo (1 segundo real = 1 minuto de juego)
+    thursdayTime += 1;
+    thursdayStats.totalThursdayTime += 1;
+    
+    // Actualizar reloj visual
+    updateThursdayClock();
+    
+    // Actualizar eventos activos
+    updateThursdayEvents();
+    
+    // Verificar si es hora de generar un nuevo evento (cada ~5 minutos aprox)
+    if (thursdayTime % 300 === 0 && Math.random() < 0.4) {
+        triggerRandomThursdayEvent();
+    }
+    
+    // Verificar si completamos el día
+    if (thursdayTime >= 86400) { // 24 horas = 86400 segundos
+        completeThursday();
+    }
+    
+    // Actualizar UI
+    updateThursdayUI();
+}
+
+// Actualizar el reloj del jueves
+function updateThursdayClock() {
+    if (!thursdayClockDisplay) return;
+    
+    const hours = Math.floor(thursdayTime / 3600);
+    const minutes = Math.floor((thursdayTime % 3600) / 60);
+    const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    thursdayClockDisplay.textContent = timeStr;
+}
+
+// Actualizar eventos del jueves
+function updateThursdayEvents() {
+    // Decrementar duración de eventos activos
+    activeThursdayEvents = activeThursdayEvents.filter(event => {
+        event.duration -= 1;
+        if (event.duration <= 0) {
+            // Remover efecto del evento
+            if (event.removeEffect) {
+                event.removeEffect();
+            }
+            consoleLog(`✅ Evento terminado: ${event.name}`);
+            return false;
+        }
+        return true;
+    });
+}
+
+// Disparar evento aleatorio del jueves
+function triggerRandomThursdayEvent() {
+    // Seleccionar evento basado en probabilidad
+    const rand = Math.random();
+    let cumulativeProbability = 0;
+    
+    for (const eventTemplate of thursdayEvents) {
+        cumulativeProbability += eventTemplate.probability;
+        if (rand <= cumulativeProbability) {
+            // Crear instancia del evento
+            const event = {
+                name: eventTemplate.name,
+                type: eventTemplate.type,
+                duration: eventTemplate.duration,
+                effect: eventTemplate.effect,
+                removeEffect: eventTemplate.removeEffect,
+                message: eventTemplate.message
+            };
+            
+            // Aplicar efecto
+            event.effect();
+            activeThursdayEvents.push(event);
+            
+            // Registrar estadística
+            thursdayStats.eventsEncountered[event.name] = 
+                (thursdayStats.eventsEncountered[event.name] || 0) + 1;
+            
+            // Notificar al jugador
+            consoleLog(event.message);
+            showNarrative(event.message);
+            
+            // Dar puntos según tipo de evento
+            if (event.type === 'curse') {
+                buenFindePoints += 50; // Sobrevivir maldiciones da puntos
+            }
+            
+            break;
+        }
+    }
+}
+
+// Completar un jueves
+function completeThursday() {
+    thursdayStats.thursdaysSurvived += 1;
+    
+    // Verificar si podemos desbloquear el viernes
+    if (buenFindePoints >= getRequiredFridayPoints()) {
+        unlockFriday();
+    } else {
+        resetThursday();
+    }
+}
+
+// Obtener puntos requeridos para el viernes
+function getRequiredFridayPoints() {
+    const basePoints = 1000;
+    return basePoints * Math.pow(2, fridayLevel); // Escala exponencial
+}
+
+// Desbloquear viernes (Buen Finde)
+function unlockFriday() {
+    fridayUnlocked = true;
+    fridayLevel += 1;
+    thursdayStats.fridaysUnlocked += 1;
+    
+    consoleLog('');
+    consoleLog('═══════════════════════════════════════════════');
+    consoleLog('🎉 ¡BUEN FINDE DESBLOQUEADO!');
+    consoleLog('═══════════════════════════════════════════════');
+    consoleLog(`Has alcanzado el nivel ${fridayLevel} de Buen Finde!`);
+    consoleLog('Disfruta de 2 horas de bonificaciones especiales.');
+    consoleLog('═══════════════════════════════════════════════');
+    
+    showNarrative('🎉 ¡BUEN FINDE! Has sobrevivido el jueves. Disfruta tus bonificaciones.');
+    
+    // Aplicar bendiciones del viernes
+    cpsMultiplier *= 3.0; // +200% CPS
+    
+    // Programar fin del viernes
+    setTimeout(() => {
+        endFriday();
+    }, 7200000); // 2 horas reales
+    
+    saveGame();
+}
+
+// Terminar viernes y volver al jueves
+function endFriday() {
+    fridayUnlocked = false;
+    cpsMultiplier /= 3.0; // Remover bonus
+    
+    consoleLog('⏰ El Buen Finde ha terminado. De vuelta al jueves...');
+    showNarrative('⏰ El viernes terminó. Es jueves otra vez...');
+    
+    resetThursday();
+}
+
+// Resetear el jueves para un nuevo ciclo
+function resetThursday() {
+    thursdayTime = 32400; // Volver a las 9 AM
+    buenFindePoints = Math.floor(buenFindePoints * 0.3); // Mantener 30% de puntos
+    activeThursdayEvents = [];
+    cpsMultiplier = 1.0; // Reset multiplicadores
+    
+    consoleLog('🔄 Nuevo jueves comenzando. Son las 9:00 AM...');
+    consoleLog(`Puntos Buen Finde: ${buenFindePoints}/${getRequiredFridayPoints()}`);
+    
+    saveGame();
+}
+
+// Actualizar UI del Thursday Mode
+function updateThursdayUI() {
+    // Actualizar puntos
+    if (fridayPointsDisplay) {
+        fridayPointsDisplay.textContent = `${buenFindePoints}/${getRequiredFridayPoints()}`;
+    }
+    
+    // Actualizar barra de progreso
+    if (fridayProgressBar) {
+        const progress = Math.min((buenFindePoints / getRequiredFridayPoints()) * 100, 100);
+        fridayProgressBar.style.width = `${progress}%`;
+    }
+    
+    // Actualizar lista de eventos activos
+    if (activeEventsListDisplay) {
+        if (activeThursdayEvents.length === 0) {
+            activeEventsListDisplay.innerHTML = '<p style="color: #666;">Sin eventos activos</p>';
+        } else {
+            activeEventsListDisplay.innerHTML = activeThursdayEvents.map(event => {
+                const minutes = Math.floor(event.duration / 60);
+                const seconds = event.duration % 60;
+                const icon = event.type === 'blessing' ? '✨' : '⚠️';
+                return `<div class="thursday-event ${event.type}">
+                    ${icon} ${event.name} (${minutes}:${seconds.toString().padStart(2, '0')})
+                </div>`;
+            }).join('');
+        }
+    }
+    
+    // Actualizar estadísticas del jueves
+    const thursdaysSurvivedDisplay = document.getElementById('thursdays-survived');
+    const fridaysUnlockedDisplay = document.getElementById('fridays-unlocked');
+    const bestPointsDisplay = document.getElementById('best-points');
+    
+    if (thursdaysSurvivedDisplay) {
+        thursdaysSurvivedDisplay.textContent = thursdayStats.thursdaysSurvived;
+    }
+    if (fridaysUnlockedDisplay) {
+        fridaysUnlockedDisplay.textContent = thursdayStats.fridaysUnlocked;
+    }
+    if (bestPointsDisplay) {
+        bestPointsDisplay.textContent = thursdayStats.bestPointsRecord;
+    }
+}
+
+// Ganar puntos del Buen Finde
+function earnBuenFindePoints(action, amount) {
+    if (!thursdayModeUnlocked) return;
+    
+    buenFindePoints += amount;
+    if (buenFindePoints > thursdayStats.bestPointsRecord) {
+        thursdayStats.bestPointsRecord = buenFindePoints;
+    }
+    
+    consoleLog(`+${amount} puntos Buen Finde! (${buenFindePoints}/${getRequiredFridayPoints()})`);
+}
+
+// ═══════════════════════════════════════════════════════════
+// FIN FELIZ JUEVES MODE
+// ═══════════════════════════════════════════════════════════
 
 // Actualizar botón de mail
 function updateMailButton() {
@@ -1709,9 +2104,20 @@ function produceCoffee() {
     if (Date.now() < donateEndTime) {
         effectiveCPS *= 1.1; // +10% bonus temporal
     }
+    
+    // Aplicar multiplicador del Thursday Mode si está activo
+    if (thursdayModeUnlocked && cpsMultiplier !== 1.0) {
+        effectiveCPS *= cpsMultiplier;
+    }
 
     coffee += effectiveCPS;
     totalCoffee += effectiveCPS;
+    
+    // Actualizar Thursday Mode si está activo
+    if (thursdayModeUnlocked && thursdayPanel && thursdayPanel.style.display === 'block') {
+        updateThursdayMode();
+    }
+    
     // Los bosses ya no spawean automáticamente - están en dungeons específicas
     updateDisplay();
     checkAchievements();
@@ -2021,6 +2427,12 @@ function fightDungeonBoss() {
         showNarrative(`¡Victoria! Derrotaste a ${currentBoss.name}. ¡Tu imperio cafetero crece!`);
         consoleLog(`🏆 ¡Victoria! Derrotaste a ${currentBoss.name} y ganaste ${currentBoss.reward} café.`);
         playBossDefeatSound();
+        
+        // Dar puntos del Buen Finde si Thursday Mode está activo
+        if (thursdayModeUnlocked) {
+            earnBuenFindePoints('derrotar_boss', 100);
+        }
+        
         currentBoss = null;
         
         // Actualizar la historia después de derrotar un boss
