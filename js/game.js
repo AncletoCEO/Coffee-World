@@ -1324,7 +1324,7 @@ function updateStory() {
     }    // Mostrar créditos al final
     const creditsSection = document.getElementById('credits');
     if (creditsSection) {
-        if (totalCoffee >= 100000 && defeatedBosses.length >= 6) { // Requiere derrotar todos los bosses
+        if (totalCoffee >= 100000 && defeatedBosses.length >= 6 && !thursdayModeUnlocked) { // No mostrar créditos si Thursday Mode está desbloqueado
             creditsSection.style.display = 'block';
             if (!achievements.includes('Leyenda Cafetera')) {
                 achievements.push('Leyenda Cafetera');
