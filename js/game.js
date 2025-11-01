@@ -1333,8 +1333,8 @@ function updateStory() {
             }
             // Verificar si se debe desbloquear Thursday Mode
             checkThursdayModeUnlock();
-            // Mostrar créditos solo si Thursday Mode no está activado
-            if (!thursdayModeUnlocked) {
+            // Mostrar créditos solo si Thursday Mode no está activo (no solo desbloqueado)
+            if (!thursdayPanel || thursdayPanel.style.display !== 'block') {
                 creditsSection.style.display = 'block';
             } else {
                 creditsSection.style.display = 'none';
@@ -1513,6 +1513,7 @@ function checkThursdayModeUnlock() {
         consoleLog('═══════════════════════════════════════════════');
         
         showNarrative('🎉 ¡FELIZ JUEVES MODE desbloqueado! El jueves eterno te espera. Usa "jueves" en la consola.');
+        
         saveGame();
     }
 }
@@ -1529,7 +1530,7 @@ function toggleThursdayMode() {
     if (thursdayPanel && thursdayPanel.style.display === 'block') {
         thursdayPanel.style.display = 'none';
         // Restaurar créditos normales cuando se desactiva Thursday Mode
-        if (creditsSection && totalCoffee >= 100000 && defeatedBosses.length >= 6 && !thursdayModeUnlocked) {
+        if (creditsSection && totalCoffee >= 100000 && defeatedBosses.length >= 6) {
             creditsSection.style.display = 'block';
         }
         consoleLog('📴 Feliz Jueves Mode desactivado. ¡Disfruta tu descanso!');
