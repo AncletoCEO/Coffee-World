@@ -1,3 +1,5 @@
+import { getUpgradeCost, calculateEffectiveCPS, getCurrentAct as getEngineCurrentAct, initialUpgrades, actLimits as engineActLimits } from './game-engine.js';
+
 // Ancleto's Coffee World - Lógica del Juego
 
 // Variables del juego
@@ -6,18 +8,7 @@ let totalCoffee = 0;
 let cps = 0; // Café por segundo
 let charisma = 0;
 let coffeeStrength = 0;
-let upgrades = {
-    upgrade1: { name: "Máquina Verde", owned: 0, cost: 10, cpsIncrease: 1, charismaIncrease: 1 },
-    upgrade2: { name: "Charlas Motivacionales", owned: 0, cost: 100, cpsIncrease: 5, charismaIncrease: 2 },
-    upgrade3: { name: "Tamper de Acero", owned: 0, cost: 500, cpsIncrease: 20, coffeeStrengthIncrease: 5 },
-    upgrade4: { name: "Café Colombiano", owned: 0, cost: 200, charismaIncrease: 2 },
-    upgrade5: { name: "Perros Guardianes", owned: 0, cost: 1000, coffeeStrengthIncrease: 10 },
-    upgrade6: { name: "Lista de Vergüenza", owned: 0, cost: 5000, cpsIncrease: 50 },
-    upgrade7: { name: "Viernes de Cupping", owned: 0, cost: 10000, cpsIncrease: 100 },
-    upgrade8: { name: "Sifón Japonés", owned: 0, cost: 20000, charismaIncrease: 5 },
-    upgrade9: { name: "Filtros SQL", owned: 0, cost: 50000, coffeeStrengthIncrease: 20 },
-    upgrade10: { name: "Comunicaciones Corporativas", owned: 0, cost: 100000, cpsIncrease: 200 }
-};
+let upgrades = JSON.parse(JSON.stringify(initialUpgrades));
 let achievements = [];
 let consoleVisible = false;
 let currentBoss = null;
@@ -64,14 +55,7 @@ const POST_GAME_COMPLETION_FRIDAYL_LEVEL = 5; // Nivel de viernes para completar
 let fridayEndTime = 0; // Timestamp cuando termina el viernes
 
 // Límites por acto para evitar progreso muy rápido
-let actLimits = {
-    1: { maxCoffee: 5000, maxCoffeeStrength: 25 },
-    2: { maxCoffee: 15000, maxCoffeeStrength: 50 },
-    3: { maxCoffee: 30000, maxCoffeeStrength: 75 },
-    4: { maxCoffee: 50000, maxCoffeeStrength: 100 },
-    5: { maxCoffee: 75000, maxCoffeeStrength: 125 },
-    6: { maxCoffee: 100000, maxCoffeeStrength: 150 }
-};
+let actLimits = engineActLimits;
 
 // Variables de desarrollo (ocultas)
 let devModeEnabled = false;
@@ -1362,13 +1346,7 @@ function extractActNumber(actString) {
 }
 
 function getCurrentAct() {
-    // Determinar acto basado en progreso real (totalCoffee) en lugar de diálogos
-    if (totalCoffee >= 50000) return 6; // Acto 6
-    if (totalCoffee >= 35000) return 5; // Acto 5
-    if (totalCoffee >= 20000) return 4; // Acto 4
-    if (totalCoffee >= 10000) return 3; // Acto 3
-    if (totalCoffee >= 5000) return 2;  // Acto 2
-    return 1; // Acto 1 - café < 5000
+    return getEngineCurrentAct(totalCoffee);
 }
 
 function getActProgress() {
@@ -2164,16 +2142,12 @@ function produceCoffee() {
     // Validar valores antes de calcular
     validateGameValues();
 
-    // FIXED: Calcular CPS efectivo considerando bonus temporal de donate
-    let effectiveCPS = cps;
-    if (Date.now() < donateEndTime) {
-        effectiveCPS *= 1.1; // +10% bonus temporal
-    }
-    
-    // Aplicar multiplicador del Thursday Mode si está activo
-    if (thursdayModeUnlocked && cpsMultiplier !== 1.0) {
-        effectiveCPS *= cpsMultiplier;
-    }
+    const effectiveCPS = calculateEffectiveCPS({
+        cps,
+        donateEndTime,
+        thursdayModeUnlocked,
+        cpsMultiplier
+    });
 
     coffee += effectiveCPS;
     totalCoffee += effectiveCPS;
@@ -2209,7 +2183,7 @@ function buyUpgrade(upgradeKey) {
         return;
     }
     
-    const cost = upgrade.cost * Math.pow(1.15, upgrade.owned);
+    const cost = getUpgradeCost(upgrade);
     
     // Verificar límites por acto
     const currentAct = getCurrentAct();
