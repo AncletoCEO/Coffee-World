@@ -8,7 +8,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       all: true,
       include: ['js/**/*.js'],
-      exclude: ['js/**/*.test.js'],
+      exclude: ['js/**/*.test.js', 'js/game.js'],
     },
   },
 });

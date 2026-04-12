@@ -1957,27 +1957,19 @@ function displayMap() {
 }
 
 function enterDungeon(name) {
-    console.log('enterDungeon called with:', name); // Debug
-    console.log('Dungeons available:', Object.keys(dungeons)); // Debug
-    console.log('Dungeon unlocked status:', dungeons[name]?.unlocked); // Debug
-
     if (!dungeons[name] || !dungeons[name].unlocked) {
-        console.log('Dungeon not available or not unlocked'); // Debug
         showNarrative('Mazmorra no disponible.');
         return;
     }
 
-    console.log('Entering dungeon:', name); // Debug
     inDungeon = true;
     currentDungeon = dungeons[name];
     playerPos = { x: 2, y: 3 }; // Posición inicial
 
     // FIXED: Ocultar sección de upgrades mientras esté en dungeon
     const upgradesSection = document.getElementById('upgrades');
-    console.log('Hiding upgrades section:', !!upgradesSection); // Debug
     if (upgradesSection) {
         upgradesSection.style.display = 'none';
-        console.log('Upgrades section hidden'); // Debug
     }
     
     // FIXED: Verificar si hay un boss disponible en esta dungeon y spawnearlo
@@ -1997,12 +1989,8 @@ function enterDungeon(name) {
     
     // FIXED: Mostrar interfaz visual de dungeon con verificaciones
     const visualContainer = document.getElementById('dungeonVisualContainer');
-    console.log('Visual container found:', !!visualContainer); // Debug
     if (visualContainer) {
         visualContainer.style.display = 'block';
-        console.log('Visual container should now be visible'); // Debug
-    } else {
-        console.error('dungeonVisualContainer not found!');
     }
     
     showNarrative(`Entrando a ${getDungeonDisplayName(name)}...`);
@@ -2011,7 +1999,6 @@ function enterDungeon(name) {
 }
 
 function exitDungeon() {
-    console.log('exitDungeon called'); // Debug
     inDungeon = false;
     if (currentDungeon) {
         currentDungeon.currentMonster = null; // Limpiar monstruo actual
@@ -2027,7 +2014,6 @@ function exitDungeon() {
     
     // FIXED: Ocultar interfaz visual de dungeon con verificación
     const visualContainer = document.getElementById('dungeonVisualContainer');
-    console.log('Hiding visual container:', !!visualContainer); // Debug
     if (visualContainer) {
         visualContainer.style.display = 'none';
     }
@@ -2398,20 +2384,15 @@ function updateDungeonDisplay() {
 
 // Actualizar botones de dungeons disponibles
 function updateDungeonButtons() {
-    console.log('updateDungeonButtons called'); // Debug
     if (!dungeonButtonsContainer) {
-        console.log('dungeonButtonsContainer not found'); // Debug
         return;
     }
 
     dungeonButtonsContainer.innerHTML = '';
-    console.log('Available dungeons:', Object.keys(dungeons)); // Debug
 
     Object.keys(dungeons).forEach(dungeonKey => {
         const dungeon = dungeons[dungeonKey];
-        console.log(`Checking dungeon ${dungeonKey}: unlocked = ${dungeon.unlocked}`); // Debug
         if (dungeon.unlocked) {
-            console.log(`Creating button for ${dungeonKey}`); // Debug
             const button = document.createElement('button');
             button.className = 'upgrade-btn';
             button.textContent = `🏰 ${getDungeonDisplayName(dungeonKey)}`;
@@ -2432,12 +2413,10 @@ function updateDungeonButtons() {
 
             // FIXED: Asegurar que el event listener funcione correctamente
             button.addEventListener('click', function() {
-                console.log(`Button clicked for dungeon: ${dungeonKey}`); // Debug
                 enterDungeon(dungeonKey);
             });
 
             dungeonButtonsContainer.appendChild(button);
-            console.log(`Button added for ${dungeonKey}`); // Debug
         }
     });
     
@@ -2496,24 +2475,19 @@ function fightDungeonBoss() {
 
 // Eventos especiales
 function donate() {
-    console.log('Donate called. Current time:', Date.now(), 'Last donate time:', lastDonateTime);
-    console.log('Time difference:', Date.now() - lastDonateTime, 'Required:', 300000);
 
     // FIXED: Cooldown de 5 minutos entre donaciones
     if (Date.now() - lastDonateTime < 300000) { // 5 minutos = 300,000 ms
         const remaining = Math.ceil((300000 - (Date.now() - lastDonateTime)) / 1000);
-        console.log('Cooldown active, remaining seconds:', remaining);
         showNarrative(`Espera ${remaining} segundos antes de donar de nuevo.`);
         return;
     }
 
-    console.log('Cooldown passed, checking coffee:', coffee);
     if (coffee >= 100) {
         coffee -= 100;
         // FIXED: Bonus temporal de 10% por 1 minuto (60,000 ms)
         donateEndTime = Date.now() + 60000; // 1 minuto
         lastDonateTime = Date.now();
-        console.log('Donate successful. New donateEndTime:', donateEndTime, 'New lastDonateTime:', lastDonateTime);
         showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 1 minuto.");
         playEventSound();
         updateDisplay();
@@ -2521,7 +2495,6 @@ function donate() {
         updateDonateEffectIndicator(); // Mostrar el indicador del efecto
         saveGame();
     } else {
-        console.log('Not enough coffee for donate');
     }
 }
 
@@ -2655,16 +2628,13 @@ function toggleSound() {
 
 // Visual Dungeon Display Functions
 function updateVisualDungeonDisplay() {
-    console.log('updateVisualDungeonDisplay called, inDungeon:', inDungeon); // Debug
     if (!inDungeon || !currentDungeon) {
-        console.log('Not in dungeon or no current dungeon'); // Debug
         return;
     }
     
     const mapDisplay = document.getElementById('dungeonMap');
-    console.log('Map display element found:', !!mapDisplay); // Debug
     if (!mapDisplay) {
-        console.error('dungeonMap element not found!');
+        console.error('Dungeon map element not found!');
         return;
     }
     
@@ -2708,7 +2678,6 @@ function updateVisualDungeonDisplay() {
     }
     
     mapDisplay.innerHTML = mapHTML;
-    console.log('Map HTML updated:', mapHTML.substring(0, 100)); // Debug
     
     // Actualizar botón de fight
     const fightButton = document.getElementById('fightBtn');
@@ -2719,7 +2688,6 @@ function updateVisualDungeonDisplay() {
 }
 
 function setupVisualDungeonControls() {
-    console.log('Setting up visual dungeon controls...'); // Debug
     
     const moveUpButton = document.getElementById('moveUpBtn');
     const moveDownButton = document.getElementById('moveDownBtn');
@@ -2728,42 +2696,29 @@ function setupVisualDungeonControls() {
     const fightButton = document.getElementById('fightBtn');
     const exitButton = document.getElementById('exitDungeonBtn');
     
-    console.log('Buttons found:', {
-        up: !!moveUpButton,
-        down: !!moveDownButton,
-        left: !!moveLeftButton,
-        right: !!moveRightButton,
-        fight: !!fightButton,
-        exit: !!exitButton
-    }); // Debug
     
     if (moveUpButton) {
         moveUpButton.addEventListener('click', () => {
-            console.log('Move up clicked'); // Debug
             movePlayerVisual(0, -1);
         });
     }
     if (moveDownButton) {
         moveDownButton.addEventListener('click', () => {
-            console.log('Move down clicked'); // Debug
             movePlayerVisual(0, 1);
         });
     }
     if (moveLeftButton) {
         moveLeftButton.addEventListener('click', () => {
-            console.log('Move left clicked'); // Debug
             movePlayerVisual(-1, 0);
         });
     }
     if (moveRightButton) {
         moveRightButton.addEventListener('click', () => {
-            console.log('Move right clicked'); // Debug
             movePlayerVisual(1, 0);
         });
     }
     if (fightButton) {
         fightButton.addEventListener('click', () => {
-            console.log('Fight clicked'); // Debug
             if (currentBoss && inDungeon) {
                 fightDungeonBoss();
             } else if (currentDungeon && currentDungeon.currentMonster) {
@@ -2773,7 +2728,6 @@ function setupVisualDungeonControls() {
     }
     if (exitButton) {
         exitButton.addEventListener('click', () => {
-            console.log('Exit clicked'); // Debug
             exitDungeon();
         });
     }
