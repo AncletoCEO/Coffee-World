@@ -130,6 +130,14 @@ export function calculateEffectiveCPS(state, now = Date.now()) {
     return effective;
 }
 
+export function produceCoffee(state, now = Date.now()) {
+    validateGameValues(state);
+    const effectiveCPS = calculateEffectiveCPS(state, now);
+    state.coffee += effectiveCPS;
+    state.totalCoffee += effectiveCPS;
+    return effectiveCPS;
+}
+
 export function serializeState(state) {
     return JSON.stringify(state);
 }

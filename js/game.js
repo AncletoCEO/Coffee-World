@@ -1,4 +1,4 @@
-import { createInitialState, getUpgradeCost, calculateEffectiveCPS, getCurrentAct as getEngineCurrentAct, initialUpgrades, actLimits as engineActLimits, validateGameValues as validateEngineValues, buyUpgrade as engineBuyUpgrade, deserializeState } from './game-engine.js';
+import { createInitialState, getUpgradeCost, produceCoffee as engineProduceCoffee, getCurrentAct as getEngineCurrentAct, initialUpgrades, actLimits as engineActLimits, validateGameValues as validateEngineValues, buyUpgrade as engineBuyUpgrade, deserializeState } from './game-engine.js';
 
 // Ancleto's Coffee World - Lógica del Juego
 
@@ -97,6 +97,12 @@ function applyEngineState(state) {
     currentDialogueIndex = state.currentDialogueIndex;
     thursdayModeUnlocked = state.thursdayModeUnlocked;
     cpsMultiplier = state.cpsMultiplier;
+}
+
+function validateAndApplyEngineState() {
+    const state = buildEngineState();
+    validateEngineValues(state);
+    applyEngineState(state);
 }
 
 // Variables de desarrollo (ocultas)
@@ -674,7 +680,7 @@ function loadGame() {
         }
     }
     // Validar valores después de cargar
-    validateGameValues();
+    validateAndApplyEngineState();
     updateDisplay();
     updateAchievements();
     updateDungeonDisplay();
@@ -850,21 +856,6 @@ function getLastDialogueIndexForAct(actNumber) {
         total += actCounts[i] || 0;
     }
     return total - 1; // Último índice del acto
-}
-
-// Función utilitaria para validar y corregir valores numéricos
-function validateGameValues() {
-    if (isNaN(coffee) || coffee < 0) coffee = 0;
-    if (isNaN(totalCoffee) || totalCoffee < 0) totalCoffee = 0;
-    if (isNaN(cps) || cps < 0) cps = 0;
-    if (isNaN(charisma) || charisma < 0) charisma = 0;
-    if (isNaN(coffeeStrength) || coffeeStrength < 0) coffeeStrength = 0;
-    
-    // Validar upgrades
-    for (const [key, upgrade] of Object.entries(upgrades)) {
-        if (isNaN(upgrade.owned) || upgrade.owned < 0) upgrade.owned = 0;
-        if (isNaN(upgrade.cost) || upgrade.cost < 0) upgrade.cost = 10;
-    }
 }
 
 // Funciones de manejo de comandos
@@ -1134,7 +1125,7 @@ function handleUnlockAllCommand() {
 }
 
 function handleFixNaNCommand() {
-    validateGameValues();
+    validateAndApplyEngineState();
     consoleLog('Valores NaN corregidos. Juego restaurado.');
     updateDisplay();
     saveGame();
@@ -1873,7 +1864,7 @@ function updateDonateEffectIndicator() {
 // Actualizar la interfaz
 function updateDisplay() {
     // Validar valores antes de mostrar
-    validateGameValues();
+    validateAndApplyEngineState();
     
     coffeeDisplay.textContent = Math.floor(coffee);
     cpsDisplay.textContent = cps;
@@ -2163,11 +2154,9 @@ function produceCoffee() {
     const state = buildEngineState();
     validateEngineValues(state);
 
-    const effectiveCPS = calculateEffectiveCPS(state);
+    const effectiveCPS = engineProduceCoffee(state);
 
     applyEngineState(state);
-    coffee += effectiveCPS;
-    totalCoffee += effectiveCPS;
     
     // Actualizar Thursday Mode si está activo
     if (thursdayModeUnlocked && thursdayPanel && thursdayPanel.style.display === 'block') {

@@ -4,7 +4,7 @@ import {
   getUpgradeCost,
   getCurrentAct,
   buyUpgrade,
-  calculateEffectiveCPS,
+  produceCoffee,
   serializeState,
   deserializeState,
   normalizeInteger
@@ -59,14 +59,37 @@ describe('Game Engine Core', () => {
     expect(success).toBe(false);
   });
 
-  it('calculates effective CPS with donation and thursday multiplier', () => {
+  it('produces coffee correctly including donation and Thursday multiplier', () => {
     const state = createInitialState();
     state.cps = 10;
     state.donateEndTime = Date.now() + 100000;
     state.thursdayModeUnlocked = true;
     state.cpsMultiplier = 1.5;
 
-    expect(calculateEffectiveCPS(state)).toBeCloseTo(10 * 1.1 * 1.5);
+    const produced = produceCoffee(state);
+    expect(produced).toBeCloseTo(10 * 1.1 * 1.5);
+    expect(state.coffee).toBeCloseTo(produced);
+    expect(state.totalCoffee).toBeCloseTo(produced);
+  });
+
+  it('performs a full upgrade and persistence cycle', () => {
+    const state = createInitialState();
+    state.coffee = 100;
+    state.totalCoffee = 100;
+
+    const upgradeCost = getUpgradeCost(state.upgrades.upgrade1);
+    const success = buyUpgrade(state, 'upgrade1');
+    expect(success).toBe(true);
+    expect(state.upgrades.upgrade1.owned).toBe(1);
+
+    const produced = produceCoffee(state);
+    expect(state.coffee).toBeCloseTo(100 - upgradeCost + produced);
+    expect(state.totalCoffee).toBeCloseTo(100 + produced);
+
+    const json = serializeState(state);
+    const restored = deserializeState(json);
+    expect(restored.totalCoffee).toBeCloseTo(state.totalCoffee);
+    expect(restored.upgrades.upgrade1.owned).toBe(1);
   });
 
   it('serializes and deserializes state preserving core values', () => {
