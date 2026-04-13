@@ -1,0 +1,17 @@
+<main class="main">
+  <section class="panel">
+    <h1>{{ title() }}</h1>
+    <p>Angular preview for Coffee World migration.</p>
+    <div class="stats">
+      <p><strong>Coffee:</strong> {{ engine.state().coffee | number:'1.0-0' }}</p>
+      <p><strong>CPS:</strong> {{ engine.state().cps | number:'1.0-0' }}</p>
+      <p><strong>Total:</strong> {{ engine.state().totalCoffee | number:'1.0-0' }}</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="produceCoffee()">Produce Coffee</button>
+      <button type="button" (click)="buyUpgrade('upgrade1')">Buy Máquina Verde</button>
+      <button type="button" (click)="resetGame()">Reset</button>
+      <button type="button" (click)="exportState()">Export State</button>
+    </div>
+  </section>
+</main>

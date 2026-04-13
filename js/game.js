@@ -68,6 +68,7 @@ function buildEngineState() {
         achievements,
         currentBoss,
         defeatedBosses,
+        bosses,
         lastMailTime,
         lastWorkTime,
         lastFightTime,
