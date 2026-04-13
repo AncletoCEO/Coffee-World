@@ -2372,9 +2372,12 @@ function buyUpgrade(upgradeKey) {
         playUpgradeSound();
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 }
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 0d7b54d (Add Easter egg for Thursdays and create post-game design document)
 
 // Verificar logros
 function checkAchievements() {

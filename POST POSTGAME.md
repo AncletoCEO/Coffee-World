@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Post-Postgame Design: Roguelike de Buen Finde
 
 ## Objetivo
@@ -65,3 +66,6 @@ El post-postgame es una expansión del modo post-game existente. Una vez el juga
 - La experiencia es rejugable y ofrece progresión acumulativa.
 - El modo no rompe el guardado existente ni el flujo del juego principal.
 - La documentación cubre el diseño y la lógica del modo.
+=======
+Pendiente de diseña un post game sin fin que seria un dungeon rogelike que se desbloquea despues de terminar el post game
+>>>>>>> 0d7b54d (Add Easter egg for Thursdays and create post-game design document)
