@@ -2234,7 +2234,6 @@ function buyUpgrade(upgradeKey) {
         }
         playUpgradeSound();
     }
-}
 
 // Verificar logros
 function checkAchievements() {

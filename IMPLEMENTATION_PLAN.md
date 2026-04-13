@@ -43,11 +43,14 @@ Asegurar que el motor del juego sea estable, modular y mantenible.
 5. Limpiar el código:
    - eliminar logs de depuración innecesarios
    - consolidar validaciones duplicadas
+6. Feliz Jueves easter egg
+   - Si se abre la pagina un dia Jueves es necesario que la aplicacion reprodusca este link de youtube antes de cargar el juego https://www.youtube.com/watch?v=BvtUSsok4JA
 
 ### Entregables
 - `js/game-engine.js` estable y testeable
 - `js/game.js` enfocado en UI
 - errores de diseño corregidos
+- Easter egg
 
 ---
 

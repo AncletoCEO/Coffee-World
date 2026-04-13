@@ -1,0 +1,1 @@
+Pendiente de diseña un post game sin fin que seria un dungeon rogelike que se desbloquea despues de terminar el post game
