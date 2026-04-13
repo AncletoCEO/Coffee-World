@@ -126,8 +126,9 @@ Sin instalación, sin esperas. ¡Tu primer sorbo en segundos!
 
 ### Deployment y CI/CD
 - **GitHub Pages**: Hosting gratuito y automático.
-- **GitHub Actions**: Versionado automático por commits.
+- **GitHub Actions**: Pruebas y despliegue automatizado a GitHub Pages.
 - **Auto-versioning**: Versiones como 2.1.{commit_count}.
+- **Pipeline de deploy**: `./github/workflows/deploy-pages.yml` ejecuta tests de root y Angular antes de publicar el build de `angular-app/dist/angular-app`.
 
 ## Estructura del Proyecto: Simple Como un Espresso
 

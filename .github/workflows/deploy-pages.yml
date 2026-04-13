@@ -1,0 +1,61 @@
+name: CI and GitHub Pages Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Run root tests
+        run: npm test
+
+      - name: Install Angular app dependencies
+        run: cd angular-app && npm ci
+
+      - name: Run Angular tests
+        run: cd angular-app && npm test -- --watch=false
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Angular app dependencies
+        run: cd angular-app && npm ci
+
+      - name: Build Angular app
+        run: cd angular-app && npm run build -- --base-href ./
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: angular-app/dist/angular-app
+          token: ${{ secrets.GITHUB_TOKEN }}

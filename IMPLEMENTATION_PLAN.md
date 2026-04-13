@@ -8,6 +8,8 @@ Implementar el diseño aprobado para estabilizar el juego actual, crear pruebas 
 - Se ha creado `js/game-engine.js` para encapsular lógica central del juego.
 - El entorno de pruebas con `vitest` ya está configurado.
 - La suite actual cubre 9 tests y pasa correctamente.
+- El proyecto Angular preliminar ya existe en `angular-app/` y compila correctamente.
+- No existe un workflow de GitHub Actions para GitHub Pages deploy en el repositorio actual; la deploy previa está basada en configuración externa o fuente de Pages separada.
 - `docs/` está ignorado en git para mantener el plan local.
 
 ---
@@ -131,7 +133,34 @@ Reemplazar la UI estática con una aplicación Angular moderna y responsive.
 
 ---
 
-## Fase 5: Documentación y cleanup
+## Fase 5: GitHub Pages y despliegue
+
+### Objetivo
+Definir y estabilizar la arquitectura de despliegue para que la migración Angular pueda publicarse de forma segura.
+
+### Tareas
+1. Auditar el despliegue actual de GitHub Pages:
+   - confirmar si Pages usa la rama `main`, `gh-pages`, o una configuración de `docs/`.
+   - identificar si el sitio live depende de archivos estáticos en el root.
+2. Definir la estrategia de despliegue:
+   - mantener el sitio actual en producción mientras se prepara Angular, o
+   - migrar directamente al nuevo build Angular cuando el preview esté completo.
+3. Implementar una pipeline de GitHub Actions para despliegue:
+   - construir `angular-app` y publicar `angular-app/dist/angular-app` a GitHub Pages,
+   - ejecutar tests antes de deploy: `npm test` + `cd angular-app && npm test -- --watch=false`,
+   - opcionalmente incluir `npm run build` y un paso de validación de artefacto.
+4. Documentar la configuración de Pages y la rama de despliegue:
+   - agregar instrucciones de publicación al `README.md`.
+   - documentar si la rama de Pages debe ser `main`, `gh-pages`, o `docs/`.
+
+### Entregables
+- `./github/workflows/deploy-pages.yml` o flujo equivalente
+- documentación de despliegue en `README.md`
+- despliegue de Angular preparado sin romper la versión actual del sitio
+
+---
+
+## Fase 6: Documentación y cleanup
 
 ### Objetivo
 Dejar el repo listo para deploy con documentación actualizada.
