@@ -37,10 +37,13 @@ let fridayLevel = 0;
 let fridayUnlocked = false;
 let activeThursdayEvents = [];
 let postGameCompleted = false; // Nueva variable para rastrear si se completó el post-game
+<<<<<<< HEAD
 let roguelikeModeActive = false;
 let roguelikeRuns = 0;
 let persistentBonuses = {};
 let nextRunMultiplier = 1.0;
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
 let thursdayStats = {
     thursdaysSurvived: 0,
     totalThursdayTime: 0,
@@ -48,7 +51,10 @@ let thursdayStats = {
     fridaysUnlocked: 0,
     bestPointsRecord: 0
 };
+<<<<<<< HEAD
 let productionInterval = null;
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
 let cpsMultiplier = 1.0; // Multiplicador de CPS por eventos del jueves
 
 // Constantes del Thursday Mode
@@ -82,8 +88,12 @@ function buildEngineState() {
         lastDonateTime,
         currentDialogueIndex,
         thursdayModeUnlocked,
+<<<<<<< HEAD
         cpsMultiplier,
         persistentBonuses
+=======
+        cpsMultiplier
+>>>>>>> 7d4ce85 (Superpowers (#8))
     });
     return state;
 }
@@ -679,10 +689,13 @@ function loadGame() {
                 bestPointsRecord: 0
             };
             postGameCompleted = data.postGameCompleted || false;
+<<<<<<< HEAD
             roguelikeModeActive = data.roguelikeModeActive || false;
             roguelikeRuns = parseInt(data.roguelikeRuns) || 0;
             persistentBonuses = data.persistentBonuses || {};
             nextRunMultiplier = parseFloat(data.nextRunMultiplier) || 1.0;
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -773,11 +786,15 @@ function saveGame() {
         fridayEndTime,
         activeThursdayEvents,
         thursdayStats,
+<<<<<<< HEAD
         postGameCompleted,
         roguelikeModeActive,
         roguelikeRuns,
         persistentBonuses,
         nextRunMultiplier
+=======
+        postGameCompleted
+>>>>>>> 7d4ce85 (Superpowers (#8))
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -1071,12 +1088,15 @@ function handleHelpCommand() {
         consoleLog('jueves/thursday - Activar/desactivar Feliz Jueves Mode');
         consoleLog('⏰ Sobrevive el jueves eterno para alcanzar el Buen Finde!');
     }
+<<<<<<< HEAD
 
     if (postGameCompleted) {
         consoleLog('');
         consoleLog('=== POST-POSTGAME ===');
         consoleLog('rogue/buenf - Iniciar modo Buen Finde roguelike tras completar el post-game');
     }
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
     
     if (devModeEnabled) {
         consoleLog('');
@@ -1155,10 +1175,13 @@ function handleFixNaNCommand() {
     saveGame();
 }
 
+<<<<<<< HEAD
 function handleRoguelikeCommand() {
     enterRoguelikeMode();
 }
 
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
 // Comando para activar/desactivar Thursday Mode
 function handleJuevesCommand() {
     toggleThursdayMode();
@@ -1184,8 +1207,11 @@ const commands = {
     help: handleHelpCommand,
     jueves: handleJuevesCommand,
     thursday: handleJuevesCommand,
+<<<<<<< HEAD
     rogue: handleRoguelikeCommand,
     buenf: handleRoguelikeCommand,
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
     // Cheats
     addcoffee: handleAddCoffeeCommand,
     godmode: handleGodModeCommand,
@@ -1746,12 +1772,17 @@ function checkPostGameCompletion() {
         if (buenFindeCreditsSection) {
             buenFindeCreditsSection.style.display = 'block';
         }
+<<<<<<< HEAD
 
         consoleLog('🔁 Escribe "rogue" para iniciar el modo Buen Finde roguelike.');
+=======
+        
+>>>>>>> 7d4ce85 (Superpowers (#8))
         saveGame();
     }
 }
 
+<<<<<<< HEAD
 function enterRoguelikeMode() {
     if (!postGameCompleted) {
         consoleLog('❌ Debes completar el post-game para iniciar el modo Buen Finde roguelike.');
@@ -1829,6 +1860,8 @@ function checkThursdayEasterEgg(callback) {
     }
 }
 
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
 // Terminar viernes y volver al jueves
 function endFriday() {
     fridayUnlocked = false;
@@ -3244,8 +3277,12 @@ document.addEventListener('DOMContentLoaded', function() {
         consoleOutput.appendChild(p);
     });
     consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
+<<<<<<< HEAD
     checkThursdayEasterEgg(() => {
         loadGame();
         startGameLoop();
     });
+=======
+    setInterval(produceCoffee, 1000); // Producir cada segundo
+>>>>>>> 7d4ce85 (Superpowers (#8))
 });
