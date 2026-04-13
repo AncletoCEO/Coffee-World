@@ -2338,6 +2338,7 @@ function buyUpgrade(upgradeKey) {
         }
         playUpgradeSound();
     }
+}
 
 // Verificar logros
 function checkAchievements() {
@@ -3219,6 +3220,10 @@ function logDevCommand(command, target) {
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners(); // Configurar event listeners primero
     initAudio();
+    checkThursdayEasterEgg(() => {
+        loadGame();
+        startGameLoop();
+    });
     // Mostrar ASCII art en la consola del juego
     const asciiArt = `
    _____                .__          __       /\\        _________         _____  _____                __      __            .__       .___
