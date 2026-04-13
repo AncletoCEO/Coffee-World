@@ -1,3 +1,5 @@
+import { createInitialState, getUpgradeCost, produceCoffee as engineProduceCoffee, getCurrentAct as getEngineCurrentAct, initialUpgrades, actLimits as engineActLimits, validateGameValues as validateEngineValues, buyUpgrade as engineBuyUpgrade, deserializeState } from './game-engine.js';
+
 // Ancleto's Coffee World - Lógica del Juego
 
 // Variables del juego
@@ -6,18 +8,7 @@ let totalCoffee = 0;
 let cps = 0; // Café por segundo
 let charisma = 0;
 let coffeeStrength = 0;
-let upgrades = {
-    upgrade1: { name: "Máquina Verde", owned: 0, cost: 10, cpsIncrease: 1, charismaIncrease: 1 },
-    upgrade2: { name: "Charlas Motivacionales", owned: 0, cost: 100, cpsIncrease: 5, charismaIncrease: 2 },
-    upgrade3: { name: "Tamper de Acero", owned: 0, cost: 500, cpsIncrease: 20, coffeeStrengthIncrease: 5 },
-    upgrade4: { name: "Café Colombiano", owned: 0, cost: 200, charismaIncrease: 2 },
-    upgrade5: { name: "Perros Guardianes", owned: 0, cost: 1000, coffeeStrengthIncrease: 10 },
-    upgrade6: { name: "Lista de Vergüenza", owned: 0, cost: 5000, cpsIncrease: 50 },
-    upgrade7: { name: "Viernes de Cupping", owned: 0, cost: 10000, cpsIncrease: 100 },
-    upgrade8: { name: "Sifón Japonés", owned: 0, cost: 20000, charismaIncrease: 5 },
-    upgrade9: { name: "Filtros SQL", owned: 0, cost: 50000, coffeeStrengthIncrease: 20 },
-    upgrade10: { name: "Comunicaciones Corporativas", owned: 0, cost: 100000, cpsIncrease: 200 }
-};
+let upgrades = JSON.parse(JSON.stringify(initialUpgrades));
 let achievements = [];
 let consoleVisible = false;
 let currentBoss = null;
@@ -64,14 +55,59 @@ const POST_GAME_COMPLETION_FRIDAYL_LEVEL = 5; // Nivel de viernes para completar
 let fridayEndTime = 0; // Timestamp cuando termina el viernes
 
 // Límites por acto para evitar progreso muy rápido
-let actLimits = {
-    1: { maxCoffee: 5000, maxCoffeeStrength: 25 },
-    2: { maxCoffee: 15000, maxCoffeeStrength: 50 },
-    3: { maxCoffee: 30000, maxCoffeeStrength: 75 },
-    4: { maxCoffee: 50000, maxCoffeeStrength: 100 },
-    5: { maxCoffee: 75000, maxCoffeeStrength: 125 },
-    6: { maxCoffee: 100000, maxCoffeeStrength: 150 }
-};
+let actLimits = engineActLimits;
+
+function buildEngineState() {
+    const state = createInitialState();
+    Object.assign(state, {
+        coffee,
+        totalCoffee,
+        cps,
+        charisma,
+        coffeeStrength,
+        upgrades,
+        achievements,
+        currentBoss,
+        defeatedBosses,
+        bosses,
+        lastMailTime,
+        lastWorkTime,
+        lastFightTime,
+        donateEndTime,
+        lastDonateTime,
+        currentDialogueIndex,
+        thursdayModeUnlocked,
+        cpsMultiplier
+    });
+    return state;
+}
+
+function applyEngineState(state) {
+    coffee = state.coffee;
+    totalCoffee = state.totalCoffee;
+    cps = state.cps;
+    charisma = state.charisma;
+    coffeeStrength = state.coffeeStrength;
+    upgrades = state.upgrades;
+    achievements = state.achievements;
+    currentBoss = state.currentBoss;
+    bosses = state.bosses;
+    defeatedBosses = state.defeatedBosses;
+    lastMailTime = state.lastMailTime;
+    lastWorkTime = state.lastWorkTime;
+    lastFightTime = state.lastFightTime;
+    donateEndTime = state.donateEndTime;
+    lastDonateTime = state.lastDonateTime;
+    currentDialogueIndex = state.currentDialogueIndex;
+    thursdayModeUnlocked = state.thursdayModeUnlocked;
+    cpsMultiplier = state.cpsMultiplier;
+}
+
+function validateAndApplyEngineState() {
+    const state = buildEngineState();
+    validateEngineValues(state);
+    applyEngineState(state);
+}
 
 // Variables de desarrollo (ocultas)
 let devModeEnabled = false;
@@ -605,15 +641,8 @@ function loadGame() {
     if (saved) {
         try {
             const data = JSON.parse(saved);
-            coffee = parseFloat(data.coffee) || 0;
-            totalCoffee = parseFloat(data.totalCoffee) || 0;
-            cps = parseFloat(data.cps) || 0;
-            charisma = parseInt(data.charisma) || 0;
-            coffeeStrength = parseInt(data.coffeeStrength) || 0;
-            upgrades = data.upgrades || upgrades;
-            achievements = data.achievements || [];
-            currentBoss = data.currentBoss || null;
-            defeatedBosses = data.defeatedBosses || [];
+            const state = deserializeState(saved);
+            applyEngineState(state);
             if (data.dungeons) {
                 for (const [name, dungeon] of Object.entries(data.dungeons)) {
                     if (dungeons[name]) {
@@ -622,14 +651,14 @@ function loadGame() {
                     }
                 }
             }
-            lastMailTime = parseInt(data.lastMailTime) || 0;
-            lastWorkTime = parseInt(data.lastWorkTime) || 0;
-            lastFightTime = parseInt(data.lastFightTime) || 0;
-            donateEndTime = parseInt(data.donateEndTime) || 0;
-            lastDonateTime = parseInt(data.lastDonateTime) || 0;
-            currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
+            lastMailTime = parseInt(data.lastMailTime) || state.lastMailTime || 0;
+            lastWorkTime = parseInt(data.lastWorkTime) || state.lastWorkTime || 0;
+            lastFightTime = parseInt(data.lastFightTime) || state.lastFightTime || 0;
+            donateEndTime = parseInt(data.donateEndTime) || state.donateEndTime || 0;
+            lastDonateTime = parseInt(data.lastDonateTime) || state.lastDonateTime || 0;
+            currentDialogueIndex = parseInt(data.currentDialogueIndex) || state.currentDialogueIndex || 0;
             // Thursday Mode data
-            thursdayModeUnlocked = data.thursdayModeUnlocked || false;
+            thursdayModeUnlocked = data.thursdayModeUnlocked || state.thursdayModeUnlocked || false;
             thursdayTime = parseInt(data.thursdayTime) || 0;
             buenFindePoints = parseInt(data.buenFindePoints) || 0;
             fridayLevel = parseInt(data.fridayLevel) || 0;
@@ -655,7 +684,7 @@ function loadGame() {
         }
     }
     // Validar valores después de cargar
-    validateGameValues();
+    validateAndApplyEngineState();
     updateDisplay();
     updateAchievements();
     updateDungeonDisplay();
@@ -831,21 +860,6 @@ function getLastDialogueIndexForAct(actNumber) {
         total += actCounts[i] || 0;
     }
     return total - 1; // Último índice del acto
-}
-
-// Función utilitaria para validar y corregir valores numéricos
-function validateGameValues() {
-    if (isNaN(coffee) || coffee < 0) coffee = 0;
-    if (isNaN(totalCoffee) || totalCoffee < 0) totalCoffee = 0;
-    if (isNaN(cps) || cps < 0) cps = 0;
-    if (isNaN(charisma) || charisma < 0) charisma = 0;
-    if (isNaN(coffeeStrength) || coffeeStrength < 0) coffeeStrength = 0;
-    
-    // Validar upgrades
-    for (const [key, upgrade] of Object.entries(upgrades)) {
-        if (isNaN(upgrade.owned) || upgrade.owned < 0) upgrade.owned = 0;
-        if (isNaN(upgrade.cost) || upgrade.cost < 0) upgrade.cost = 10;
-    }
 }
 
 // Funciones de manejo de comandos
@@ -1115,7 +1129,7 @@ function handleUnlockAllCommand() {
 }
 
 function handleFixNaNCommand() {
-    validateGameValues();
+    validateAndApplyEngineState();
     consoleLog('Valores NaN corregidos. Juego restaurado.');
     updateDisplay();
     saveGame();
@@ -1362,13 +1376,7 @@ function extractActNumber(actString) {
 }
 
 function getCurrentAct() {
-    // Determinar acto basado en progreso real (totalCoffee) en lugar de diálogos
-    if (totalCoffee >= 50000) return 6; // Acto 6
-    if (totalCoffee >= 35000) return 5; // Acto 5
-    if (totalCoffee >= 20000) return 4; // Acto 4
-    if (totalCoffee >= 10000) return 3; // Acto 3
-    if (totalCoffee >= 5000) return 2;  // Acto 2
-    return 1; // Acto 1 - café < 5000
+    return getEngineCurrentAct(totalCoffee);
 }
 
 function getActProgress() {
@@ -1860,7 +1868,7 @@ function updateDonateEffectIndicator() {
 // Actualizar la interfaz
 function updateDisplay() {
     // Validar valores antes de mostrar
-    validateGameValues();
+    validateAndApplyEngineState();
     
     coffeeDisplay.textContent = Math.floor(coffee);
     cpsDisplay.textContent = cps;
@@ -1979,27 +1987,19 @@ function displayMap() {
 }
 
 function enterDungeon(name) {
-    console.log('enterDungeon called with:', name); // Debug
-    console.log('Dungeons available:', Object.keys(dungeons)); // Debug
-    console.log('Dungeon unlocked status:', dungeons[name]?.unlocked); // Debug
-
     if (!dungeons[name] || !dungeons[name].unlocked) {
-        console.log('Dungeon not available or not unlocked'); // Debug
         showNarrative('Mazmorra no disponible.');
         return;
     }
 
-    console.log('Entering dungeon:', name); // Debug
     inDungeon = true;
     currentDungeon = dungeons[name];
     playerPos = { x: 2, y: 3 }; // Posición inicial
 
     // FIXED: Ocultar sección de upgrades mientras esté en dungeon
     const upgradesSection = document.getElementById('upgrades');
-    console.log('Hiding upgrades section:', !!upgradesSection); // Debug
     if (upgradesSection) {
         upgradesSection.style.display = 'none';
-        console.log('Upgrades section hidden'); // Debug
     }
     
     // FIXED: Verificar si hay un boss disponible en esta dungeon y spawnearlo
@@ -2019,12 +2019,8 @@ function enterDungeon(name) {
     
     // FIXED: Mostrar interfaz visual de dungeon con verificaciones
     const visualContainer = document.getElementById('dungeonVisualContainer');
-    console.log('Visual container found:', !!visualContainer); // Debug
     if (visualContainer) {
         visualContainer.style.display = 'block';
-        console.log('Visual container should now be visible'); // Debug
-    } else {
-        console.error('dungeonVisualContainer not found!');
     }
     
     showNarrative(`Entrando a ${getDungeonDisplayName(name)}...`);
@@ -2033,7 +2029,6 @@ function enterDungeon(name) {
 }
 
 function exitDungeon() {
-    console.log('exitDungeon called'); // Debug
     inDungeon = false;
     if (currentDungeon) {
         currentDungeon.currentMonster = null; // Limpiar monstruo actual
@@ -2049,7 +2044,6 @@ function exitDungeon() {
     
     // FIXED: Ocultar interfaz visual de dungeon con verificación
     const visualContainer = document.getElementById('dungeonVisualContainer');
-    console.log('Hiding visual container:', !!visualContainer); // Debug
     if (visualContainer) {
         visualContainer.style.display = 'none';
     }
@@ -2161,22 +2155,12 @@ function fightDungeonMonster() {
 
 // Producción automática
 function produceCoffee() {
-    // Validar valores antes de calcular
-    validateGameValues();
+    const state = buildEngineState();
+    validateEngineValues(state);
 
-    // FIXED: Calcular CPS efectivo considerando bonus temporal de donate
-    let effectiveCPS = cps;
-    if (Date.now() < donateEndTime) {
-        effectiveCPS *= 1.1; // +10% bonus temporal
-    }
-    
-    // Aplicar multiplicador del Thursday Mode si está activo
-    if (thursdayModeUnlocked && cpsMultiplier !== 1.0) {
-        effectiveCPS *= cpsMultiplier;
-    }
+    const effectiveCPS = engineProduceCoffee(state);
 
-    coffee += effectiveCPS;
-    totalCoffee += effectiveCPS;
+    applyEngineState(state);
     
     // Actualizar Thursday Mode si está activo
     if (thursdayModeUnlocked && thursdayPanel && thursdayPanel.style.display === 'block') {
@@ -2203,64 +2187,30 @@ function produceCoffee() {
 
 // Comprar upgrade
 function buyUpgrade(upgradeKey) {
-    const upgrade = upgrades[upgradeKey];
+    const state = buildEngineState();
+    const upgrade = state.upgrades[upgradeKey];
     if (!upgrade) {
         consoleLog('Upgrade no encontrado.');
         return;
     }
-    
-    const cost = upgrade.cost * Math.pow(1.15, upgrade.owned);
-    
-    // Verificar límites por acto
-    const currentAct = getCurrentAct();
-    const limits = actLimits[currentAct];
-    
-    consoleLog(`🔍 BuyUpgrade Debug - Acto: ${currentAct}, Café Total: ${totalCoffee}, Fuerza: ${coffeeStrength}`);
-    
-    if (limits) {
-        // Verificar si hay un boss pendiente en el acto actual
-        const pendingBoss = bosses.find(boss => 
-            boss.act === currentAct && 
-            totalCoffee >= boss.spawnAt && 
-            !defeatedBosses.includes(boss.name)
-        );
-        
-        consoleLog(`🔍 Límites Acto ${currentAct}: Max Café ${limits.maxCoffee}, Max Fuerza ${limits.maxCoffeeStrength}`);
-        consoleLog(`🔍 Boss pendiente: ${pendingBoss ? pendingBoss.name : 'Ninguno'}`);
-        
-        // Verificar límite de café total
-        if (totalCoffee >= limits.maxCoffee) {
-            // EXCEPCIÓN: Permitir upgrades de fuerza cafetera si hay boss pendiente
-            if (!pendingBoss || !upgrade.coffeeStrengthIncrease) {
-                showNarrative(`¡Límite de acto alcanzado! Derrota al boss del Acto ${currentAct} para desbloquear más upgrades.`);
-                consoleLog(`⚠️ Límite de Acto ${currentAct}: Máximo ${limits.maxCoffee} café alcanzado. Derrota al boss para continuar.`);
-                return;
-            } else {
-                consoleLog(`⚠️ Límite alcanzado pero permitiendo upgrade de fuerza (${upgradeKey}) para boss ${pendingBoss.name}`);
-            }
-        }
-        
-        // Verificar límite de fuerza cafetera para upgrades que la aumentan
-        if (upgrade.coffeeStrengthIncrease && coffeeStrength >= limits.maxCoffeeStrength) {
-            showNarrative(`¡Límite de fuerza cafetera alcanzado! Derrota al boss del Acto ${currentAct} para aumentar el límite.`);
-            consoleLog(`⚠️ Límite de Fuerza Cafetera: Máximo ${limits.maxCoffeeStrength} alcanzado en Acto ${currentAct}.`);
-            return;
-        }
-    }
-    
-    if (coffee >= cost) {
-        coffee -= cost;
-        upgrade.owned++;
-        
-        // Asegurar que los valores sean números válidos
-        cps += upgrade.cpsIncrease || 0;
-        charisma += upgrade.charismaIncrease || 0;
-        coffeeStrength += upgrade.coffeeStrengthIncrease || 0;
-        
-        updateDisplay();
-        saveGame();
 
-        // Mensajes narrativos
+    const success = engineBuyUpgrade(state, upgradeKey);
+    if (!success) {
+        const cost = getUpgradeCost(upgrade);
+        if (coffee < cost) {
+            showNarrative('No tienes suficiente café para comprar esta mejora.');
+        } else {
+            const currentAct = getCurrentAct();
+            showNarrative(`¡No puedes comprar esa mejora todavía! Derrota al boss del Acto ${currentAct} para avanzar.`);
+        }
+        return;
+    }
+
+    applyEngineState(state);
+    updateDisplay();
+    saveGame();
+
+    // Mensajes narrativos
         if (upgradeKey === 'upgrade1') {
             showNarrative("¡Excelente! La Máquina Verde es el inicio de tu imperio cafetero. Confía en mí, esto es solo el comienzo.");
         } else if (upgradeKey === 'upgrade2') {
@@ -2424,20 +2374,15 @@ function updateDungeonDisplay() {
 
 // Actualizar botones de dungeons disponibles
 function updateDungeonButtons() {
-    console.log('updateDungeonButtons called'); // Debug
     if (!dungeonButtonsContainer) {
-        console.log('dungeonButtonsContainer not found'); // Debug
         return;
     }
 
     dungeonButtonsContainer.innerHTML = '';
-    console.log('Available dungeons:', Object.keys(dungeons)); // Debug
 
     Object.keys(dungeons).forEach(dungeonKey => {
         const dungeon = dungeons[dungeonKey];
-        console.log(`Checking dungeon ${dungeonKey}: unlocked = ${dungeon.unlocked}`); // Debug
         if (dungeon.unlocked) {
-            console.log(`Creating button for ${dungeonKey}`); // Debug
             const button = document.createElement('button');
             button.className = 'upgrade-btn';
             button.textContent = `🏰 ${getDungeonDisplayName(dungeonKey)}`;
@@ -2458,12 +2403,10 @@ function updateDungeonButtons() {
 
             // FIXED: Asegurar que el event listener funcione correctamente
             button.addEventListener('click', function() {
-                console.log(`Button clicked for dungeon: ${dungeonKey}`); // Debug
                 enterDungeon(dungeonKey);
             });
 
             dungeonButtonsContainer.appendChild(button);
-            console.log(`Button added for ${dungeonKey}`); // Debug
         }
     });
     
@@ -2522,24 +2465,19 @@ function fightDungeonBoss() {
 
 // Eventos especiales
 function donate() {
-    console.log('Donate called. Current time:', Date.now(), 'Last donate time:', lastDonateTime);
-    console.log('Time difference:', Date.now() - lastDonateTime, 'Required:', 300000);
 
     // FIXED: Cooldown de 5 minutos entre donaciones
     if (Date.now() - lastDonateTime < 300000) { // 5 minutos = 300,000 ms
         const remaining = Math.ceil((300000 - (Date.now() - lastDonateTime)) / 1000);
-        console.log('Cooldown active, remaining seconds:', remaining);
         showNarrative(`Espera ${remaining} segundos antes de donar de nuevo.`);
         return;
     }
 
-    console.log('Cooldown passed, checking coffee:', coffee);
     if (coffee >= 100) {
         coffee -= 100;
         // FIXED: Bonus temporal de 10% por 1 minuto (60,000 ms)
         donateEndTime = Date.now() + 60000; // 1 minuto
         lastDonateTime = Date.now();
-        console.log('Donate successful. New donateEndTime:', donateEndTime, 'New lastDonateTime:', lastDonateTime);
         showNarrative("¡Gracias por donar! Tu producción aumenta un 10% por 1 minuto.");
         playEventSound();
         updateDisplay();
@@ -2547,7 +2485,6 @@ function donate() {
         updateDonateEffectIndicator(); // Mostrar el indicador del efecto
         saveGame();
     } else {
-        console.log('Not enough coffee for donate');
     }
 }
 
@@ -2681,16 +2618,13 @@ function toggleSound() {
 
 // Visual Dungeon Display Functions
 function updateVisualDungeonDisplay() {
-    console.log('updateVisualDungeonDisplay called, inDungeon:', inDungeon); // Debug
     if (!inDungeon || !currentDungeon) {
-        console.log('Not in dungeon or no current dungeon'); // Debug
         return;
     }
     
     const mapDisplay = document.getElementById('dungeonMap');
-    console.log('Map display element found:', !!mapDisplay); // Debug
     if (!mapDisplay) {
-        console.error('dungeonMap element not found!');
+        console.error('Dungeon map element not found!');
         return;
     }
     
@@ -2734,7 +2668,6 @@ function updateVisualDungeonDisplay() {
     }
     
     mapDisplay.innerHTML = mapHTML;
-    console.log('Map HTML updated:', mapHTML.substring(0, 100)); // Debug
     
     // Actualizar botón de fight
     const fightButton = document.getElementById('fightBtn');
@@ -2745,7 +2678,6 @@ function updateVisualDungeonDisplay() {
 }
 
 function setupVisualDungeonControls() {
-    console.log('Setting up visual dungeon controls...'); // Debug
     
     const moveUpButton = document.getElementById('moveUpBtn');
     const moveDownButton = document.getElementById('moveDownBtn');
@@ -2754,42 +2686,29 @@ function setupVisualDungeonControls() {
     const fightButton = document.getElementById('fightBtn');
     const exitButton = document.getElementById('exitDungeonBtn');
     
-    console.log('Buttons found:', {
-        up: !!moveUpButton,
-        down: !!moveDownButton,
-        left: !!moveLeftButton,
-        right: !!moveRightButton,
-        fight: !!fightButton,
-        exit: !!exitButton
-    }); // Debug
     
     if (moveUpButton) {
         moveUpButton.addEventListener('click', () => {
-            console.log('Move up clicked'); // Debug
             movePlayerVisual(0, -1);
         });
     }
     if (moveDownButton) {
         moveDownButton.addEventListener('click', () => {
-            console.log('Move down clicked'); // Debug
             movePlayerVisual(0, 1);
         });
     }
     if (moveLeftButton) {
         moveLeftButton.addEventListener('click', () => {
-            console.log('Move left clicked'); // Debug
             movePlayerVisual(-1, 0);
         });
     }
     if (moveRightButton) {
         moveRightButton.addEventListener('click', () => {
-            console.log('Move right clicked'); // Debug
             movePlayerVisual(1, 0);
         });
     }
     if (fightButton) {
         fightButton.addEventListener('click', () => {
-            console.log('Fight clicked'); // Debug
             if (currentBoss && inDungeon) {
                 fightDungeonBoss();
             } else if (currentDungeon && currentDungeon.currentMonster) {
@@ -2799,7 +2718,6 @@ function setupVisualDungeonControls() {
     }
     if (exitButton) {
         exitButton.addEventListener('click', () => {
-            console.log('Exit clicked'); // Debug
             exitDungeon();
         });
     }

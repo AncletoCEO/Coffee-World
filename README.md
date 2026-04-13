@@ -13,6 +13,28 @@
 
 **¡Disponible GRATIS online!** Juega directamente en tu navegador, sin descargas, con guardado automático y un mundo que nunca duerme. ¿Por qué esperar? ¡Tu taza te llama!
 
+## Desarrollo y pruebas
+
+El proyecto ya incluye una separación inicial entre la lógica del juego y la UI, junto con tests unitarios básicos.
+
+Para instalar dependencias:
+
+```bash
+npm install
+```
+
+Para ejecutar las pruebas:
+
+```bash
+npm test
+```
+
+Para generar el reporte de coverage:
+
+```bash
+npm run coverage
+```
+
 ## La Inspiración Cafetera: Los Viajes de Ancleto por el Mundo
 
 ¡Hola, soy Ancleto, el fundador del Buen Gusto, la Buena Ortografía y la Cultura Cafetera! Antes de crear este juego épico, emprendí una expedición global para entender el alma del café y traer esa magia a tu pantalla. Cada sorbo, cada ritual, cada aroma me inspiró para hacer de Coffee World el mejor juego del mundo. Déjame contarte mis aventuras cafeteras que dieron vida a esta obra maestra:
@@ -104,8 +126,10 @@ Sin instalación, sin esperas. ¡Tu primer sorbo en segundos!
 
 ### Deployment y CI/CD
 - **GitHub Pages**: Hosting gratuito y automático.
-- **GitHub Actions**: Versionado automático por commits.
+- **GitHub Actions**: Pruebas y despliegue automatizado a GitHub Pages.
 - **Auto-versioning**: Versiones como 2.1.{commit_count}.
+- **Pipeline de deploy**: `./github/workflows/deploy-pages.yml` ejecuta tests de root y Angular antes de publicar el build de `angular-app/dist/angular-app`.
+- **Nota**: El deploy final requiere confirmación de la fuente de GitHub Pages (`main`, `gh-pages`, o `docs/`) antes de activar la publicación.
 
 ## Estructura del Proyecto: Simple Como un Espresso
 

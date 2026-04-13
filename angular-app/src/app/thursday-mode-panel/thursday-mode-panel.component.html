@@ -1,0 +1,13 @@
+<section class="panel thursday-mode-panel">
+  <h2>Thursday Mode</h2>
+  <p>Status: <strong>{{ engine.state().thursdayModeUnlocked ? 'Unlocked' : 'Locked' }}</strong></p>
+  <p>CPS Multiplier: <strong>{{ engine.state().cpsMultiplier | number:'1.1-1' }}</strong></p>
+  <div class="actions">
+    <button type="button" (click)="unlockThursdayMode()" [disabled]="engine.state().thursdayModeUnlocked">
+      Unlock Thursday Mode
+    </button>
+    <button type="button" (click)="increaseMultiplier()" [disabled]="!engine.state().thursdayModeUnlocked">
+      Increase Multiplier
+    </button>
+  </div>
+</section>

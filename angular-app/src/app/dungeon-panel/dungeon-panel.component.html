@@ -1,0 +1,22 @@
+<section class="panel dungeon-panel">
+  <h2>Dungeon</h2>
+  <p>Current Act: {{ currentAct() }}</p>
+  <div *ngIf="engine.state().currentBoss; else noBoss">
+    <h3>Current Boss</h3>
+    <p><strong>{{ engine.state().currentBoss?.name }}</strong></p>
+    <p>Health: {{ engine.state().currentBoss?.health }} / {{ engine.state().currentBoss?.maxHealth }}</p>
+    <p>Reward: {{ engine.state().currentBoss?.reward }}</p>
+  </div>
+  <ng-template #noBoss>
+    <p>No current boss engaged.</p>
+    <div *ngIf="pendingBosses.length; else noPending">
+      <h3>Pending Boss</h3>
+      <p><strong>{{ pendingBosses[0].name }}</strong></p>
+      <p>Spawn at {{ pendingBosses[0].spawnAt | number:'1.0-0' }} total coffee</p>
+      <p>Dungeon: {{ pendingBosses[0].dungeon }}</p>
+    </div>
+    <ng-template #noPending>
+      <p>No pending bosses for this act yet.</p>
+    </ng-template>
+  </ng-template>
+</section>
