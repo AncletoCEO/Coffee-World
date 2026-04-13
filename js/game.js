@@ -1,4 +1,4 @@
-import { getUpgradeCost, calculateEffectiveCPS, getCurrentAct as getEngineCurrentAct, initialUpgrades, actLimits as engineActLimits } from './game-engine.js';
+import { createInitialState, getUpgradeCost, calculateEffectiveCPS, getCurrentAct as getEngineCurrentAct, initialUpgrades, actLimits as engineActLimits, validateGameValues as validateEngineValues, buyUpgrade as engineBuyUpgrade, deserializeState } from './game-engine.js';
 
 // Ancleto's Coffee World - Lógica del Juego
 
@@ -56,6 +56,48 @@ let fridayEndTime = 0; // Timestamp cuando termina el viernes
 
 // Límites por acto para evitar progreso muy rápido
 let actLimits = engineActLimits;
+
+function buildEngineState() {
+    return {
+        coffee,
+        totalCoffee,
+        cps,
+        charisma,
+        coffeeStrength,
+        upgrades,
+        achievements,
+        currentBoss,
+        defeatedBosses,
+        lastMailTime,
+        lastWorkTime,
+        lastFightTime,
+        donateEndTime,
+        lastDonateTime,
+        currentDialogueIndex,
+        thursdayModeUnlocked,
+        cpsMultiplier
+    };
+}
+
+function applyEngineState(state) {
+    coffee = state.coffee;
+    totalCoffee = state.totalCoffee;
+    cps = state.cps;
+    charisma = state.charisma;
+    coffeeStrength = state.coffeeStrength;
+    upgrades = state.upgrades;
+    achievements = state.achievements;
+    currentBoss = state.currentBoss;
+    defeatedBosses = state.defeatedBosses;
+    lastMailTime = state.lastMailTime;
+    lastWorkTime = state.lastWorkTime;
+    lastFightTime = state.lastFightTime;
+    donateEndTime = state.donateEndTime;
+    lastDonateTime = state.lastDonateTime;
+    currentDialogueIndex = state.currentDialogueIndex;
+    thursdayModeUnlocked = state.thursdayModeUnlocked;
+    cpsMultiplier = state.cpsMultiplier;
+}
 
 // Variables de desarrollo (ocultas)
 let devModeEnabled = false;
@@ -589,15 +631,8 @@ function loadGame() {
     if (saved) {
         try {
             const data = JSON.parse(saved);
-            coffee = parseFloat(data.coffee) || 0;
-            totalCoffee = parseFloat(data.totalCoffee) || 0;
-            cps = parseFloat(data.cps) || 0;
-            charisma = parseInt(data.charisma) || 0;
-            coffeeStrength = parseInt(data.coffeeStrength) || 0;
-            upgrades = data.upgrades || upgrades;
-            achievements = data.achievements || [];
-            currentBoss = data.currentBoss || null;
-            defeatedBosses = data.defeatedBosses || [];
+            const state = deserializeState(saved);
+            applyEngineState(state);
             if (data.dungeons) {
                 for (const [name, dungeon] of Object.entries(data.dungeons)) {
                     if (dungeons[name]) {
@@ -606,14 +641,14 @@ function loadGame() {
                     }
                 }
             }
-            lastMailTime = parseInt(data.lastMailTime) || 0;
-            lastWorkTime = parseInt(data.lastWorkTime) || 0;
-            lastFightTime = parseInt(data.lastFightTime) || 0;
-            donateEndTime = parseInt(data.donateEndTime) || 0;
-            lastDonateTime = parseInt(data.lastDonateTime) || 0;
-            currentDialogueIndex = parseInt(data.currentDialogueIndex) || 0;
+            lastMailTime = parseInt(data.lastMailTime) || state.lastMailTime || 0;
+            lastWorkTime = parseInt(data.lastWorkTime) || state.lastWorkTime || 0;
+            lastFightTime = parseInt(data.lastFightTime) || state.lastFightTime || 0;
+            donateEndTime = parseInt(data.donateEndTime) || state.donateEndTime || 0;
+            lastDonateTime = parseInt(data.lastDonateTime) || state.lastDonateTime || 0;
+            currentDialogueIndex = parseInt(data.currentDialogueIndex) || state.currentDialogueIndex || 0;
             // Thursday Mode data
-            thursdayModeUnlocked = data.thursdayModeUnlocked || false;
+            thursdayModeUnlocked = data.thursdayModeUnlocked || state.thursdayModeUnlocked || false;
             thursdayTime = parseInt(data.thursdayTime) || 0;
             buenFindePoints = parseInt(data.buenFindePoints) || 0;
             fridayLevel = parseInt(data.fridayLevel) || 0;
@@ -2125,16 +2160,12 @@ function fightDungeonMonster() {
 
 // Producción automática
 function produceCoffee() {
-    // Validar valores antes de calcular
-    validateGameValues();
+    const state = buildEngineState();
+    validateEngineValues(state);
 
-    const effectiveCPS = calculateEffectiveCPS({
-        cps,
-        donateEndTime,
-        thursdayModeUnlocked,
-        cpsMultiplier
-    });
+    const effectiveCPS = calculateEffectiveCPS(state);
 
+    applyEngineState(state);
     coffee += effectiveCPS;
     totalCoffee += effectiveCPS;
     
@@ -2163,64 +2194,30 @@ function produceCoffee() {
 
 // Comprar upgrade
 function buyUpgrade(upgradeKey) {
-    const upgrade = upgrades[upgradeKey];
+    const state = buildEngineState();
+    const upgrade = state.upgrades[upgradeKey];
     if (!upgrade) {
         consoleLog('Upgrade no encontrado.');
         return;
     }
-    
-    const cost = getUpgradeCost(upgrade);
-    
-    // Verificar límites por acto
-    const currentAct = getCurrentAct();
-    const limits = actLimits[currentAct];
-    
-    consoleLog(`🔍 BuyUpgrade Debug - Acto: ${currentAct}, Café Total: ${totalCoffee}, Fuerza: ${coffeeStrength}`);
-    
-    if (limits) {
-        // Verificar si hay un boss pendiente en el acto actual
-        const pendingBoss = bosses.find(boss => 
-            boss.act === currentAct && 
-            totalCoffee >= boss.spawnAt && 
-            !defeatedBosses.includes(boss.name)
-        );
-        
-        consoleLog(`🔍 Límites Acto ${currentAct}: Max Café ${limits.maxCoffee}, Max Fuerza ${limits.maxCoffeeStrength}`);
-        consoleLog(`🔍 Boss pendiente: ${pendingBoss ? pendingBoss.name : 'Ninguno'}`);
-        
-        // Verificar límite de café total
-        if (totalCoffee >= limits.maxCoffee) {
-            // EXCEPCIÓN: Permitir upgrades de fuerza cafetera si hay boss pendiente
-            if (!pendingBoss || !upgrade.coffeeStrengthIncrease) {
-                showNarrative(`¡Límite de acto alcanzado! Derrota al boss del Acto ${currentAct} para desbloquear más upgrades.`);
-                consoleLog(`⚠️ Límite de Acto ${currentAct}: Máximo ${limits.maxCoffee} café alcanzado. Derrota al boss para continuar.`);
-                return;
-            } else {
-                consoleLog(`⚠️ Límite alcanzado pero permitiendo upgrade de fuerza (${upgradeKey}) para boss ${pendingBoss.name}`);
-            }
-        }
-        
-        // Verificar límite de fuerza cafetera para upgrades que la aumentan
-        if (upgrade.coffeeStrengthIncrease && coffeeStrength >= limits.maxCoffeeStrength) {
-            showNarrative(`¡Límite de fuerza cafetera alcanzado! Derrota al boss del Acto ${currentAct} para aumentar el límite.`);
-            consoleLog(`⚠️ Límite de Fuerza Cafetera: Máximo ${limits.maxCoffeeStrength} alcanzado en Acto ${currentAct}.`);
-            return;
-        }
-    }
-    
-    if (coffee >= cost) {
-        coffee -= cost;
-        upgrade.owned++;
-        
-        // Asegurar que los valores sean números válidos
-        cps += upgrade.cpsIncrease || 0;
-        charisma += upgrade.charismaIncrease || 0;
-        coffeeStrength += upgrade.coffeeStrengthIncrease || 0;
-        
-        updateDisplay();
-        saveGame();
 
-        // Mensajes narrativos
+    const success = engineBuyUpgrade(state, upgradeKey);
+    if (!success) {
+        const cost = getUpgradeCost(upgrade);
+        if (coffee < cost) {
+            showNarrative('No tienes suficiente café para comprar esta mejora.');
+        } else {
+            const currentAct = getCurrentAct();
+            showNarrative(`¡No puedes comprar esa mejora todavía! Derrota al boss del Acto ${currentAct} para avanzar.`);
+        }
+        return;
+    }
+
+    applyEngineState(state);
+    updateDisplay();
+    saveGame();
+
+    // Mensajes narrativos
         if (upgradeKey === 'upgrade1') {
             showNarrative("¡Excelente! La Máquina Verde es el inicio de tu imperio cafetero. Confía en mí, esto es solo el comienzo.");
         } else if (upgradeKey === 'upgrade2') {
