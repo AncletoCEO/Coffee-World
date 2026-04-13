@@ -60,13 +60,19 @@ export function validateGameValues(state) {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     if (!state.persistentBonuses || typeof state.persistentBonuses !== 'object') {
         state.persistentBonuses = { cps: 1.0 };
     }
     state.persistentBonuses.cps = normalizeFloat(state.persistentBonuses.cps, 1.0);
 
+<<<<<<< HEAD
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     for (const key in state.upgrades) {
         const upgrade = state.upgrades[key];
         if (!upgrade || typeof upgrade !== 'object') {
@@ -136,11 +142,17 @@ export function calculateEffectiveCPS(state, now = Date.now()) {
         effective *= state.cpsMultiplier;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (state.persistentBonuses && typeof state.persistentBonuses.cps === 'number' && state.persistentBonuses.cps !== 1.0) {
         effective *= state.persistentBonuses.cps;
     }
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+    if (state.persistentBonuses && typeof state.persistentBonuses.cps === 'number' && state.persistentBonuses.cps !== 1.0) {
+        effective *= state.persistentBonuses.cps;
+    }
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     return effective;
 }
 
@@ -166,11 +178,16 @@ export function deserializeState(jsonString) {
         achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [],
         defeatedBosses: Array.isArray(parsed.defeatedBosses) ? parsed.defeatedBosses : [],
 <<<<<<< HEAD
+<<<<<<< HEAD
         bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses,
         persistentBonuses: parsed.persistentBonuses || defaultState.persistentBonuses
 =======
         bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+        bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses,
+        persistentBonuses: parsed.persistentBonuses || defaultState.persistentBonuses
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     };
     validateGameValues(state);
     return state;
@@ -196,10 +213,15 @@ export function createInitialState() {
         currentDialogueIndex: 0,
         thursdayModeUnlocked: false,
 <<<<<<< HEAD
+<<<<<<< HEAD
         cpsMultiplier: 1.0,
         persistentBonuses: { cps: 1.0 }
 =======
         cpsMultiplier: 1.0
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+        cpsMultiplier: 1.0,
+        persistentBonuses: { cps: 1.0 }
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     };
 }

@@ -38,12 +38,18 @@ let fridayUnlocked = false;
 let activeThursdayEvents = [];
 let postGameCompleted = false; // Nueva variable para rastrear si se completó el post-game
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 let roguelikeModeActive = false;
 let roguelikeRuns = 0;
 let persistentBonuses = {};
 let nextRunMultiplier = 1.0;
+<<<<<<< HEAD
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 let thursdayStats = {
     thursdaysSurvived: 0,
     totalThursdayTime: 0,
@@ -52,9 +58,13 @@ let thursdayStats = {
     bestPointsRecord: 0
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 let productionInterval = null;
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+let productionInterval = null;
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 let cpsMultiplier = 1.0; // Multiplicador de CPS por eventos del jueves
 
 // Constantes del Thursday Mode
@@ -89,11 +99,16 @@ function buildEngineState() {
         currentDialogueIndex,
         thursdayModeUnlocked,
 <<<<<<< HEAD
+<<<<<<< HEAD
         cpsMultiplier,
         persistentBonuses
 =======
         cpsMultiplier
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+        cpsMultiplier,
+        persistentBonuses
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     });
     return state;
 }
@@ -690,12 +705,18 @@ function loadGame() {
             };
             postGameCompleted = data.postGameCompleted || false;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
             roguelikeModeActive = data.roguelikeModeActive || false;
             roguelikeRuns = parseInt(data.roguelikeRuns) || 0;
             persistentBonuses = data.persistentBonuses || {};
             nextRunMultiplier = parseFloat(data.nextRunMultiplier) || 1.0;
+<<<<<<< HEAD
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -787,14 +808,20 @@ function saveGame() {
         activeThursdayEvents,
         thursdayStats,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
         postGameCompleted,
         roguelikeModeActive,
         roguelikeRuns,
         persistentBonuses,
         nextRunMultiplier
+<<<<<<< HEAD
 =======
         postGameCompleted
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -1089,14 +1116,20 @@ function handleHelpCommand() {
         consoleLog('⏰ Sobrevive el jueves eterno para alcanzar el Buen Finde!');
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 
     if (postGameCompleted) {
         consoleLog('');
         consoleLog('=== POST-POSTGAME ===');
         consoleLog('rogue/buenf - Iniciar modo Buen Finde roguelike tras completar el post-game');
     }
+<<<<<<< HEAD
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     
     if (devModeEnabled) {
         consoleLog('');
@@ -1176,12 +1209,18 @@ function handleFixNaNCommand() {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 function handleRoguelikeCommand() {
     enterRoguelikeMode();
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 // Comando para activar/desactivar Thursday Mode
 function handleJuevesCommand() {
     toggleThursdayMode();
@@ -1208,10 +1247,15 @@ const commands = {
     jueves: handleJuevesCommand,
     thursday: handleJuevesCommand,
 <<<<<<< HEAD
+<<<<<<< HEAD
     rogue: handleRoguelikeCommand,
     buenf: handleRoguelikeCommand,
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+    rogue: handleRoguelikeCommand,
+    buenf: handleRoguelikeCommand,
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     // Cheats
     addcoffee: handleAddCoffeeCommand,
     godmode: handleGodModeCommand,
@@ -1773,16 +1817,24 @@ function checkPostGameCompletion() {
             buenFindeCreditsSection.style.display = 'block';
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         consoleLog('🔁 Escribe "rogue" para iniciar el modo Buen Finde roguelike.');
 =======
         
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+
+        consoleLog('🔁 Escribe "rogue" para iniciar el modo Buen Finde roguelike.');
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
         saveGame();
     }
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 function enterRoguelikeMode() {
     if (!postGameCompleted) {
         consoleLog('❌ Debes completar el post-game para iniciar el modo Buen Finde roguelike.');
@@ -1860,8 +1912,11 @@ function checkThursdayEasterEgg(callback) {
     }
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 // Terminar viernes y volver al jueves
 function endFriday() {
     fridayUnlocked = false;
@@ -3260,9 +3315,12 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners(); // Configurar event listeners primero
     initAudio();
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     loadGame();
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     // Mostrar ASCII art en la consola del juego
     const asciiArt = `
    _____                .__          __       /\\        _________         _____  _____                __      __            .__       .___
@@ -3284,11 +3342,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
     checkThursdayEasterEgg(() => {
         loadGame();
         startGameLoop();
     });
+<<<<<<< HEAD
 =======
     setInterval(produceCoffee, 1000); // Producir cada segundo
 >>>>>>> 7d4ce85 (Superpowers (#8))
+=======
+>>>>>>> 9a3553f (Add Thursday Easter egg overlay and implement roguelike mode features)
 });
