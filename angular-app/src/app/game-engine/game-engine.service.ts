@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   GameState,
   createInitialState,
@@ -8,29 +8,34 @@ import {
   serializeState,
   deserializeState
 } from './game-engine';
+import { GameStateService } from '../game-state.service';
 import { SaveLoadService } from '../save-load.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameEngineService {
-  public state = signal<GameState>(createInitialState());
+  public get state() {
+    return this.gameStateService.state;
+  }
 
-  constructor(private readonly saveLoadService: SaveLoadService) {
+  constructor(
+    private readonly saveLoadService: SaveLoadService,
+    private readonly gameStateService: GameStateService
+  ) {
     this.loadState();
   }
 
   reset(): void {
-    const nextState = createInitialState();
-    this.state.set(nextState);
-    this.saveState(nextState);
+    this.gameStateService.reset();
+    this.saveState(this.gameStateService.getState());
   }
 
   buyUpgrade(upgradeKey: string): boolean {
     const nextState = this.cloneState(this.state());
     const success = buyUpgrade(nextState, upgradeKey);
     if (success) {
-      this.state.set(nextState);
+      this.gameStateService.setState(nextState);
       this.saveState(nextState);
     }
     return success;
@@ -39,7 +44,7 @@ export class GameEngineService {
   produceCoffee(): number {
     const nextState = this.cloneState(this.state());
     const produced = produceCoffee(nextState);
-    this.state.set(nextState);
+    this.gameStateService.setState(nextState);
     this.saveState(nextState);
     return produced;
   }
@@ -56,7 +61,7 @@ export class GameEngineService {
 
   importState(json: string): void {
     const nextState = deserializeState(json);
-    this.state.set(nextState);
+    this.gameStateService.setState(nextState);
     this.saveState(nextState);
   }
 
@@ -68,7 +73,7 @@ export class GameEngineService {
     const nextState = this.cloneState(this.state());
     if (!nextState.achievements.includes(message)) {
       nextState.achievements.push(message);
-      this.state.set(nextState);
+      this.gameStateService.setState(nextState);
       this.saveState(nextState);
     }
   }
@@ -79,21 +84,21 @@ export class GameEngineService {
     if (nextState.cpsMultiplier === 1.0) {
       nextState.cpsMultiplier = 1.5;
     }
-    this.state.set(nextState);
+    this.gameStateService.setState(nextState);
     this.saveState(nextState);
   }
 
   setCpsMultiplier(value: number): void {
     const nextState = this.cloneState(this.state());
     nextState.cpsMultiplier = Math.max(1.0, Math.min(3.0, value));
-    this.state.set(nextState);
+    this.gameStateService.setState(nextState);
     this.saveState(nextState);
   }
 
   advanceDialogue(): void {
     const nextState = this.cloneState(this.state());
     nextState.currentDialogueIndex += 1;
-    this.state.set(nextState);
+    this.gameStateService.setState(nextState);
     this.saveState(nextState);
   }
 
@@ -109,7 +114,7 @@ export class GameEngineService {
     const saved = this.saveLoadService.load();
     if (saved) {
       try {
-        this.state.set(deserializeState(saved));
+        this.gameStateService.setState(deserializeState(saved));
       } catch {
         this.saveLoadService.clear();
       }

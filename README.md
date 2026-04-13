@@ -129,6 +129,7 @@ Sin instalación, sin esperas. ¡Tu primer sorbo en segundos!
 - **GitHub Actions**: Pruebas y despliegue automatizado a GitHub Pages.
 - **Auto-versioning**: Versiones como 2.1.{commit_count}.
 - **Pipeline de deploy**: `./github/workflows/deploy-pages.yml` ejecuta tests de root y Angular antes de publicar el build de `angular-app/dist/angular-app`.
+- **Nota**: El deploy final requiere confirmación de la fuente de GitHub Pages (`main`, `gh-pages`, o `docs/`) antes de activar la publicación.
 
 ## Estructura del Proyecto: Simple Como un Espresso
 
