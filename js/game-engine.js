@@ -59,11 +59,14 @@ export function validateGameValues(state) {
         state.defeatedBosses = [];
     }
 
+<<<<<<< HEAD
     if (!state.persistentBonuses || typeof state.persistentBonuses !== 'object') {
         state.persistentBonuses = { cps: 1.0 };
     }
     state.persistentBonuses.cps = normalizeFloat(state.persistentBonuses.cps, 1.0);
 
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
     for (const key in state.upgrades) {
         const upgrade = state.upgrades[key];
         if (!upgrade || typeof upgrade !== 'object') {
@@ -132,9 +135,12 @@ export function calculateEffectiveCPS(state, now = Date.now()) {
     if (state.thursdayModeUnlocked && typeof state.cpsMultiplier === 'number' && state.cpsMultiplier !== 1.0) {
         effective *= state.cpsMultiplier;
     }
+<<<<<<< HEAD
     if (state.persistentBonuses && typeof state.persistentBonuses.cps === 'number' && state.persistentBonuses.cps !== 1.0) {
         effective *= state.persistentBonuses.cps;
     }
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
     return effective;
 }
 
@@ -159,8 +165,12 @@ export function deserializeState(jsonString) {
         upgrades: parsed.upgrades ? { ...defaultState.upgrades, ...parsed.upgrades } : { ...defaultState.upgrades },
         achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [],
         defeatedBosses: Array.isArray(parsed.defeatedBosses) ? parsed.defeatedBosses : [],
+<<<<<<< HEAD
         bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses,
         persistentBonuses: parsed.persistentBonuses || defaultState.persistentBonuses
+=======
+        bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses
+>>>>>>> 7d4ce85 (Superpowers (#8))
     };
     validateGameValues(state);
     return state;
@@ -185,7 +195,11 @@ export function createInitialState() {
         lastDonateTime: 0,
         currentDialogueIndex: 0,
         thursdayModeUnlocked: false,
+<<<<<<< HEAD
         cpsMultiplier: 1.0,
         persistentBonuses: { cps: 1.0 }
+=======
+        cpsMultiplier: 1.0
+>>>>>>> 7d4ce85 (Superpowers (#8))
     };
 }

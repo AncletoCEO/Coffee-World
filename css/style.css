@@ -655,6 +655,7 @@ footer {
     cursor: not-allowed;
 }
 
+<<<<<<< HEAD
 .thursday-overlay {
     position: fixed;
     inset: 0;
@@ -701,6 +702,8 @@ footer {
     font-size: 12px;
 }
 
+=======
+>>>>>>> 7d4ce85 (Superpowers (#8))
 .thursday-stats {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid #ffff00;
