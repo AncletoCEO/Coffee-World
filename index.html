@@ -16,7 +16,7 @@
                 <button id="soundToggle" class="control-btn">Sonido: ON</button>
                 <button id="consoleToggle" class="control-btn">Consola: OFF</button>
                 <button id="resetGame" class="control-btn">🔄 Reset</button>
-                <span class="version-info">v2.1.77</span>
+                <span class="version-info">v2.1.106</span>
             </div>
         </header>
 
@@ -171,10 +171,84 @@
             <p><small>Ningún hámster fue lastimado durante la producción de este juego.</small></p>
         </section>
 
+        <section id="thursday-panel" style="display: none;">
+            <div class="thursday-header">
+                <h2>⏰ Feliz Jueves Mode</h2>
+                <div class="thursday-info">
+                    <div class="thursday-time">
+                        <span class="label">Hora del Jueves:</span>
+                        <span id="thursday-clock" class="value">09:00</span>
+                    </div>
+                    <div class="friday-points-container">
+                        <span class="label">Puntos Buen Finde:</span>
+                        <span id="friday-points" class="value">0/1000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thursday-status">
+                <div class="active-events">
+                    <h3>🔔 Eventos Activos</h3>
+                    <div id="active-events-list">
+                        <p style="color: #666;">Sin eventos activos</p>
+                    </div>
+                </div>
+
+                <div class="friday-progress">
+                    <h3>🎉 Progreso al Buen Finde</h3>
+                    <div class="progress-bar-container">
+                        <div id="friday-progress-bar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thursday-actions">
+                <button id="use-blessing-btn" class="thursday-btn" disabled>🙏 Usar Bendición</button>
+                <button id="emergency-coffee-btn" class="thursday-btn" disabled>☕ Café de Emergencia</button>
+            </div>
+
+            <div class="thursday-stats">
+                <p><strong>📊 Estadísticas del Jueves:</strong></p>
+                <p>🔄 Jueves Sobrevividos: <span id="thursdays-survived">0</span></p>
+                <p>🎉 Fines de Semana Desbloqueados: <span id="fridays-unlocked">0</span></p>
+                <p>🏆 Récord de Puntos: <span id="best-points">0</span></p>
+            </div>
+        </section>
+
+        <section id="buen-finde-credits" style="display: none;">
+            <h2>🎉 Créditos del Buen Finde</h2>
+            <p><strong>🏆 Sobreviviente del Jueves Eterno:</strong> Tú</p>
+            <p><strong>⏰ Director del Tiempo:</strong> Cronos Cafetero</p>
+            <p><strong>📅 Guardián del Viernes:</strong> TGIF Master</p>
+            <p><strong>🎲 Generador de Eventos Aleatorios:</strong> Murphy's Law Engine</p>
+            <p><strong>☕ Proveedor de Café de Emergencia:</strong> Red Bull Espresso LLC</p>
+            <p><strong>🏢 Simulador de Reuniones:</strong> Zoom Meeting AI</p>
+            <p><strong>📧 Generador de Mails del Jefe:</strong> Corporate Spam Bot 3000</p>
+            <p><strong>🏠 Coordinador de Home Office:</strong> Pajama Work Consultant</p>
+            <p><strong>🎉 Organizador de Hora Feliz:</strong> Happy Hour Committee</p>
+            <p><strong>💜 Diseñador del Modo Jueves:</strong> Purple Theme Specialist</p>
+            <p><strong>📊 Estadístico del Sufrimiento:</strong> Pain Metrics Analyzer</p>
+            <p><strong>🔄 Arquitecto de Ciclos Infinitos:</strong> While(true) Developer</p>
+            <p><strong>🎯 Balanceador de Maldiciones:</strong> Curse/Blessing Equilibrium Expert</p>
+            <p><strong>🎬 Agradecimientos Especiales del Post-Game:</strong></p>
+            <ul>
+                <li>A todos los que sobrevivieron un jueves real</li>
+                <li>A los que cuentan las horas para el viernes</li>
+                <li>Al café que nos mantiene despiertos</li>
+                <li>A las reuniones que pudieron ser un mail</li>
+                <li>Al home office por salvar nuestras vidas</li>
+                <li>A la hora feliz que nunca llega</li>
+                <li>A los que entienden la lucha del jueves eterno</li>
+            </ul>
+            <p><strong>🎉 ¡Felicitaciones por alcanzar el Buen Finde!</strong></p>
+            <p><em>"Has sobrevivido el jueves eterno y alcanzado el descanso merecido."</em></p>
+            <p><small>El viernes es un estado mental. El jueves es para siempre.</small></p>
+        </section>
+
         <footer></footer>
     </div>
 
     <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
-    <script src="js/game.js"></script>
+    <script type="module" src="js/game.js"></script>
 </body>
 </html>

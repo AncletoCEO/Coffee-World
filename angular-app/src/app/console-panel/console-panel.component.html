@@ -1,0 +1,31 @@
+<section class="panel console-panel">
+  <h2>Console</h2>
+  <div *ngIf="engine.state().achievements.length; else noAchievements">
+    <h3>Achievements</h3>
+    <ul>
+      <li *ngFor="let achievement of engine.state().achievements">{{ achievement }}</li>
+    </ul>
+  </div>
+  <ng-template #noAchievements>
+    <p>No achievements yet.</p>
+  </ng-template>
+
+  <div *ngIf="engine.state().defeatedBosses.length; else noBosses">
+    <h3>Defeated Bosses</h3>
+    <ul>
+      <li *ngFor="let boss of engine.state().defeatedBosses">{{ boss }}</li>
+    </ul>
+  </div>
+  <ng-template #noBosses>
+    <p>No defeated bosses yet.</p>
+  </ng-template>
+
+  <div class="actions">
+    <input
+      type="text"
+      placeholder="New achievement"
+      [(ngModel)]="achievementText"
+    />
+    <button type="button" (click)="addAchievement()">Add Achievement</button>
+  </div>
+</section>

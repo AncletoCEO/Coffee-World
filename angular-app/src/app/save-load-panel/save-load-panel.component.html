@@ -1,0 +1,16 @@
+<section class="panel save-load-panel">
+  <h2>Save / Load</h2>
+  <p>Export your game state or paste a previously exported JSON to restore progress.</p>
+  <textarea
+    rows="8"
+    [value]="stateText"
+    (input)="stateText = $event.target.value"
+    placeholder="Exported state will appear here..."
+  ></textarea>
+  <div class="actions">
+    <button type="button" (click)="exportState()">Export</button>
+    <button type="button" (click)="importState()">Import</button>
+    <button type="button" (click)="clearSavedState()">Clear Saved</button>
+  </div>
+  <p class="message">{{ message }}</p>
+</section>

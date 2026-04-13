@@ -1,0 +1,13 @@
+<section class="panel upgrades-panel">
+  <h2>Upgrades</h2>
+  <div class="upgrade-list">
+    <div class="upgrade-row" *ngFor="let item of engine.state().upgrades | keyvalue">
+      <div class="upgrade-name">{{ item.value.name }}</div>
+      <div class="upgrade-owned">Owned: {{ item.value.owned }}</div>
+      <div class="upgrade-cost">Cost: {{ engine.getUpgradeCost(item.key) | number:'1.0-0' }}</div>
+      <button type="button" (click)="buy(item.key)" [disabled]="engine.state().coffee < engine.getUpgradeCost(item.key)">
+        Buy
+      </button>
+    </div>
+  </div>
+</section>

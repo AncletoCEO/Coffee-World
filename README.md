@@ -1,11 +1,163 @@
-# Ancleto's Coffee World: El Mundo Cafetero Incremental de Ancleto
+# ☕ Ancleto's Coffee World: ¡El Mejor Juego del Mundo Cafetero! ☕
 
-🎮 **¡JUEGA AHORA!** → [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/)
+🎮 **¡JUEGA AHORA MISMO!** → [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/)
 
 [![Estado del Deployment](https://img.shields.io/website?url=https%3A//ancletoceo.github.io/Coffee-World/)](https://ancletoceo.github.io/Coffee-World/)
 [![Versión](https://img.shields.io/github/package-json/v/AncletoCEO/Coffee-World)](https://github.com/AncletoCEO/Coffee-World)
 [![Commits](https://img.shields.io/github/commit-activity/m/AncletoCEO/Coffee-World)](https://github.com/AncletoCEO/Coffee-World/commits/main)
 [![GitHub Pages](https://img.shields.io/badge/deployment-github%20pages-blue)](https://ancletoceo.github.io/Coffee-World/)
+
+## ¡Bienvenidos al Imperio Cafetero Más Épico del Universo!
+
+¿Estás listo para sumergirte en el **juego más adictivo, divertido y cafetero que jamás hayas probado**? Ancleto's Coffee World no es solo un juego incremental: es una experiencia que combina estrategia, humor corporativo, exploración ASCII y una narrativa que te dejará con sed de más. ¡El mejor juego del mundo, sin exagerar! Porque aquí, cada grano de café cuenta, cada boss derrotado es una victoria épica, y cada sorbo es un paso hacia la dominación cafetera global.
+
+**¡Disponible GRATIS online!** Juega directamente en tu navegador, sin descargas, con guardado automático y un mundo que nunca duerme. ¿Por qué esperar? ¡Tu taza te llama!
+
+## Desarrollo y pruebas
+
+El proyecto ya incluye una separación inicial entre la lógica del juego y la UI, junto con tests unitarios básicos.
+
+Para instalar dependencias:
+
+```bash
+npm install
+```
+
+Para ejecutar las pruebas:
+
+```bash
+npm test
+```
+
+Para generar el reporte de coverage:
+
+```bash
+npm run coverage
+```
+
+## La Inspiración Cafetera: Los Viajes de Ancleto por el Mundo
+
+¡Hola, soy Ancleto, el fundador del Buen Gusto, la Buena Ortografía y la Cultura Cafetera! Antes de crear este juego épico, emprendí una expedición global para entender el alma del café y traer esa magia a tu pantalla. Cada sorbo, cada ritual, cada aroma me inspiró para hacer de Coffee World el mejor juego del mundo. Déjame contarte mis aventuras cafeteras que dieron vida a esta obra maestra:
+
+### Addis Abeba, Etiopía: El Origen Sagrado
+
+En las montañas etíopes, descubrí la ceremonia jebena: tostado lento en sartén de cobre, molienda manual con mortero, e infusión en olla con reposo y decantado natural. ¡Tres rondas (abol, tona, bereka) que unen a la comunidad! Esto inspiró nuestros "breaks creativos" y la narrativa progresiva del juego – cada acto es una ronda más profunda en tu viaje cafetero.
+
+### Tokio, Japón: Precisión Tecnológica
+
+Allí, el sifón de vidrio y mechero Bunsen crean extracción limpia en 12 minutos. ¡Una danza de vapor y gravedad! Me recordó la precisión de nuestros upgrades: cada mejora es como un sifón perfecto, elevando tu producción sin amargores. ¡Así nació el sistema de escalado dinámico!
+
+### Nápoles, Italia: El Espresso Relámpago
+
+¡30 segundos para un espresso perfecto con 9 bares de presión! Los baristas napolitanos discuten cada detalle como CEOs en junta. Esto me dio la idea de los bosses: cada uno es un "espresso relámpago" que requiere estrategia y fuerza cafetera para vencer. ¡Sin presión, no hay victoria!
+
+### Melbourne, Australia: Innovación Premium
+
+Máquinas automáticas de $1200 AUD con molinillos cónicos cerámicos. ¡Café de especialidad en hubs culturales! Inspiró nuestros logros y la estética terminal: moderno pero retro, como un latte art en ASCII. ¡Cada logro es un "cupping" australiano que eleva tu estatus!
+
+### Buenos Aires, Argentina: Transformación Corporativa
+
+Vi cómo cambiar cafeteras viejas revolucionó oficinas: más innovación, menos estrés. ¡Impacto medido en productividad! Esto es el corazón del juego: upgrades que transforman tu imperio, de una taza solitaria a un dominio global. ¡Como nuestras "Viernes de Cupping" que duplican la creatividad!
+
+De estos viajes nació Coffee World: un blend de historia, ciencia y aventura. Cada mecánica refleja un ritual real, cada boss una batalla por el mejor sorbo. ¡Sin estos viajes, no habría juego! Ahora, juega y siente el mundo cafetero en tus venas.
+
+## ¿Por Qué Este Es EL MEJOR JUEGO DEL MUNDO?
+
+- **Adicción Garantizada**: Una vez que empieces a recolectar café automáticamente, no podrás parar. ¡Es más adictivo que el espresso doble!
+- **Humor Irresistible**: Inspirado en el universo de Ancleto, con personajes como Damián, Lucía y el legendario hámster. ¡Risas aseguradas en cada línea de diálogo!
+- **Profundidad Estratégica**: 10 upgrades, 6 dungeons ASCII, 25 logros y un sistema de bosses que te obligará a pensar (y reírte) mientras juegas.
+- **Estética Retro Terminal**: Verde sobre negro, fuente monoespaciada, efectos de glow. ¡Como hackear la Matrix, pero con café!
+- **Narrativa Épica**: 6 actos completos con progresión obligatoria. Derrota bosses, explora mundos y construye tu imperio cafetero.
+- **Comandos Interactivos**: 20+ comandos en la consola. ¡Siente el poder de ser el CEO de tu propio mundo cafetero!
+- **Guardado Robusto**: LocalStorage + export/import CSV. ¡Nunca pierdas tu progreso, ni siquiera si Lucía intenta infiltrarse!
+
+Este no es un juego cualquiera: es **LA OBRA MAESTRA** del gaming incremental. ¡El mejor del mundo, punto! Si no lo crees, juega y verás por qué miles (bueno, cientos... decenas... ¡tú!) lo aman.
+
+## Mecánicas Que Te Harán Gritar "¡Más Café!"
+
+### Producción Automática y Upgrades
+- Genera café por segundo con upgrades que escalan dinámicamente. ¡De 10 café iniciales a un imperio que produce miles!
+- 10 mejoras únicas: Máquina Verde, Expansión de Cafeteras, y más. Cada una con bonos de CPS, Carisma y Fuerza Cafetera.
+
+### Exploración y Batallas
+- **6 Dungeons ASCII**: Mapas con símbolos como `@` (tú), `M` (monstruos), `B` (bosses). ¡Explora con estilo retro!
+- **Bosses por Acto**: Derrota a cada uno para avanzar. ¡Sin ellos, el café no fluye!
+- **Sistema de Combate**: Lucha con estrategia, usa tu fuerza cafetera y derrota amenazas con humor.
+
+### Sistema de Logros y Narrativa
+- **25 Achievements**: Desde "Primer Sorbo" hasta "Emperador Cafetero". ¡Cada uno desbloquea diálogos épicos!
+- **40+ Diálogos Progresivos**: Evolucionan con tu progreso total. ¡Ríe con las locuras de Ancleto y compañía!
+
+### Funcionalidades Avanzadas
+- **Consola Interactiva**: Comandos como `buy`, `fight`, `mail`, `donate`. ¡Siente el poder corporativo!
+- **Cooldowns Estratégicos**: Mail (2 min), Donaciones (variable). ¡Planifica como un CEO!
+- **Guardado Seguro**: Auto-save continuo, exporta tu progreso y nunca pierdas tu imperio.
+
+## Cómo Empezar Tu Aventura Cafetera (¡Es Fácil y Gratificante!)
+
+### Opción 1: Juega Online Inmediatamente
+**¡Haz clic aquí y comienza YA!** [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/)  
+Sin instalación, sin esperas. ¡Tu primer sorbo en segundos!
+
+### Opción 2: Desarrollo Local (Para los Verdaderos Baristas)
+1. Clona el repo: `git clone https://github.com/AncletoCEO/Coffee-World.git`
+2. Abre `index.html` en tu navegador.
+3. O usa un servidor: `python -m http.server 8000`
+
+### Primeros Pasos (Guía Rápida)
+1. **Recolecta Café Automáticamente**: Mira cómo crece tu producción.
+2. **Compra tu Primer Upgrade**: Máquina Verde por 10 café. ¡Siente el poder!
+3. **Explora la Consola**: Escribe `help` para ver comandos. ¡Descubre secretos!
+4. **Entra a Dungeons**: Con 750+ café, enfrenta tu primer boss. ¡Épico!
+5. **Sigue la Historia**: Derrota bosses para desbloquear actos. ¡Construye tu legado!
+
+## Tecnología y Arquitectura: Pura Magia Cafetera
+
+### Frontend
+- **HTML5 Semántico**: Accesible y bien estructurado.
+- **CSS3 Moderno**: Grid, Flexbox, Variables CSS, Animaciones. ¡Estilo terminal impecable!
+- **JavaScript ES6+ Vanilla**: Código limpio, eficiente, sin frameworks. ¡Puro poder cafetero!
+- **Web Audio API**: Sonidos inmersivos para cada acción.
+
+### Persistencia y Almacenamiento
+- **LocalStorage**: Guardado automático y continuo.
+- **CSV Export/Import**: Backup manual, comparte tu progreso.
+- **Validación de Datos**: Protección contra corrupciones (¡como el comando `fixnan`!).
+
+### Deployment y CI/CD
+- **GitHub Pages**: Hosting gratuito y automático.
+- **GitHub Actions**: Pruebas y despliegue automatizado a GitHub Pages.
+- **Auto-versioning**: Versiones como 2.1.{commit_count}.
+- **Pipeline de deploy**: `./github/workflows/deploy-pages.yml` ejecuta tests de root y Angular antes de publicar el build de `angular-app/dist/angular-app`.
+- **Nota**: El deploy final requiere confirmación de la fuente de GitHub Pages (`main`, `gh-pages`, o `docs/`) antes de activar la publicación.
+
+## Estructura del Proyecto: Simple Como un Espresso
+
+```
+Coffee-World/
+├── index.html              # La puerta a tu imperio cafetero
+├── css/
+│   ├── style.css           # Estilos principales (verde terminal)
+│   └── terminal-styles.css # Efectos adicionales retro
+├── js/
+│   └── game.js            # El corazón del juego (2700+ líneas de magia)
+```
+
+## ¿Por Qué Jugar Ancleto's Coffee World?
+
+- **Gratis y Accesible**: Juega en cualquier dispositivo con navegador.
+- **Sin Fin**: Progresión infinita, upgrades eternos, bosses legendarios.
+- **Comunidad**: Únete a la cultura cafetera. ¡Comparte tus logros!
+- **Inspirado en la Vida Real**: Humor corporativo, referencias a emails épicos y la saga de Ancleto.
+- **El Mejor Juego del Mundo**: ¡Sí, lo decimos en serio! Si encuentras uno mejor, ¡házmelo saber... pero dudo que exista!
+
+¡No esperes más! Entra al mundo de Ancleto, recolecta café, derrota bosses y conviértete en el Emperador Cafetero. ¡El mejor juego del universo te espera!
+
+---
+
+**¡Juega Ahora!** [https://ancletoceo.github.io/Coffee-World/](https://ancletoceo.github.io/Coffee-World/)
+
+*Fundado por Ancleto: El Guardián del Buen Gusto, la Buena Ortografía y la Cultura Cafetera. "Una taza compartida puede cambiarlo todo."*
 
 ## Descripción del Proyecto
 
