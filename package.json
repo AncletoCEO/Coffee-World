@@ -1,10 +1,6 @@
 {
   "name": "ancleto-coffee-world",
-<<<<<<< HEAD
   "version": "2.1.110",
-=======
-  "version": "2.1.106",
->>>>>>> 7d4ce85 (Superpowers (#8))
   "type": "module",
   "description": "¡Construye tu imperio cafetero! El juego incremental de Ancleto, el mejor CEO del mundo.",
   "main": "index.html",
@@ -14,11 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-<<<<<<< HEAD
     "version": "2.1.110"
-=======
-    "version": "2.1.106"
->>>>>>> 7d4ce85 (Superpowers (#8))
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.1",
