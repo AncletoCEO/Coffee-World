@@ -58,12 +58,10 @@ export function validateGameValues(state) {
     if (Array.isArray(state.defeatedBosses) === false) {
         state.defeatedBosses = [];
     }
-
     if (!state.persistentBonuses || typeof state.persistentBonuses !== 'object') {
         state.persistentBonuses = { cps: 1.0 };
     }
     state.persistentBonuses.cps = normalizeFloat(state.persistentBonuses.cps, 1.0);
-
     for (const key in state.upgrades) {
         const upgrade = state.upgrades[key];
         if (!upgrade || typeof upgrade !== 'object') {
