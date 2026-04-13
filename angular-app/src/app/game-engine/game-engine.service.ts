@@ -8,15 +8,15 @@ import {
   serializeState,
   deserializeState
 } from './game-engine';
+import { SaveLoadService } from '../save-load.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameEngineService {
-  private readonly storageKey = 'coffee-world-state';
   public state = signal<GameState>(createInitialState());
 
-  constructor() {
+  constructor(private readonly saveLoadService: SaveLoadService) {
     this.loadState();
   }
 
@@ -27,7 +27,7 @@ export class GameEngineService {
   }
 
   buyUpgrade(upgradeKey: string): boolean {
-    const nextState = structuredClone(this.state());
+    const nextState = this.cloneState(this.state());
     const success = buyUpgrade(nextState, upgradeKey);
     if (success) {
       this.state.set(nextState);
@@ -37,11 +37,17 @@ export class GameEngineService {
   }
 
   produceCoffee(): number {
-    const nextState = structuredClone(this.state());
+    const nextState = this.cloneState(this.state());
     const produced = produceCoffee(nextState);
     this.state.set(nextState);
     this.saveState(nextState);
     return produced;
+  }
+
+  private cloneState(state: GameState): GameState {
+    return typeof structuredClone === 'function'
+      ? structuredClone(state)
+      : JSON.parse(JSON.stringify(state));
   }
 
   getUpgradeCost(upgradeKey: string): number {
@@ -58,23 +64,54 @@ export class GameEngineService {
     return serializeState(this.state());
   }
 
-  private saveState(state: GameState): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(this.storageKey, serializeState(state));
+  addAchievement(message: string): void {
+    const nextState = this.cloneState(this.state());
+    if (!nextState.achievements.includes(message)) {
+      nextState.achievements.push(message);
+      this.state.set(nextState);
+      this.saveState(nextState);
     }
   }
 
-  private loadState(): void {
-    if (typeof localStorage === 'undefined') {
-      return;
+  unlockThursdayMode(): void {
+    const nextState = this.cloneState(this.state());
+    nextState.thursdayModeUnlocked = true;
+    if (nextState.cpsMultiplier === 1.0) {
+      nextState.cpsMultiplier = 1.5;
     }
+    this.state.set(nextState);
+    this.saveState(nextState);
+  }
 
-    const saved = localStorage.getItem(this.storageKey);
+  setCpsMultiplier(value: number): void {
+    const nextState = this.cloneState(this.state());
+    nextState.cpsMultiplier = Math.max(1.0, Math.min(3.0, value));
+    this.state.set(nextState);
+    this.saveState(nextState);
+  }
+
+  advanceDialogue(): void {
+    const nextState = this.cloneState(this.state());
+    nextState.currentDialogueIndex += 1;
+    this.state.set(nextState);
+    this.saveState(nextState);
+  }
+
+  clearSavedState(): void {
+    this.saveLoadService.clear();
+  }
+
+  private saveState(state: GameState): void {
+    this.saveLoadService.save(serializeState(state));
+  }
+
+  private loadState(): void {
+    const saved = this.saveLoadService.load();
     if (saved) {
       try {
         this.state.set(deserializeState(saved));
       } catch {
-        localStorage.removeItem(this.storageKey);
+        this.saveLoadService.clear();
       }
     }
   }
