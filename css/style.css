@@ -655,6 +655,52 @@ footer {
     cursor: not-allowed;
 }
 
+.thursday-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.thursday-overlay-content {
+    background: #050015;
+    border: 2px solid #ff00ff;
+    box-shadow: 0 0 40px rgba(255, 0, 255, 0.5);
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 760px;
+    width: 100%;
+    text-align: center;
+}
+
+.thursday-overlay h2 {
+    color: #ff00ff;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.thursday-overlay p {
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.thursday-video-container {
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.thursday-overlay-note {
+    color: #aaaaaa;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
 .thursday-stats {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid #ffff00;

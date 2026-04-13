@@ -37,6 +37,10 @@ let fridayLevel = 0;
 let fridayUnlocked = false;
 let activeThursdayEvents = [];
 let postGameCompleted = false; // Nueva variable para rastrear si se completó el post-game
+let roguelikeModeActive = false;
+let roguelikeRuns = 0;
+let persistentBonuses = {};
+let nextRunMultiplier = 1.0;
 let thursdayStats = {
     thursdaysSurvived: 0,
     totalThursdayTime: 0,
@@ -44,6 +48,7 @@ let thursdayStats = {
     fridaysUnlocked: 0,
     bestPointsRecord: 0
 };
+let productionInterval = null;
 let cpsMultiplier = 1.0; // Multiplicador de CPS por eventos del jueves
 
 // Constantes del Thursday Mode
@@ -77,7 +82,8 @@ function buildEngineState() {
         lastDonateTime,
         currentDialogueIndex,
         thursdayModeUnlocked,
-        cpsMultiplier
+        cpsMultiplier,
+        persistentBonuses
     });
     return state;
 }
@@ -673,6 +679,10 @@ function loadGame() {
                 bestPointsRecord: 0
             };
             postGameCompleted = data.postGameCompleted || false;
+            roguelikeModeActive = data.roguelikeModeActive || false;
+            roguelikeRuns = parseInt(data.roguelikeRuns) || 0;
+            persistentBonuses = data.persistentBonuses || {};
+            nextRunMultiplier = parseFloat(data.nextRunMultiplier) || 1.0;
         } catch (e) {
             console.error('Error cargando datos guardados:', e);
             // Reinicializar valores por defecto si hay error
@@ -763,7 +773,11 @@ function saveGame() {
         fridayEndTime,
         activeThursdayEvents,
         thursdayStats,
-        postGameCompleted
+        postGameCompleted,
+        roguelikeModeActive,
+        roguelikeRuns,
+        persistentBonuses,
+        nextRunMultiplier
     };
     localStorage.setItem('ancletoCoffeeWorld', JSON.stringify(data));
 }
@@ -1057,6 +1071,12 @@ function handleHelpCommand() {
         consoleLog('jueves/thursday - Activar/desactivar Feliz Jueves Mode');
         consoleLog('⏰ Sobrevive el jueves eterno para alcanzar el Buen Finde!');
     }
+
+    if (postGameCompleted) {
+        consoleLog('');
+        consoleLog('=== POST-POSTGAME ===');
+        consoleLog('rogue/buenf - Iniciar modo Buen Finde roguelike tras completar el post-game');
+    }
     
     if (devModeEnabled) {
         consoleLog('');
@@ -1135,6 +1155,10 @@ function handleFixNaNCommand() {
     saveGame();
 }
 
+function handleRoguelikeCommand() {
+    enterRoguelikeMode();
+}
+
 // Comando para activar/desactivar Thursday Mode
 function handleJuevesCommand() {
     toggleThursdayMode();
@@ -1160,6 +1184,8 @@ const commands = {
     help: handleHelpCommand,
     jueves: handleJuevesCommand,
     thursday: handleJuevesCommand,
+    rogue: handleRoguelikeCommand,
+    buenf: handleRoguelikeCommand,
     // Cheats
     addcoffee: handleAddCoffeeCommand,
     godmode: handleGodModeCommand,
@@ -1720,8 +1746,86 @@ function checkPostGameCompletion() {
         if (buenFindeCreditsSection) {
             buenFindeCreditsSection.style.display = 'block';
         }
-        
+
+        consoleLog('🔁 Escribe "rogue" para iniciar el modo Buen Finde roguelike.');
         saveGame();
+    }
+}
+
+function enterRoguelikeMode() {
+    if (!postGameCompleted) {
+        consoleLog('❌ Debes completar el post-game para iniciar el modo Buen Finde roguelike.');
+        return;
+    }
+    if (roguelikeModeActive) {
+        consoleLog('⚠️ Ya estás en una sesión de Buen Finde roguelike.');
+        return;
+    }
+
+    roguelikeModeActive = true;
+    roguelikeRuns += 1;
+    nextRunMultiplier = 1 + Math.min(0.5, 0.1 * roguelikeRuns);
+    persistentBonuses.cps = 1 + Math.min(1, 0.1 * roguelikeRuns);
+
+    consoleLog('');
+    consoleLog('═══════════════════════════════════════════════');
+    consoleLog('🎮 ¡Modo Buen Finde Roguelike iniciado!');
+    consoleLog('═══════════════════════════════════════════════');
+    consoleLog(`Run #${roguelikeRuns} iniciada. Tu bonus persistente de CPS es x${persistentBonuses.cps.toFixed(2)}.`);
+    consoleLog('Sobrevive al jueves eterno y aumenta tu multiplicador entre runs.');
+    consoleLog('═══════════════════════════════════════════════');
+    showNarrative('🎮 Entraste en el modo Buen Finde roguelike. Cada run mejora tus bonus persistentes.');
+
+    saveGame();
+}
+
+function startGameLoop() {
+    if (productionInterval !== null) {
+        return;
+    }
+    productionInterval = setInterval(produceCoffee, 1000);
+}
+
+function showThursdayEasterEgg(callback) {
+    const overlay = document.getElementById('thursday-overlay');
+    const videoFrame = document.getElementById('thursday-video');
+    const skipBtn = document.getElementById('thursday-skip-btn');
+    if (!overlay || !videoFrame || !skipBtn) {
+        callback();
+        return;
+    }
+
+    overlay.style.display = 'flex';
+    videoFrame.src = 'https://www.youtube.com/embed/BvtUSsok4JA?autoplay=1&mute=1&rel=0&showinfo=0';
+    skipBtn.disabled = true;
+    skipBtn.textContent = 'Saltarse en 5s...';
+
+    let skipDelay = 5;
+    const interval = setInterval(() => {
+        skipDelay -= 1;
+        skipBtn.textContent = `Saltarse en ${skipDelay}s...`;
+        if (skipDelay <= 0) {
+            clearInterval(interval);
+            skipBtn.disabled = false;
+            skipBtn.textContent = 'Saltarse video y continuar';
+        }
+    }, 1000);
+
+    skipBtn.addEventListener('click', function handleSkip() {
+        skipBtn.removeEventListener('click', handleSkip);
+        overlay.style.display = 'none';
+        videoFrame.src = '';
+        callback();
+    });
+}
+
+function checkThursdayEasterEgg(callback) {
+    const today = new Date();
+    const isThursday = today.getDay() === 4; // 0 = Domingo, 4 = Jueves
+    if (isThursday) {
+        showThursdayEasterEgg(callback);
+    } else {
+        callback();
     }
 }
 
@@ -3115,7 +3219,6 @@ function logDevCommand(command, target) {
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners(); // Configurar event listeners primero
     initAudio();
-    loadGame();
     // Mostrar ASCII art en la consola del juego
     const asciiArt = `
    _____                .__          __       /\\        _________         _____  _____                __      __            .__       .___
@@ -3136,5 +3239,8 @@ document.addEventListener('DOMContentLoaded', function() {
         consoleOutput.appendChild(p);
     });
     consoleLog('Bienvenido a Ancleto\'s Coffee World. Escribe "help" para comandos.');
-    setInterval(produceCoffee, 1000); // Producir cada segundo
+    checkThursdayEasterEgg(() => {
+        loadGame();
+        startGameLoop();
+    });
 });

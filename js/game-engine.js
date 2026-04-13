@@ -59,6 +59,11 @@ export function validateGameValues(state) {
         state.defeatedBosses = [];
     }
 
+    if (!state.persistentBonuses || typeof state.persistentBonuses !== 'object') {
+        state.persistentBonuses = { cps: 1.0 };
+    }
+    state.persistentBonuses.cps = normalizeFloat(state.persistentBonuses.cps, 1.0);
+
     for (const key in state.upgrades) {
         const upgrade = state.upgrades[key];
         if (!upgrade || typeof upgrade !== 'object') {
@@ -127,6 +132,9 @@ export function calculateEffectiveCPS(state, now = Date.now()) {
     if (state.thursdayModeUnlocked && typeof state.cpsMultiplier === 'number' && state.cpsMultiplier !== 1.0) {
         effective *= state.cpsMultiplier;
     }
+    if (state.persistentBonuses && typeof state.persistentBonuses.cps === 'number' && state.persistentBonuses.cps !== 1.0) {
+        effective *= state.persistentBonuses.cps;
+    }
     return effective;
 }
 
@@ -151,7 +159,8 @@ export function deserializeState(jsonString) {
         upgrades: parsed.upgrades ? { ...defaultState.upgrades, ...parsed.upgrades } : { ...defaultState.upgrades },
         achievements: Array.isArray(parsed.achievements) ? parsed.achievements : [],
         defeatedBosses: Array.isArray(parsed.defeatedBosses) ? parsed.defeatedBosses : [],
-        bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses
+        bosses: Array.isArray(parsed.bosses) ? parsed.bosses : defaultState.bosses,
+        persistentBonuses: parsed.persistentBonuses || defaultState.persistentBonuses
     };
     validateGameValues(state);
     return state;
@@ -176,6 +185,7 @@ export function createInitialState() {
         lastDonateTime: 0,
         currentDialogueIndex: 0,
         thursdayModeUnlocked: false,
-        cpsMultiplier: 1.0
+        cpsMultiplier: 1.0,
+        persistentBonuses: { cps: 1.0 }
     };
 }
