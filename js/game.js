@@ -58,7 +58,8 @@ let fridayEndTime = 0; // Timestamp cuando termina el viernes
 let actLimits = engineActLimits;
 
 function buildEngineState() {
-    return {
+    const state = createInitialState();
+    Object.assign(state, {
         coffee,
         totalCoffee,
         cps,
@@ -77,7 +78,8 @@ function buildEngineState() {
         currentDialogueIndex,
         thursdayModeUnlocked,
         cpsMultiplier
-    };
+    });
+    return state;
 }
 
 function applyEngineState(state) {
@@ -89,6 +91,7 @@ function applyEngineState(state) {
     upgrades = state.upgrades;
     achievements = state.achievements;
     currentBoss = state.currentBoss;
+    bosses = state.bosses;
     defeatedBosses = state.defeatedBosses;
     lastMailTime = state.lastMailTime;
     lastWorkTime = state.lastWorkTime;
