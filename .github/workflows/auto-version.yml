@@ -32,11 +32,9 @@ jobs:
 
     - name: Update version in files
       run: |
-        # Actualizar package.json
+        # Actualizar package.json (raíz y app Angular)
         sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${{ steps.version.outputs.version }}\"/g" package.json
-        
-        # Actualizar index.html
-        sed -i "s/<span class=\"version-info\">v[0-9.]*<\/span>/<span class=\"version-info\">v${{ steps.version.outputs.version }}<\/span>/g" index.html
+        sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${{ steps.version.outputs.version }}\"/g" angular-app/package.json
         
         echo "✅ Archivos actualizados con versión v${{ steps.version.outputs.version }}"
 
@@ -44,6 +42,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add package.json index.html
+        git add package.json angular-app/package.json
         git commit -m "🔖 Auto-update version to v${{ steps.version.outputs.version }}" || echo "No changes to commit"
         git push

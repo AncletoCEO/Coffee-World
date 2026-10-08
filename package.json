@@ -3,12 +3,13 @@
   "version": "2.1.115",
   "type": "module",
   "description": "¡Construye tu imperio cafetero! El juego incremental de Ancleto, el mejor CEO del mundo.",
-  "main": "index.html",
+  "main": "angular-app/src/main.ts",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "dev": "python -m http.server 3000",
+    "start": "cd angular-app && npm start",
+    "dev": "cd angular-app && npm start",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:angular": "cd angular-app && npm test -- --watch=false",
     "coverage": "vitest run --coverage",
     "version": "2.1.115"
   },

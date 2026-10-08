@@ -1,0 +1,18 @@
+<section class="terminal" aria-label="Terminal de Coffee World">
+  <div #scrollback class="scrollback" role="log" aria-live="polite">
+    <pre *ngFor="let line of engine.log()">{{ line }}</pre>
+  </div>
+  <form class="prompt" (ngSubmit)="submit()">
+    <label class="prompt-label" for="cli-input">ancleto@coffee:~$</label>
+    <input
+      id="cli-input"
+      class="prompt-input"
+      type="text"
+      name="command"
+      [(ngModel)]="command"
+      autocomplete="off"
+      autofocus
+      placeholder="escribe un comando (help)">
+    <button class="prompt-send" type="submit">↵</button>
+  </form>
+</section>

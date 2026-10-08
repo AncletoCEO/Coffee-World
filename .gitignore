@@ -2,6 +2,9 @@
 node_modules/
 coverage/
 
+# Local tooling memory (not project source)
+.ancleto/
+
 # Ignore project docs that should not be uploaded
 docs/
 
