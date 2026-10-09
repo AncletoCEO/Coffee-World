@@ -1,6 +1,6 @@
 {
   "name": "ancleto-coffee-world",
-  "version": "2.1.117",
+  "version": "2.1.119",
   "type": "module",
   "description": "¡Construye tu imperio cafetero! El juego incremental de Ancleto, el mejor CEO del mundo.",
   "main": "angular-app/src/main.ts",
@@ -11,7 +11,7 @@
     "test:watch": "vitest",
     "test:angular": "cd angular-app && npm test -- --watch=false",
     "coverage": "vitest run --coverage",
-    "version": "2.1.117"
+    "version": "2.1.119"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.1",
