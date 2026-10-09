@@ -21,4 +21,4 @@
 - [x] 3.5 Verificación en vivo (build + Chrome headless): HUD sube solo y aparece narración sin escribir comandos. (5/5 checks PASS)
 
 ## Fase 4 — Cierre
-- [ ] 4.1 Sincronizar la spec de `cli-interface` y archivar el change.
+- [x] 4.1 Sincronizar la spec de `cli-interface` y archivar el change.
