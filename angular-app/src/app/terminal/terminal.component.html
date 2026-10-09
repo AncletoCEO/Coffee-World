@@ -1,4 +1,5 @@
 <section class="terminal" aria-label="Terminal de Coffee World">
+  <div class="status-bar" role="status" aria-live="off">{{ hud() }}</div>
   <div #scrollback class="scrollback" role="log" aria-live="polite">
     <pre *ngFor="let line of engine.log()">{{ line }}</pre>
   </div>

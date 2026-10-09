@@ -10,17 +10,17 @@
 - [x] 1.7 Confirmar que el build sigue usando `--base-href ./`.
 
 ## Fase 2 — Fuente de Pages y limpieza
-- [ ] 2.1 Verificar/forzar la fuente de Pages en `workflow` (`enablement: true` o **Settings → Pages → Source: GitHub Actions**).
-- [ ] 2.2 Confirmar con `gh api repos/AncletoCEO/Coffee-World/pages` que `build_type` es `workflow`.
+- [ ] 2.1 Verificar/forzar la fuente de Pages en `workflow` (`enablement: true` o **Settings → Pages → Source: GitHub Actions**). Intentado con `enablement: true`; el token disponible no puede cambiarlo por API (PUT → 404, falta admin). El deploy por Actions funciona igual.
+- [ ] 2.2 Confirmar con `gh api repos/AncletoCEO/Coffee-World/pages` que `build_type` es `workflow`. Aún reporta `legacy`/`main`; pendiente cambio manual en Settings.
 - [ ] 2.3 Eliminar la rama `gh-pages` huérfana (`git push origin --delete gh-pages`) una vez verificado el despliegue.
 
 ## Fase 3 — Verificación
 - [x] 3.1 Correr `npm test` (raíz) y `cd angular-app && npm test -- --watch=false` en verde. (raíz 47 ✓, Angular 60 ✓)
-- [ ] 3.2 Deploy verde en Actions; `deploy-pages` reporta `page_url`.
-- [ ] 3.3 Abrir `https://ancletoceo.github.io/Coffee-World/` y confirmar que carga el juego (no el README).
-- [ ] 3.4 Verificar en DevTools que `index.html`, `main-*.js`, `styles-*.css` y `favicon.ico` devuelven `200`.
+- [x] 3.2 Deploy verde en Actions; `deploy-pages` reporta `page_url`. (run 37879291122: "Reported success!", deployment en e88c961, `https://ancletoceo.github.io/Coffee-World/`)
+- [x] 3.3 Abrir `https://ancletoceo.github.io/Coffee-World/` y confirmar que carga el juego (no el README). (Chrome headless: DOM renderiza bienvenida + prompt; `help`/`status` producen salida)
+- [x] 3.4 Verificar en DevTools que `index.html`, `main-*.js`, `styles-*.css` y `favicon.ico` devuelven `200`. (`curl` → 200 los cuatro)
 - [x] 3.5 Confirmar que `--base-href ./` resuelve los assets bajo `/Coffee-World/`. (build verificado: `dist/angular-app/browser/index.html` con `<base href="./">`)
 
 ## Fase 4 — Cierre documental
-- [ ] 4.1 Sincronizar la spec de `deployment` y archivar el change.
+- [x] 4.1 Sincronizar la spec de `deployment` y archivar el change.
 - [x] 4.2 Registrar el aprendizaje (fuente de Pages + ruta `browser/`) en la memoria del proyecto.

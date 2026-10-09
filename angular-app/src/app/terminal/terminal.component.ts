@@ -1,7 +1,9 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GameEngineService } from '../game-engine/game-engine.service';
+import { getActProgress, getCurrentAct, getRequiredFridayPoints, getThursdayClock } from '../game-engine/game-engine';
+import { actByNumber } from '../game-engine/content';
 
 @Component({
   selector: 'app-terminal',
@@ -13,6 +15,22 @@ import { GameEngineService } from '../game-engine/game-engine.service';
 export class TerminalComponent implements AfterViewInit, OnDestroy {
   protected readonly engine = inject(GameEngineService);
   protected command = '';
+
+  protected readonly hud = computed(() => {
+    const state = this.engine.state;
+    const act = getCurrentAct(state);
+    const progress = Math.floor(getActProgress(state) * 100);
+    const parts = [
+      `Café: ${Math.floor(state.coffee)}`,
+      `CPS: ${Math.floor(state.cps)}`,
+      `Acto ${act}: ${actByNumber(act).name} (${progress}%)`
+    ];
+    if (state.thursdayModeUnlocked) {
+      parts.push(`⏰ Jueves ${getThursdayClock(state)}`);
+      parts.push(`Puntos: ${state.buenFindePoints}/${getRequiredFridayPoints(state)}`);
+    }
+    return parts.join('  |  ');
+  });
 
   @ViewChild('scrollback') private scrollback?: ElementRef<HTMLElement>;
 

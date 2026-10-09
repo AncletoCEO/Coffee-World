@@ -5,13 +5,15 @@ import {
   checkThursdayUnlock,
   createInitialState,
   deserializeState,
+  getCurrentAct,
   getLatestDialogueIndex,
+  getPendingBoss,
   produceCoffee,
   serializeState,
   tickThursday,
   endFriday
 } from './game-engine';
-import { DIALOGUES } from './content';
+import { actByNumber, DIALOGUES } from './content';
 import { runCommand, CommandResult } from './commands';
 import { GameStateService } from '../game-state.service';
 import { SaveLoadService } from '../save-load.service';
@@ -25,6 +27,8 @@ export class GameEngineService {
 
   private interval: ReturnType<typeof setInterval> | null = null;
   private ticksSinceSave = 0;
+  private lastAct = 1;
+  private lastBossName: string | null = null;
   private static readonly SAVE_EVERY_TICKS = 15;
 
   constructor(
@@ -32,7 +36,8 @@ export class GameEngineService {
     private readonly gameStateService: GameStateService
   ) {
     this.loadState();
-    this.pushLog(['Bienvenido a Ancleto\'s Coffee World.', 'Escribe "help" para ver los comandos.']);
+    this.syncNarrationTrackers();
+    this.narrateOpening();
   }
 
   get state(): GameState {
@@ -90,6 +95,18 @@ export class GameEngineService {
       messages.push(`📧 Nueva historia: "${dialogue.title}" (${dialogue.narrator}).`);
     }
 
+    const act = getCurrentAct(state);
+    if (act > this.lastAct) {
+      messages.push(`🎬 Acto ${act}: ${actByNumber(act).name}`);
+      this.lastAct = act;
+    }
+
+    const pendingBoss = getPendingBoss(state);
+    if (pendingBoss && pendingBoss.name !== this.lastBossName) {
+      messages.push(`⚔️ ¡${pendingBoss.name} espera en ${pendingBoss.dungeon}!`);
+      this.lastBossName = pendingBoss.name;
+    }
+
     this.gameStateService.setState({ ...state });
     if (messages.length) this.pushLog(messages);
 
@@ -98,6 +115,20 @@ export class GameEngineService {
       this.ticksSinceSave = 0;
       this.saveState();
     }
+  }
+
+  private syncNarrationTrackers(): void {
+    this.lastAct = getCurrentAct(this.state);
+    this.lastBossName = getPendingBoss(this.state)?.name ?? null;
+  }
+
+  private narrateOpening(): void {
+    this.pushLog(["Bienvenido a Ancleto's Coffee World.", 'Escribe "help" para ver los comandos.']);
+    this.narrateObjective();
+  }
+
+  private narrateObjective(): void {
+    this.pushLog(['🥅 Objetivo: producí café, comprá mejoras y derrotá al primer boss.']);
   }
 
   private applyResult(result: CommandResult): void {
@@ -115,7 +146,10 @@ export class GameEngineService {
     this.saveLoadService.clear();
     this.gameStateService.reset();
     this.devMode.set(false);
+    this.lastAct = 1;
+    this.lastBossName = null;
     this.pushLog(['Juego reseteado. Nueva partida.']);
+    this.narrateObjective();
     this.start();
   }
 
