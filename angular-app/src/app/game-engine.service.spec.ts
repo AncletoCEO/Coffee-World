@@ -63,4 +63,37 @@ describe('GameEngineService', () => {
     expect(service.state.coffee).toBe(0);
     expect(service.state.totalCoffee).toBe(0);
   });
+
+  it('narrates a new dialogue when crossing its threshold', () => {
+    stateService.setState({ ...service.state, totalCoffee: 60, currentDialogueIndex: 0 });
+
+    service.tick();
+
+    expect(service.log().some(line => line.includes('Nueva historia'))).toBe(true);
+  });
+
+  it('narrates an act change once per transition', () => {
+    stateService.setState({ ...service.state, defeatedBosses: ['Damián Rebelde'], totalCoffee: 5000 });
+
+    service.tick();
+    service.tick();
+
+    const actLines = service.log().filter(line => line.startsWith('🎬'));
+    expect(actLines.length).toBe(1);
+    expect(actLines[0]).toContain('Acto 2');
+  });
+
+  it('does not add narration lines on idle ticks', () => {
+    service.tick();
+    const afterFirst = service.log().length;
+
+    service.tick();
+    service.tick();
+
+    expect(service.log().length).toBe(afterFirst);
+  });
+
+  it('emits a kickoff objective line at startup', () => {
+    expect(service.log().some(line => line.includes('Objetivo'))).toBe(true);
+  });
 });

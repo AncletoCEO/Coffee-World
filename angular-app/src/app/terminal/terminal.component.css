@@ -14,6 +14,19 @@
   box-sizing: border-box;
 }
 
+.status-bar {
+  flex: 0 0 auto;
+  border-bottom: 1px solid #00ff00;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #00ff00;
+  white-space: normal;
+  word-break: break-word;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+}
+
 .scrollback {
   flex: 1;
   overflow-y: auto;
